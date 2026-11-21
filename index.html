@@ -68,18 +68,11 @@ svg.icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-w
 svg.icon-sm { width: 16px; height: 16px; }
 svg.icon-lg { width: 32px; height: 32px; }
 
-/* Layout */
 #app { display: flex; min-height: 100vh; padding-top: var(--safe-top); padding-bottom: calc(var(--nav-h) + var(--safe-bottom)); }
 .sidebar {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
-  width: var(--sidebar-w);
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 20px 14px;
-  flex-direction: column;
-  z-index: 40;
+  display: none; position: fixed; top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border);
+  padding: 20px 14px; flex-direction: column; z-index: 40;
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; letter-spacing: 0.5px; padding: 6px 10px 20px; color: var(--accent); }
 .nav-item {
@@ -95,28 +88,21 @@ svg.icon-lg { width: 32px; height: 32px; }
 
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
-  height: calc(var(--nav-h) + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  display: flex; justify-content: space-around; align-items: center;
-  z-index: 40;
+  height: calc(var(--nav-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom);
+  background: var(--surface); border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around; align-items: center; z-index: 40;
 }
 .bnav-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; color: var(--text-muted); font-size: 11px; font-weight: 600;
-  padding: 6px 10px; border-radius: var(--radius-sm);
+  gap: 4px; color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 6px 10px; border-radius: var(--radius-sm);
 }
 .bnav-btn.active { color: var(--accent); }
 
 .main-wrap { flex: 1; width: 100%; max-width: 1400px; margin: 0 auto; }
 .topbar {
   position: sticky; top: 0; z-index: 30;
-  background: rgba(10,10,15,0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 16px;
+  background: rgba(10,10,15,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border); padding: 12px 16px;
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
 }
 [data-theme="light"] .topbar { background: rgba(255,255,255,0.85); }
@@ -127,8 +113,7 @@ svg.icon-lg { width: 32px; height: 32px; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 9px 14px; border-radius: var(--radius-sm);
-  font-size: 13px; font-weight: 600;
+  padding: 9px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
   background: var(--surface-2); color: var(--text);
 }
 .btn:hover { background: var(--surface-3); }
@@ -139,165 +124,81 @@ svg.icon-lg { width: 32px; height: 32px; }
 .btn-icon { padding: 8px; border-radius: var(--radius-sm); background: var(--surface-2); }
 
 .member-pill {
-  display: flex; align-items: center; gap: 8px;
-  padding: 5px 10px 5px 6px; border-radius: 99px;
-  background: var(--surface-2); border: 1px solid var(--border);
-  font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border-radius: 99px;
+  background: var(--surface-2); border: 1px solid var(--border); font-size: 13px; font-weight: 600;
 }
 .member-avatar {
-  width: 26px; height: 26px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   font-size: 14px; overflow: hidden; flex-shrink: 0;
 }
 .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Views */
 .view { display: none; padding: 16px; }
 .view.active { display: block; }
 .view-feed { padding: 0 !important; }
 
-/* Progress Bar */
 #upload-bar-wrap {
   display: none; position: fixed; top: var(--safe-top); left: 0; right: 0;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 10px 16px; z-index: 60; box-shadow: var(--shadow);
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px; z-index: 60; box-shadow: var(--shadow);
 }
 .progress-track { height: 6px; background: var(--surface-3); border-radius: 99px; overflow: hidden; margin-top: 6px; }
 .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
-/* Controls Bar */
-.controls-bar {
-  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center;
-}
+.controls-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
 .search-box {
   flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px;
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: var(--radius-sm);
 }
 .search-box input { width: 100%; font-size: 14px; }
-.select-box {
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px;
-}
+.select-box { background: var(--surface); border: 1px solid var(--border); padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; }
 
-/* Photo Grid */
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--cols, 3), 1fr);
-  gap: 8px;
-}
+.photo-grid { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 8px; }
 .photo-card {
-  position: relative; aspect-ratio: 1 / 1;
-  background: var(--surface); border-radius: var(--radius-sm);
+  position: relative; aspect-ratio: 1 / 1; background: var(--surface); border-radius: var(--radius-sm);
   overflow: hidden; cursor: pointer; border: 1px solid var(--border);
 }
-.photo-card img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.2s, filter 0.2s;
-}
+.photo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s, filter 0.2s; }
 .privacy-blur .photo-card img { filter: blur(18px); transform: scale(1.1); }
-.photo-card:hover img { transform: scale(1.03); }
-.privacy-blur .photo-card:hover img { transform: scale(1.12); }
-.photo-badges {
-  position: absolute; top: 6px; left: 6px; right: 6px;
-  display: flex; justify-content: space-between; pointer-events: none;
-}
+.photo-badges { position: absolute; top: 6px; left: 6px; right: 6px; display: flex; justify-content: space-between; pointer-events: none; }
 .badge-group { display: flex; gap: 4px; }
-.p-badge {
-  background: rgba(0,0,0,0.65); color: #fff;
-  padding: 3px 6px; border-radius: 6px; font-size: 11px;
-  display: inline-flex; align-items: center; gap: 3px;
-}
+.p-badge { background: rgba(0,0,0,0.65); color: #fff; padding: 3px 6px; border-radius: 6px; font-size: 11px; display: inline-flex; align-items: center; gap: 3px; }
 .photo-meta-bar {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,0.8));
-  color: #fff; padding: 16px 8px 6px; font-size: 11px;
-  display: flex; justify-content: space-between; align-items: center;
+  position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  color: #fff; padding: 16px 8px 6px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;
 }
 .select-check {
-  position: absolute; top: 8px; right: 8px;
-  width: 24px; height: 24px; border-radius: 50%;
-  border: 2px solid #fff; background: rgba(0,0,0,0.4);
-  display: none; align-items: center; justify-content: center; color: #fff;
+  position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid #fff; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; color: #fff;
 }
 .selecting .select-check { display: flex; }
 .photo-card.selected .select-check { background: var(--accent); border-color: var(--accent); }
 .photo-card.selected { outline: 3px solid var(--accent); }
 
-/* Bulk Bar */
 #bulk-bar {
   display: none; position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 10px);
-  left: 50%; transform: translateX(-50%);
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 10px 14px; border-radius: var(--radius);
-  box-shadow: var(--shadow); z-index: 45;
-  gap: 8px; align-items: center; flex-wrap: wrap; max-width: 95vw;
+  left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border);
+  padding: 10px 14px; border-radius: var(--radius); box-shadow: var(--shadow); z-index: 45; gap: 8px; align-items: center; flex-wrap: wrap; max-width: 95vw;
 }
 #bulk-bar.active { display: flex; }
 
-/* TikTok Feed */
-.feed-container {
-  height: calc(100vh - var(--nav-h) - var(--safe-bottom) - 53px);
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  background: #000;
-}
-.feed-item {
-  position: relative;
-  width: 100%; height: 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  display: flex; align-items: center; justify-content: center;
-  background: #000;
-}
-.feed-item img {
-  width: 100%; height: 100%;
-  object-fit: contain; /* WAJIB: tidak terpotong */
-}
+.feed-container { height: calc(100vh - var(--nav-h) - var(--safe-bottom) - 53px); overflow-y: scroll; scroll-snap-type: y mandatory; background: #000; }
+.feed-item { position: relative; width: 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; background: #000; }
+.feed-item img { width: 100%; height: 100%; object-fit: contain; }
 .privacy-blur .feed-item img { filter: blur(22px); }
-.feed-overlay {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,0.85));
-  padding: 40px 70px 20px 16px; color: #fff;
-  pointer-events: none;
-}
-.feed-actions {
-  position: absolute; right: 12px; bottom: 24px;
-  display: flex; flex-direction: column; gap: 16px; align-items: center;
-  z-index: 5;
-}
-.feed-act-btn {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  color: #fff; font-size: 12px; font-weight: 600;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-}
-.feed-act-circle {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(255,255,255,0.16); backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-}
+.feed-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 40px 70px 20px 16px; color: #fff; pointer-events: none; }
+.feed-actions { position: absolute; right: 12px; bottom: 24px; display: flex; flex-direction: column; gap: 16px; align-items: center; z-index: 5; }
+.feed-act-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; font-size: 12px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.feed-act-circle { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.16); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; }
 .feed-act-btn.liked .feed-act-circle { color: #ef4444; background: rgba(239,68,68,0.25); }
 .feed-act-btn.faved .feed-act-circle { color: #f59e0b; background: rgba(245,158,11,0.25); }
 
-/* Cards & Grids */
-.card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px;
-  box-shadow: var(--shadow); margin-bottom: 16px;
-}
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); margin-bottom: 16px; }
 .album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-.album-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden; cursor: pointer;
-}
-.album-cover {
-  aspect-ratio: 4 / 3; background: var(--surface-2);
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
-}
+.album-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; }
+.album-cover { aspect-ratio: 4 / 3; background: var(--surface-2); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .album-cover img { width: 100%; height: 100%; object-fit: cover; }
 .album-info { padding: 10px 12px; }
 
-/* Stats & Chart */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
 .stat-box { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); }
 .stat-val { font-size: 24px; font-weight: 800; color: var(--accent); margin-top: 4px; }
@@ -305,142 +206,81 @@ svg.icon-lg { width: 32px; height: 32px; }
 .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
 .bar-fill { width: 100%; max-width: 36px; background: var(--accent); border-radius: 6px 6px 0 0; min-height: 4px; transition: height 0.3s; }
 
-/* Viewer Modal */
-#viewer-modal {
-  display: none; position: fixed; inset: 0; background: #000;
-  z-index: 80; flex-direction: column;
-}
+#viewer-modal { display: none; position: fixed; inset: 0; background: #000; z-index: 80; flex-direction: column; }
 #viewer-modal.active { display: flex; }
-.viewer-top {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: calc(12px + var(--safe-top)) 16px 12px;
-  background: rgba(0,0,0,0.7); color: #fff; z-index: 5;
-}
-.viewer-stage {
-  flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
-  overflow: hidden; touch-action: none;
-}
-.viewer-stage img {
-  max-width: 100%; max-height: 100%; object-fit: contain;
-  transition: transform 0.2s; user-select: none;
-}
+.viewer-top { display: flex; justify-content: space-between; align-items: center; padding: calc(12px + var(--safe-top)) 16px 12px; background: rgba(0,0,0,0.7); color: #fff; z-index: 5; }
+.viewer-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
+.viewer-stage img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.2s; user-select: none; }
 .viewer-nav-btn {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 42px; height: 42px; border-radius: 50%;
-  background: rgba(255,255,255,0.18); color: #fff;
-  display: flex; align-items: center; justify-content: center; z-index: 5;
+  position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(255,255,255,0.18); color: #fff; display: flex; align-items: center; justify-content: center; z-index: 5;
 }
 .viewer-prev { left: 12px; }
 .viewer-next { right: 12px; }
-.viewer-bottom {
-  background: rgba(15,15,22,0.92); color: #fff;
-  padding: 12px 16px calc(12px + var(--safe-bottom));
-  border-top: 1px solid rgba(255,255,255,0.12);
-}
+.viewer-bottom { background: rgba(15,15,22,0.92); color: #fff; padding: 12px 16px calc(12px + var(--safe-bottom)); border-top: 1px solid rgba(255,255,255,0.12); }
 .viewer-tools { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
 .v-tool {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.12);
-  color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 10px;
+  background: rgba(255,255,255,0.12); color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap;
 }
 
-/* Modals & Sheets */
 .modal-backdrop {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
   z-index: 90; align-items: center; justify-content: center; padding: 16px;
 }
 .modal-backdrop.active { display: flex; }
-.modal-box {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); width: 100%; max-width: 440px;
-  max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: var(--shadow);
-}
-.sheet-backdrop {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.65); z-index: 70;
-  align-items: flex-end; justify-content: center;
-}
+.modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: var(--shadow); }
+.sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 70; align-items: flex-end; justify-content: center; }
 .sheet-backdrop.active { display: flex; }
-.sheet-box {
-  background: var(--surface); border-top: 1px solid var(--border);
-  border-radius: 22px 22px 0 0; width: 100%; max-width: 540px;
-  padding: 16px 16px calc(20px + var(--safe-bottom));
-  max-height: 85vh; overflow-y: auto;
-}
+.sheet-box { background: var(--surface); border-top: 1px solid var(--border); border-radius: 22px 22px 0 0; width: 100%; max-width: 540px; padding: 16px 16px calc(20px + var(--safe-bottom)); max-height: 85vh; overflow-y: auto; }
 .sheet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .sheet-item {
   background: var(--surface-2); padding: 14px 8px; border-radius: var(--radius-sm);
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  font-size: 12px; font-weight: 600; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; text-align: center;
 }
 .sheet-item:hover { background: var(--accent); color: #fff; }
 
-/* Member Cards */
 .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; margin: 14px 0; }
 .member-card {
-  position: relative; background: var(--surface-2); border: 2px solid transparent;
-  border-radius: var(--radius); padding: 14px 10px;
-  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+  position: relative; background: var(--surface-2); border: 2px solid transparent; border-radius: var(--radius);
+  padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
 }
 .member-card:hover { border-color: var(--accent); }
-.member-card-avatar {
-  width: 56px; height: 56px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; overflow: hidden;
-}
+.member-card-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; overflow: hidden; }
 .member-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .member-edit-btn {
-  position: absolute; top: 6px; right: 6px;
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--surface); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
 }
 
-/* Form Elements */
 .form-group { margin-bottom: 12px; }
 .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
-.form-input {
-  width: 100%; background: var(--surface-2); border: 1px solid var(--border);
-  padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px;
-}
+.form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border); padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; }
 .form-input:focus { border-color: var(--accent); }
 
-/* Toast */
 #toast-wrap {
-  position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 14px);
-  left: 50%; transform: translateX(-50%);
-  z-index: 100; display: flex; flex-direction: column; gap: 8px;
-  width: max-content; max-width: 92vw;
+  position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 14px); left: 50%; transform: translateX(-50%);
+  z-index: 100; display: flex; flex-direction: column; gap: 8px; width: max-content; max-width: 92vw;
 }
 .toast {
-  background: var(--surface-3); color: var(--text);
-  border: 1px solid var(--border);
-  padding: 11px 16px; border-radius: 12px;
-  font-size: 13px; font-weight: 600; box-shadow: var(--shadow);
-  display: flex; align-items: center; gap: 12px;
-  animation: fadeUp 0.2s ease;
+  background: var(--surface-3); color: var(--text); border: 1px solid var(--border);
+  padding: 11px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 12px; animation: fadeUp 0.2s ease;
 }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Empty State */
-.empty-state {
-  text-align: center; padding: 48px 20px; color: var(--text-muted);
-}
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
 .empty-icon {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: var(--surface-2); color: var(--accent);
+  width: 64px; height: 64px; border-radius: 50%; background: var(--surface-2); color: var(--accent);
   display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;
 }
 
-/* App Lock Overlay */
 #lock-screen {
   display: none; position: fixed; inset: 0; background: var(--bg);
   z-index: 95; flex-direction: column; align-items: center; justify-content: center; padding: 24px;
 }
 #lock-screen.active { display: flex; }
 
-/* Responsive Desktop */
 @media (min-width: 840px) {
   #app { padding-left: var(--sidebar-w); padding-bottom: 0; }
   .sidebar { display: flex; }
@@ -453,7 +293,6 @@ svg.icon-lg { width: 32px; height: 32px; }
 </head>
 <body>
 
-<!-- Inline SVG Sprite -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
   <symbol id="i-feed" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></symbol>
@@ -497,11 +336,10 @@ svg.icon-lg { width: 32px; height: 32px; }
 <input type="file" id="file-input" accept="image/*" multiple style="display:none">
 
 <div id="app">
-  <!-- Desktop Sidebar -->
   <aside class="sidebar">
     <div class="brand">
       <svg class="icon"><use href="#i-sparkles"/></svg>
-      <span>KIRANA GALLERY</span>
+      <span id="brand-family-name">KIRANA GALLERY</span>
     </div>
     <button class="nav-item active" data-view="gallery"><svg class="icon"><use href="#i-grid"/></svg>Galeri <span class="nav-badge" id="badge-gallery">0</span></button>
     <button class="nav-item" data-view="feed"><svg class="icon"><use href="#i-feed"/></svg>Feed Layar Penuh</button>
@@ -519,7 +357,6 @@ svg.icon-lg { width: 32px; height: 32px; }
     </div>
   </aside>
 
-  <!-- Main Wrapper -->
   <div class="main-wrap">
     <header class="topbar">
       <div class="topbar-title">
@@ -536,7 +373,6 @@ svg.icon-lg { width: 32px; height: 32px; }
       </div>
     </header>
 
-    <!-- VIEW: GALLERY -->
     <section id="view-gallery" class="view active">
       <div class="controls-bar">
         <div class="search-box">
@@ -562,12 +398,10 @@ svg.icon-lg { width: 32px; height: 32px; }
       <div id="gallery-grid" class="photo-grid"></div>
     </section>
 
-    <!-- VIEW: FEED -->
     <section id="view-feed" class="view view-feed">
       <div id="feed-container" class="feed-container"></div>
     </section>
 
-    <!-- VIEW: ALBUMS -->
     <section id="view-albums" class="view">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <h3 id="album-view-heading">Semua Album</h3>
@@ -580,7 +414,6 @@ svg.icon-lg { width: 32px; height: 32px; }
       <div id="album-photos-grid" class="photo-grid" style="display:none"></div>
     </section>
 
-    <!-- VIEW: FAVORITES -->
     <section id="view-favorites" class="view">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <h3>Foto Favorit</h3>
@@ -589,18 +422,15 @@ svg.icon-lg { width: 32px; height: 32px; }
       <div id="favorites-grid" class="photo-grid"></div>
     </section>
 
-    <!-- VIEW: MEMORIES -->
     <section id="view-memories" class="view">
       <div id="memories-content"></div>
     </section>
 
-    <!-- VIEW: ARCHIVE -->
     <section id="view-archive" class="view">
       <div style="margin-bottom:14px"><h3>Foto Diarsipkan</h3></div>
       <div id="archive-grid" class="photo-grid"></div>
     </section>
 
-    <!-- VIEW: TRASH -->
     <section id="view-trash" class="view">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <div>
@@ -612,12 +442,10 @@ svg.icon-lg { width: 32px; height: 32px; }
       <div id="trash-grid" class="photo-grid"></div>
     </section>
 
-    <!-- VIEW: STATS -->
     <section id="view-stats" class="view">
       <div id="stats-content"></div>
     </section>
 
-    <!-- VIEW: LOGS -->
     <section id="view-logs" class="view">
       <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
         <h3>Log Aktivitas Keluarga</h3>
@@ -631,13 +459,27 @@ svg.icon-lg { width: 32px; height: 32px; }
       <div id="logs-list"></div>
     </section>
 
-    <!-- VIEW: SETTINGS -->
     <section id="view-settings" class="view">
+      <div class="card">
+        <h3 style="margin-bottom:12px">Informasi Keluarga & Secret Code</h3>
+        <div style="margin-bottom:10px;font-size:13px">
+          Nama Keluarga: <b id="settings-fam-name" style="color:var(--accent)">-</b>
+        </div>
+        <div style="margin-bottom:14px;font-size:13px">
+          Secret Code (Bagikan ke HP keluarga lain): <br>
+          <code id="settings-fam-code" style="background:var(--surface-2);padding:6px 10px;border-radius:6px;display:inline-block;margin-top:4px;font-size:14px;font-weight:bold;color:var(--accent)">-</code>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="copySecretCode()">Salin Secret Code</button>
+          <button class="btn" onclick="openPairingModal()">Ganti / Masuk Kode Lain</button>
+        </div>
+      </div>
+
       <div class="card">
         <h3 style="margin-bottom:12px">Tampilan & Tema</h3>
         <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
           <span>Mode Terang / Gelap</span>
-          <button class="btn" onclick="toggleTheme()" id="btn-theme-toggle">Ganti Tema</button>
+          <button class="btn" onclick="toggleTheme()">Ganti Tema</button>
         </div>
         <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
           <span>Warna Aksen</span>
@@ -685,7 +527,6 @@ svg.icon-lg { width: 32px; height: 32px; }
     </section>
   </div>
 
-  <!-- Mobile Bottom Nav -->
   <nav class="bottom-nav">
     <button class="bnav-btn active" data-view="gallery"><svg class="icon"><use href="#i-grid"/></svg><span>Galeri</span></button>
     <button class="bnav-btn" data-view="feed"><svg class="icon"><use href="#i-feed"/></svg><span>Feed</span></button>
@@ -695,7 +536,6 @@ svg.icon-lg { width: 32px; height: 32px; }
   </nav>
 </div>
 
-<!-- Bulk Action Bar -->
 <div id="bulk-bar">
   <span id="bulk-count" style="font-weight:700;font-size:13px">0 dipilih</span>
   <button class="btn" onclick="bulkAction('fav')">Favorit</button>
@@ -707,7 +547,6 @@ svg.icon-lg { width: 32px; height: 32px; }
   <button class="btn-icon" onclick="toggleSelectMode()"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
 </div>
 
-<!-- More Sheet (Mobile) -->
 <div class="sheet-backdrop" id="more-sheet" onclick="if(event.target===this)closeMoreSheet()">
   <div class="sheet-box">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -727,7 +566,6 @@ svg.icon-lg { width: 32px; height: 32px; }
   </div>
 </div>
 
-<!-- Fullscreen Photo Viewer -->
 <div id="viewer-modal">
   <div class="viewer-top">
     <button class="btn-icon" onclick="closeViewer()"><svg class="icon"><use href="#i-x"/></svg></button>
@@ -749,7 +587,6 @@ svg.icon-lg { width: 32px; height: 32px; }
   </div>
 </div>
 
-<!-- Member Selection & Management Modal -->
 <div class="modal-backdrop" id="member-modal">
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -762,7 +599,6 @@ svg.icon-lg { width: 32px; height: 32px; }
   </div>
 </div>
 
-<!-- Member Add/Edit Form Modal -->
 <div class="modal-backdrop" id="member-form-modal">
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -788,7 +624,7 @@ svg.icon-lg { width: 32px; height: 32px; }
       <input type="file" class="form-input" id="mf-avatar" accept="image/*">
     </div>
     <div class="form-group">
-      <label class="form-label">Password Anggota (Opsional - kosongkan jika tanpa password)</label>
+      <label class="form-label">Password Anggota (Opsional)</label>
       <input type="password" class="form-input" id="mf-pass" placeholder="Masukkan password baru">
     </div>
     <div style="display:flex;gap:8px;margin-top:16px">
@@ -798,7 +634,31 @@ svg.icon-lg { width: 32px; height: 32px; }
   </div>
 </div>
 
-<!-- Generic Dialog Modal (Prompt & Confirm) -->
+<!-- Modal Pairing / Setup Keluarga & Secret Code -->
+<div class="modal-backdrop" id="pairing-modal">
+  <div class="modal-box" style="text-align:center">
+    <div class="empty-icon"><svg class="icon icon-lg"><use href="#i-sparkles"/></svg></div>
+    <h3 style="margin-bottom:6px">Keluarga & Secret Code</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Hubungkan HP ini dengan keluarga Anda menggunakan secret code atau buat keluarga baru.</p>
+    
+    <div style="margin-bottom:16px;text-align:left">
+      <label class="form-label">1. Buat Keluarga Baru</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" class="form-input" id="pair-new-name" placeholder="Nama Keluarga (Mis: Keluarga Kirana)">
+        <button class="btn btn-primary" onclick="createNewFamily()">Buat</button>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid var(--border);padding-top:14px;text-align:left">
+      <label class="form-label">2. Atau Gabung dengan Secret Code</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" class="form-input" id="pair-code-input" placeholder="Masukkan Secret Code...">
+        <button class="btn btn-primary" onclick="joinBySecretCode()">Gabung</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="dialog-modal">
   <div class="modal-box">
     <h3 id="dialog-title" style="margin-bottom:8px">Konfirmasi</h3>
@@ -811,7 +671,6 @@ svg.icon-lg { width: 32px; height: 32px; }
   </div>
 </div>
 
-<!-- App Lock Screen -->
 <div id="lock-screen">
   <div class="card" style="max-width:340px;width:100%;text-align:center">
     <div class="empty-icon"><svg class="icon icon-lg"><use href="#i-lock"/></svg></div>
@@ -828,8 +687,8 @@ svg.icon-lg { width: 32px; height: 32px; }
 // ============================================================================
 // KONFIGURASI SUPABASE (Ganti dengan Project URL & Anon Public Key Anda)
 // ============================================================================
-const SUPABASE_URL = 'GANTI-DENGAN-PROJECT-URL';
-const SUPABASE_ANON_KEY = 'GANTI-DENGAN-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://mmxtypftvqgtfvadklvy.supabase.co';
+const SUPABASE_ANON_KEY = 'Sb_publishable_5sBKTxCm_C4vZV3gyNBbig_VxRREXYl';
 
 // ============================================================================
 // 1. UTILS
@@ -943,7 +802,7 @@ function blobToDataURL(blob) {
 }
 
 // ============================================================================
-// 2. MEMBERS (Profil Anggota Keluarga)
+// 2. STATE & FAMILY / PAIRING CONFIG
 // ============================================================================
 const DEFAULT_MEMBERS = [
   { id: 'mem_ayah', name: 'Ayah', emoji: '👨', color: '#3b82f6', avatar: '', password: '' },
@@ -953,6 +812,91 @@ const DEFAULT_MEMBERS = [
 
 let editingMemberId = null;
 
+const state = {
+  view: 'gallery',
+  familyName: localStorage.getItem('kfg_fam_name') || 'Keluarga Kirana',
+  familyCode: localStorage.getItem('kfg_fam_code') || '',
+  members: [],
+  currentMemberId: localStorage.getItem('kfg_member_id') || '',
+  photos: [],
+  albums: [],
+  logs: [],
+  activeAlbumId: null,
+  selecting: false,
+  selectedIds: new Set(),
+  privacyMode: false,
+  viewerList: [],
+  viewerIndex: 0,
+  viewerZoom: 1,
+  slideshowTimer: null,
+  supabase: null,
+  online: false
+};
+
+function updateFamilyUI() {
+  $('brand-family-name').textContent = state.familyName.toUpperCase();
+  $('settings-fam-name').textContent = state.familyName;
+  $('settings-fam-code').textContent = state.familyCode || 'Belum diatur';
+}
+
+function openPairingModal() {
+  $('pair-new-name').value = state.familyName;
+  $('pair-code-input').value = state.familyCode;
+  $('pairing-modal').classList.add('active');
+}
+
+async function createNewFamily() {
+  const name = $('pair-new-name').value.trim();
+  if (!name) return showToast('Nama keluarga wajib diisi.');
+  const code = 'KRF-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+  
+  state.familyName = name;
+  state.familyCode = code;
+  localStorage.setItem('kfg_fam_name', name);
+  localStorage.setItem('kfg_fam_code', code);
+
+  if (state.supabase) {
+    await state.supabase.from('families').upsert({ id: 'primary', name, code });
+  }
+
+  $('pairing-modal').classList.remove('active');
+  updateFamilyUI();
+  showToast(`Keluarga "${name}" dibuat! Secret Code: ${code}`);
+}
+
+async function joinBySecretCode() {
+  const code = $('pair-code-input').value.trim().toUpperCase();
+  if (!code) return showToast('Masukkan Secret Code.');
+
+  if (state.supabase) {
+    showToast('Mencari data keluarga...');
+    const { data, error } = await state.supabase.from('families').select('*').eq('code', code).single();
+    if (error || !data) {
+      return showToast('Secret Code tidak ditemukan di Cloud.');
+    }
+    state.familyName = data.name;
+    state.familyCode = data.code;
+    localStorage.setItem('kfg_fam_name', data.name);
+    localStorage.setItem('kfg_fam_code', data.code);
+
+    $('pairing-modal').classList.remove('active');
+    updateFamilyUI();
+    await syncFromSupabase(true);
+    showToast(`Berhasil bergabung dengan ${data.name}!`);
+  } else {
+    showToast('Mode offline: Pastikan Supabase terhubung untuk pairing antar HP.');
+  }
+}
+
+function copySecretCode() {
+  if (!state.familyCode) return showToast('Belum ada Secret Code.');
+  navigator.clipboard?.writeText(state.familyCode);
+  showToast('Secret Code disalin ke clipboard.');
+}
+
+// ============================================================================
+// 3. MEMBERS
+// ============================================================================
 function renderActiveMemberUI() {
   const m = state.members.find(x => x.id === state.currentMemberId) || state.members[0];
   if (!m) return;
@@ -1012,7 +956,6 @@ async function selectMember(id) {
 async function requestEditMember(id) {
   const m = state.members.find(x => x.id === id);
   if (!m) return;
-  // WAJIB: Edit profil wajib password dulu jika anggota punya password
   if (m.password) {
     const res = await showDialog({
       title: `Verifikasi ${m.name}`,
@@ -1092,7 +1035,7 @@ async function deleteCurrentEditingMember() {
 }
 
 // ============================================================================
-// 3. DB WRAPPER (IndexedDB)
+// 4. DB WRAPPER (IndexedDB)
 // ============================================================================
 const DB_NAME = 'KiranaFamilyGalleryDB';
 const DB_VER = 1;
@@ -1151,7 +1094,7 @@ function dbDelete(store, key) {
 }
 
 // ============================================================================
-// 4. LOG HELPER
+// 5. LOG HELPER
 // ============================================================================
 async function addLog(action, detail = '') {
   const m = state.members.find(x => x.id === state.currentMemberId) || { id: 'unknown', name: 'Keluarga', emoji: '👨‍👩‍👧' };
@@ -1171,7 +1114,7 @@ async function addLog(action, detail = '') {
 }
 
 // ============================================================================
-// 5. URL CACHE (Object URL & Cloud Public URL Resolver)
+// 6. URL CACHE
 // ============================================================================
 const urlCache = new Map();
 
@@ -1202,28 +1145,6 @@ function revokePhotoUrl(photoId) {
     urlCache.delete(photoId + s);
   });
 }
-
-// ============================================================================
-// 6. STATE
-// ============================================================================
-const state = {
-  view: 'gallery',
-  members: [],
-  currentMemberId: localStorage.getItem('kfg_member_id') || '',
-  photos: [],
-  albums: [],
-  logs: [],
-  activeAlbumId: null,
-  selecting: false,
-  selectedIds: new Set(),
-  privacyMode: false,
-  viewerList: [],
-  viewerIndex: 0,
-  viewerZoom: 1,
-  slideshowTimer: null,
-  supabase: null,
-  online: false
-};
 
 // ============================================================================
 // 7. NAV & ROUTING
@@ -1367,7 +1288,7 @@ async function handleFilesUpload(files) {
 }
 
 // ============================================================================
-// 9. FEED (TikTok-style Fullscreen Scroll-Snap, object-fit: contain)
+// 9. FEED
 // ============================================================================
 async function renderFeed() {
   const container = $('feed-container');
@@ -1376,7 +1297,7 @@ async function renderFeed() {
     container.innerHTML = `<div class="empty-state" style="padding-top:120px"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-feed"/></svg></div><h3>Belum Ada Foto di Feed</h3><p>Unggah foto pertama keluarga Anda sekarang.</p></div>`;
     return;
   }
-  container.innerHTML = list.map((p, idx) => `
+  container.innerHTML = list.map(p => `
     <div class="feed-item" data-id="${p.id}">
       <img id="feed-img-${p.id}" src="" alt="${esc(p.name)}" style="transform:rotate(${p.rot || 0}deg)" ondblclick="toggleLike('${p.id}')">
       <div class="feed-overlay">
@@ -1515,7 +1436,7 @@ $('cols-select').addEventListener('change', e => {
 });
 
 // ============================================================================
-// 11. ALBUMS (CRUD + Cover + Pindah Foto)
+// 11. ALBUMS
 // ============================================================================
 async function renderAlbums() {
   if (state.activeAlbumId) {
@@ -1541,7 +1462,7 @@ async function renderAlbums() {
 
   const grid = $('albums-grid');
   if (!state.albums.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-album"/></svg></div><h3>Belum Ada Album</h3><p>Buat album untuk mengelompokkan momen liburan atau acara keluarga.</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-album"/></svg></div><h3>Belum Ada Album</h3><p>Buat album untuk mengelompokkan momen liburan.</p></div>`;
     return;
   }
 
@@ -1576,7 +1497,7 @@ function closeAlbumDetail() { state.activeAlbumId = null; renderAlbums(); }
 async function createAlbumFlow() {
   const res = await showDialog({
     title: 'Buat Album Baru',
-    fields: [{ name: 'name', label: 'Nama Album', placeholder: 'Misal: Liburan Bali 2026' }],
+    fields: [{ name: 'name', label: 'Nama Album', placeholder: 'Misal: Liburan Bali' }],
     okText: 'Buat'
   });
   if (!res || !res.name.trim()) return;
@@ -1631,7 +1552,7 @@ function renderFavorites() {
 }
 
 // ============================================================================
-// 13. MEMORIES (Hari ini tahun lalu, baru ditambahkan, baru dilihat, favorit acak, hari ini)
+// 13. MEMORIES
 // ============================================================================
 async function renderMemories() {
   const active = state.photos.filter(p => !p.deleted && !p.archived);
@@ -1681,7 +1602,7 @@ function renderArchive() {
 }
 
 // ============================================================================
-// 15. TRASH & AUTO-PURGE 30 HARI & UNDO
+// 15. TRASH
 // ============================================================================
 async function purgeOldTrash() {
   const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -1739,7 +1660,7 @@ async function emptyTrashFlow() {
   if (!trashed.length) return showToast('Sampah sudah kosong.');
   const ok = await showDialog({
     title: 'Kosongkan Sampah?',
-    message: `${trashed.length} foto akan dihapus secara permanen dan tidak bisa dikembalikan.`,
+    message: `${trashed.length} foto akan dihapus secara permanen.`,
     okText: 'Hapus Permanen',
     danger: true
   });
@@ -1817,14 +1738,12 @@ async function bulkMoveAlbum() {
 
 async function bulkDownload() {
   const ids = Array.from(state.selectedIds);
-  for (const id of ids) {
-    await downloadPhoto(id);
-  }
+  for (const id of ids) await downloadPhoto(id);
   toggleSelectMode(false);
 }
 
 // ============================================================================
-// 17. VIEWER (Prev/Next, Swipe, Zoom Double-Tap, Rotate, Share, Copy, Download)
+// 17. VIEWER
 // ============================================================================
 function getPhotoListBySource(source) {
   if (source === 'feed') return state.photos.filter(p => !p.deleted && !p.archived).sort((a, b) => b.uploaded_at - a.uploaded_at);
@@ -1902,7 +1821,6 @@ function viewerNav(dir) {
   renderViewer();
 }
 
-// Swipe & Double-Tap Zoom di Viewer
 (() => {
   const stage = $('viewer-stage');
   let startX = 0, lastTap = 0;
@@ -2102,7 +2020,6 @@ function renderStats() {
   const totalSize = active.reduce((s, p) => s + (p.size || 0), 0);
   const totalLikes = active.reduce((s, p) => s + (p.likes || 0), 0);
 
-  // Chart 6 bulan terakhir
   const months = [];
   const now = new Date();
   for (let i = 5; i >= 0; i--) {
@@ -2117,7 +2034,6 @@ function renderStats() {
   }
   const maxM = Math.max(1, ...months.map(m => m.count));
 
-  // Leaderboard anggota
   const leader = state.members.map(m => ({
     ...m,
     count: active.filter(p => p.member_id === m.id).length
@@ -2203,9 +2119,10 @@ async function clearLogsFlow() {
 function renderSettings() {
   const pin = localStorage.getItem('kfg_app_pin');
   $('pin-status-text').textContent = pin ? 'Aktif (Terkunci saat tombol Kunci ditekan)' : 'Belum diatur';
+  updateFamilyUI();
   $('sync-info-box').innerHTML = state.online
     ? `Status Cloud: <b style="color:var(--success)">Terhubung ke Supabase (Realtime Aktif)</b>`
-    : `Status Cloud: <b style="color:var(--warning)">Mode Offline Lokal (IndexedDB)</b>. Isi <code>SUPABASE_URL</code> dan <code>SUPABASE_ANON_KEY</code> di bagian atas script untuk sinkronisasi antar HP.`;
+    : `Status Cloud: <b style="color:var(--warning)">Mode Offline Lokal (IndexedDB)</b>.`;
 }
 
 function toggleTheme() {
@@ -2223,7 +2140,7 @@ function togglePrivacy() {
   state.privacyMode = !state.privacyMode;
   document.body.classList.toggle('privacy-blur', state.privacyMode);
   $('btn-privacy').style.color = state.privacyMode ? 'var(--accent)' : '';
-  showToast(state.privacyMode ? 'Mode Privat Aktif (Thumbnail diburamkan)' : 'Mode Privat Nonaktif');
+  showToast(state.privacyMode ? 'Mode Privat Aktif' : 'Mode Privat Nonaktif');
 }
 
 async function setupPinFlow() {
@@ -2287,6 +2204,8 @@ async function scanDuplicates() {
 async function exportBackup() {
   const payload = {
     app: 'KIRANA_FAMILY_GALLERY',
+    familyName: state.familyName,
+    familyCode: state.familyCode,
     exported_at: Date.now(),
     members: state.members,
     albums: state.albums,
@@ -2325,7 +2244,7 @@ async function importBackup(e) {
 }
 
 // ============================================================================
-// 23. SUPABASE SYNC
+// 23. SUPABASE SYNC & FAMILIES PAIRING
 // ============================================================================
 function initSupabaseClient() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY || SUPABASE_URL.includes('GANTI-DENGAN') || SUPABASE_ANON_KEY.includes('GANTI-DENGAN')) {
@@ -2345,6 +2264,17 @@ function initSupabaseClient() {
 async function syncFromSupabase(manual = false) {
   if (!state.supabase) return;
   try {
+    const famRes = await state.supabase.from('families').select('*').limit(1).single();
+    if (famRes.data) {
+      state.familyName = famRes.data.name;
+      state.familyCode = famRes.data.code;
+      localStorage.setItem('kfg_fam_name', famRes.data.name);
+      localStorage.setItem('kfg_fam_code', famRes.data.code);
+      updateFamilyUI();
+    } else if (state.familyName && state.familyCode) {
+      await state.supabase.from('families').upsert({ id: 'primary', name: state.familyName, code: state.familyCode });
+    }
+
     const [mRes, aRes, pRes, lRes] = await Promise.all([
       state.supabase.from('members').select('*'),
       state.supabase.from('albums').select('*'),
@@ -2403,7 +2333,7 @@ async function pushLogSupabase(l) {
 }
 
 // ============================================================================
-// 24. REALTIME (Sinkronisasi Langsung Antar HP)
+// 24. REALTIME
 // ============================================================================
 function setupRealtime() {
   if (!state.supabase) return;
@@ -2459,7 +2389,7 @@ function setupRealtime() {
 }
 
 // ============================================================================
-// 25. INIT, KEYBOARD SHORTCUTS & PWA INLINE
+// 25. INIT & PWA
 // ============================================================================
 function setupPWA() {
   const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#7c5cff"/><text x="50%" y="56%" font-size="260" text-anchor="middle" dominant-baseline="middle">📸</text></svg>`;
@@ -2486,7 +2416,6 @@ function setupPWA() {
 
   if ('serviceWorker' in navigator) {
     const swCode = `
-      const CACHE = 'kfg-v1';
       self.addEventListener('install', e => self.skipWaiting());
       self.addEventListener('activate', e => e.waitUntil(clients.claim()));
       self.addEventListener('fetch', e => {
@@ -2522,7 +2451,6 @@ document.querySelectorAll('.nav-item, .bnav-btn[data-view]').forEach(btn => {
 });
 
 async function initApp() {
-  // Restore tema & aksen
   if (localStorage.getItem('kfg_theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
   const savedAccent = localStorage.getItem('kfg_accent');
   if (savedAccent) {
@@ -2548,6 +2476,15 @@ async function initApp() {
   initSupabaseClient();
   await syncFromSupabase(false);
   setupRealtime();
+
+  updateFamilyUI();
+
+  if (!state.familyCode) {
+    // Generate initial code jika belum ada
+    state.familyCode = 'KRF-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+    localStorage.setItem('kfg_fam_code', state.familyCode);
+    updateFamilyUI();
+  }
 
   if (!state.currentMemberId || !state.members.some(m => m.id === state.currentMemberId)) {
     state.currentMemberId = '';
