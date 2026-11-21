@@ -38,14 +38,11 @@ img{display:block;max-width:100%}
 .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:var(--surface2);transition:.2s}
 .iconbtn:hover{background:var(--accent);color:#fff}
 .iconbtn svg{width:18px;height:18px}
-#main{flex:1;padding:14px 14px 110px;max-width:1200px;width:100%;margin:0 auto}
+#main{flex:1;padding:14px 14px 90px;max-width:1200px;width:100%;margin:0 auto}
 #bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);border-top:1px solid rgba(128,128,160,.12);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
 #bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px;font-size:10px;color:var(--muted);border-radius:12px;transition:.2s}
 #bottomnav button.active{color:var(--accent)}
 #bottomnav svg{width:20px;height:20px}
-#fab{position:fixed;right:16px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:35;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:.2s}
-#fab:hover{transform:scale(1.08)}
-#fab svg{width:24px;height:24px}
 .card{background:var(--surface);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-size:13px;font-weight:600;transition:.2s}
 .btn:hover{filter:brightness(1.1)}
@@ -58,7 +55,7 @@ img{display:block;max-width:100%}
 .grid[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
 .grid[data-cols="6"]{grid-template-columns:repeat(6,1fr)}
 @media(min-width:640px){.grid[data-cols="2"]{grid-template-columns:repeat(3,1fr)}.grid[data-cols="3"]{grid-template-columns:repeat(4,1fr)}.grid[data-cols="4"]{grid-template-columns:repeat(5,1fr)}.grid[data-cols="6"]{grid-template-columns:repeat(8,1fr)}}
-@media(min-width:900px){#sidebar{display:block}#bottomnav{display:none}#fab{bottom:30px}#main{padding-bottom:30px}}
+@media(min-width:900px){#sidebar{display:block}#bottomnav{display:none}#main{padding-bottom:30px}}
 .photocard{position:relative;border-radius:14px;overflow:hidden;background:var(--surface2);cursor:pointer;transition:transform .2s}
 .photocard:hover{transform:translateY(-2px)}
 .photocard img{width:100%;aspect-ratio:1;object-fit:cover}
@@ -74,8 +71,8 @@ img{display:block;max-width:100%}
 .toolbar input:focus,.toolbar select:focus{border-color:var(--accent)}
 #feed{height:calc(100dvh - 60px);overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none}
 #feed::-webkit-scrollbar{display:none}
-.feeditem{scroll-snap-align:start;height:100%;position:relative;display:flex;align-items:center;justify-content:center;background:#000}
-.feeditem img{max-height:100%;max-width:100%;object-fit:contain;transition:transform .2s}
+.feeditem{scroll-snap-align:start;height:100%;position:relative;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden}
+.feeditem img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;display:block;margin:0 auto;transition:transform .2s;pointer-events:none}
 .feeditem .overlay{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 24px;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff}
 .feeditem .actions{position:absolute;right:12px;bottom:90px;display:flex;flex-direction:column;gap:14px}
 .feeditem .actions button{color:#fff;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
@@ -145,7 +142,6 @@ img{display:block;max-width:100%}
 #lockScreen.open{display:flex}
 #lockScreen input{background:var(--surface2);border:1px solid rgba(128,128,160,.2);border-radius:12px;padding:12px 16px;font-size:18px;text-align:center;letter-spacing:6px;width:200px}
 .hidden{display:none!important}
-.tagchip{display:inline-block;background:var(--surface2);color:var(--muted);border-radius:8px;padding:2px 8px;font-size:10px;margin-right:4px}
 </style>
 </head>
 <body data-theme="dark">
@@ -170,10 +166,8 @@ img{display:block;max-width:100%}
 <symbol id="i-info" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></symbol>
 <symbol id="i-edit" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.2V21h3.8L18 9.8 14.2 6zM20.7 7.3l-4-4 1.4-1.4 4 4z"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5l12 7-12 7z"/></symbol>
-<symbol id="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></symbol>
 <symbol id="i-full" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h6v2H6v4H4zM14 4h6v6h-2V6h-4zM4 14h2v4h4v2H4zM18 14h2v6h-6v-2h4z"/></symbol>
 <symbol id="i-restore" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V2L7 6l5 4V7a5 5 0 11-5 5H5a7 7 0 107-7z"/></symbol>
-<symbol id="i-users" viewBox="0 0 24 24"><path fill="currentColor" d="M9 11a4 4 0 100-8 4 4 0 000 8zm7 0a3 3 0 100-6 3 3 0 000 6zM2 20c0-3.3 3.1-6 7-6s7 2.7 7 6zm14.5-6c2.5.4 4.5 2.4 4.5 5h-4c0-1.9-.2-3.6-.5-5z"/></symbol>
 <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol>
 <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M14 3l7 7-4 1-4 4 1 6-7-7-4 1 1-4 4-4z"/></symbol>
 <symbol id="i-share" viewBox="0 0 24 24"><path fill="currentColor" d="M18 16a3 3 0 00-2.8 2H8.8A3 3 0 006 16a3 3 0 100 6 3 3 0 002.8-2h6.4a3 3 0 002.8 2 3 3 0 100-6zm0-10a3 3 0 00-2.8 2H8.8A3 3 0 006 6a3 3 0 100 6 3 3 0 002.8-2h6.4A3 3 0 0018 12a3 3 0 100-6z"/></symbol>
@@ -181,7 +175,6 @@ img{display:block;max-width:100%}
 <symbol id="i-rotate" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1L7 6l5 5V7a5 5 0 11-5 5H5a7 7 0 107-7z"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24"><path fill="currentColor" d="M21 12l-9-9H4v8l9 9 8-8zM7 8a2 2 0 110-4 2 2 0 010 4z"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a5 5 0 00-5 5v3H5v12h14V10h-2V7a5 5 0 00-5-5zm0 2a3 3 0 013 3v3H9V7a3 3 0 013-3z"/></symbol>
-<symbol id="i-eye" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5C6 5 2 12 2 12s4 7 10 7 10-7 10-7-4-7-10-7zm0 11a4 4 0 110-8 4 4 0 010 8z"/></symbol>
 </svg>
 
 <div id="app">
@@ -214,7 +207,6 @@ img{display:block;max-width:100%}
     <button data-nav="favorites"><svg><use href="#i-heart"/></svg>Favorit</button>
     <button id="moreBtn"><svg><use href="#i-dots"/></svg>Lainnya</button>
   </nav>
-  <button id="fab" title="Upload cepat"><svg><use href="#i-plus"/></svg></button>
 </div>
 </div>
 
@@ -342,7 +334,6 @@ toastUndo('Dipindah ke Tempat Sampah — ketuk untuk urungkan',async()=>{p.delet
 function waitForDB(){return new Promise(res=>{if(db)return res();const t=setInterval(()=>{if(db){clearInterval(t);res();}},50);});}
 
 $('#uploadBtn').onclick=()=>$('#fileInput').click();
-$('#fab').onclick=()=>$('#fileInput').click();
 $('#fileInput').onchange=async e=>{const files=Array.from(e.target.files||[]);if(!files.length)return;e.target.value='';
 await waitForDB();
 const total=files.length;let done=0;let fail=0;
@@ -580,7 +571,10 @@ g.querySelectorAll('.membercard').forEach(c=>{c.onclick=async e=>{if(e.target.cl
 if(mem.pass){$('#memberModal').classList.remove('open');const pw=await modalPrompt('Password','Masukkan password '+mem.name,'',true);
 if(pw===null||pw!==mem.pass){$('#memberModal').classList.add('open');if(pw!==null)toast('Password salah');return;}}
 setActiveMember(id);$('#memberModal').classList.remove('open');vibrate();toast('Profil: '+mem.name);};});
-g.querySelectorAll('.medit').forEach(b=>b.onclick=e=>{e.stopPropagation();$('#memberModal').classList.remove('open');openMemberEditor(b.dataset.id);});
+g.querySelectorAll('.medit').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.id;const mem=members.find(x=>x.id===id);
+if(mem.pass){$('#memberModal').classList.remove('open');const pw=await modalPrompt('Password','Masukkan password '+mem.name,'',true);
+if(pw===null||pw!==mem.pass){$('#memberModal').classList.add('open');if(pw!==null)toast('Password salah');return;}}
+$('#memberModal').classList.remove('open');openMemberEditor(id);});
 g.querySelectorAll('.mdel').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.id;if(members.length<=1){toast('Minimal harus ada 1 anggota');return;}
 const mem=members.find(x=>x.id===id);$('#memberModal').classList.remove('open');
 const ok=await modalConfirm('Hapus anggota?','"'+mem.name+'" akan dihapus dari daftar profil.');if(!ok){$('#memberModal').classList.add('open');return;}
@@ -617,7 +611,7 @@ document.body.classList.toggle('privacy',localStorage.getItem('kfg_privacy')==='
 const pin=localStorage.getItem('kfg_pin');
 if(pin){$('#lockScreen').classList.add('open');$('#lockOk').onclick=()=>{if($('#lockPin').value===pin){$('#lockScreen').classList.remove('open');$('#lockPin').value='';setView('gallery');}else{toast('PIN salah');$('#lockPin').value='';}};$('#lockPin').onkeydown=e=>{if(e.key==='Enter')$('#lockOk').click();};}
 else setView('gallery');
-if(!localStorage.getItem('kfg_onboarded')){const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Selamat datang! 👋</h3><p>1. Pilih profil anggota keluarga.<br>2. Upload foto lewat tombol +.<br>3. Buat album, favorit, dan jelajahi memories.<br>4. Atur warna tema & privasi di Pengaturan.</p><div class="row"><button class="btn" id="obOk">Mulai</button></div></div>';r.classList.add('open');$('#obOk').onclick=()=>{r.classList.remove('open');localStorage.setItem('kfg_onboarded','1');};}
+if(!localStorage.getItem('kfg_onboarded')){const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Selamat datang! 👋</h3><p>1. Pilih profil anggota keluarga.<br>2. Upload foto lewat tombol upload di atas.<br>3. Buat album, favorit, dan jelajahi memories.<br>4. Atur warna tema & privasi di Pengaturan.</p><div class="row"><button class="btn" id="obOk">Mulai</button></div></div>';r.classList.add('open');$('#obOk').onclick=()=>{r.classList.remove('open');localStorage.setItem('kfg_onboarded','1');};}
 if('serviceWorker' in navigator){try{const swCode="self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('fetch',e=>{});";const blob=new Blob([swCode],{type:'text/javascript'});await navigator.serviceWorker.register(URL.createObjectURL(blob));}catch(e){}}
 const manifest={name:'KIRANA FAMILY GALLERY',short_name:'KFG',start_url:'.',display:'standalone',background_color:'#0a0a0f',theme_color:'#7c5cff',icons:[]};
 const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(mBlob);document.head.appendChild(link);}
