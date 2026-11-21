@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0f" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Kirana Family Gallery</title>
+<style>
+/* ============ VARIABLES ============ */
+:root[data-theme="dark"] {
+  --bg: #0a0a0f;
+  --surface: #15151f;
+  --surface-2: #1e1e2c;
+  --surface-3: #26263a;
+  --border: #2e2e44;
+  --text: #f0f0f8;
+  --text-2: #a0a0b8;
+  --text-3: #6b6b85;
+  --accent: #7c5cff;
+  --accent-2: #a68cff;
+  --danger: #ff5470;
+  --success: #4ade80;
+  --shadow: 0 8px 30px rgba(0,0,0,.4);
+}
+:root[data-theme="light"] {
+  --bg: #f7f7fb;
+  --surface: #ffffff;
+  --surface-2: #f0f0f8;
+  --surface-3: #e6e6f0;
+  --border: #d8d8e4;
+  --text: #1a1a24;
+  --text-2: #5c5c74;
+  --text-3: #8a8aa0;
+  --accent: #6b46ff;
+  --accent-2: #8b6dff;
+  --danger: #e04e68;
+  --success: #16a34a;
+  --shadow: 0 8px 30px rgba(0,0,0,.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow: hidden;
+  transition: background .25s, color .25s;
+}
+img { max-width: 100%; display: block; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+.ic { width: 20px; height: 20px; flex-shrink: 0; }
+.full { width: 100%; }
+.small { font-size: .85rem; padding: 8px 14px; }
+.hint { color: var(--text-2); font-size: .85rem; padding: 8px 0; }
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 18px; border-radius: 12px;
+  font-weight: 600; font-size: .9rem;
+  background: var(--surface-2); color: var(--text);
+  transition: transform .12s, background .2s, opacity .2s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--surface-3); }
+.btn:active { transform: scale(.97); }
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-2); }
+.btn.ghost { background: transparent; border-color: var(--border); }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.danger { color: var(--danger); }
+.btn.danger:hover { background: rgba(255,84,112,.12); }
+.btn.full { width: 100%; justify-content: center; }
+.icon-btn {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--surface-2); color: var(--text);
+  transition: background .2s, transform .12s;
+}
+.icon-btn:hover { background: var(--surface-3); }
+.icon-btn:active { transform: scale(.94); }
+
+/* ============ APP SHELL ============ */
+.app-shell { display: flex; height: 100dvh; }
+.app-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  width: 260px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 20px 16px;
+  height: 100dvh;
+  overflow-y: auto;
+}
+.brand { display: flex; align-items: center; gap: 12px; padding: 4px 8px 24px; }
+.brand-logo {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-weight: 800; font-size: 1.3rem;
+  display: grid; place-items: center;
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { font-size: 1rem; }
+.brand-text span { font-size: .78rem; color: var(--text-2); }
+.side-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.nav-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: 10px;
+  color: var(--text-2); font-weight: 500; font-size: .92rem;
+  transition: background .2s, color .2s;
+  text-align: left;
+}
+.nav-btn:hover { background: var(--surface-2); color: var(--text); }
+.nav-btn.active { background: var(--accent); color: #fff; }
+.sidebar-footer { padding-top: 16px; border-top: 1px solid var(--border); margin-top: 16px; }
+.storage-mini-bar {
+  height: 6px; border-radius: 3px; background: var(--surface-3);
+  overflow: hidden; margin-bottom: 6px;
+}
+.storage-mini-bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
+.storage-mini span, .storage-mini { font-size: .78rem; color: var(--text-2); }
+
+/* ============ TOPBAR ============ */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  gap: 12px;
+}
+.topbar-title { font-size: 1.1rem; font-weight: 700; }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+#btn-member-switch {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--surface-2);
+  display: grid; place-items: center;
+  transition: background .2s;
+}
+#btn-member-switch:hover { background: var(--surface-3); }
+
+/* ============ VIEWS ============ */
+.views { flex: 1; position: relative; overflow: hidden; }
+.view {
+  position: absolute; inset: 0;
+  display: none; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.view.active { display: block; }
+.view-feed.active { display: flex; flex-direction: column; overflow: hidden; }
+.view-inner { padding: 16px; max-width: 1400px; margin: 0 auto; }
+.section-title { margin: 20px 0 12px; font-size: 1rem; color: var(--text); }
+
+/* ============ TOOLBAR ============ */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface-2); border-radius: 12px;
+  padding: 10px 14px; flex: 1; min-width: 180px;
+  border: 1px solid transparent;
+  transition: border-color .2s;
+}
+.search-box:focus-within { border-color: var(--accent); }
+.search-box input { flex: 1; background: none; border: none; outline: none; color: var(--text); }
+.search-box input::placeholder { color: var(--text-3); }
+.select {
+  background: var(--surface-2); color: var(--text);
+  padding: 10px 14px; border-radius: 12px;
+  border: 1px solid var(--border); outline: none;
+  cursor: pointer;
+}
+.filter-panel {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  padding: 12px; background: var(--surface-2); border-radius: 12px;
+  margin-bottom: 16px; font-size: .88rem;
+}
+.filter-panel label { display: flex; align-items: center; gap: 8px; color: var(--text-2); }
+.filter-panel input[type="date"] {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 6px 10px; border-radius: 8px; color: var(--text);
+}
+.result-line { color: var(--text-2); font-size: .85rem; margin-bottom: 12px; }
+
+/* ============ FEED ============ */
+.feed {
+  flex: 1; overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.feed::-webkit-scrollbar { display: none; }
+.feed-item {
+  height: 100%; scroll-snap-align: start; scroll-snap-stop: always;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  background: #000; overflow: hidden;
+}
+.feed-item img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain; user-select: none;
+}
+.feed-overlay {
+  position: absolute; inset: auto 0 0 0;
+  padding: 24px 20px 32px;
+  background: linear-gradient(transparent, rgba(0,0,0,.85));
+  color: #fff;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 12px;
+}
+.feed-meta h3 { font-size: 1.05rem; margin-bottom: 4px; }
+.feed-meta p { font-size: .82rem; opacity: .8; }
+.feed-meta .feed-by { font-size: .78rem; opacity: .7; margin-top: 2px; }
+.feed-actions { display: flex; flex-direction: column; gap: 12px; }
+.feed-actions button {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(10px);
+  color: #fff; display: grid; place-items: center;
+  transition: transform .15s, background .2s;
+}
+.feed-actions button:hover { background: rgba(0,0,0,.7); }
+.feed-actions button:active { transform: scale(.9); }
+.feed-actions button.active { color: var(--danger); }
+.feed-actions button.active.fav { color: #ffd93d; }
+.feed-float {
+  position: absolute; top: 12px; right: 12px;
+  display: flex; gap: 8px; z-index: 5;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 20px;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(10px);
+  color: #fff; font-size: .82rem; font-weight: 600;
+}
+.pill:hover { background: rgba(0,0,0,.75); }
+
+/* ============ GRID ============ */
+.grid { display: grid; gap: 8px; }
+.grid-sm { grid-template-columns: repeat(3, 1fr); }
+.grid-md { grid-template-columns: repeat(2, 1fr); }
+.grid-lg { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 640px) { .grid-md { grid-template-columns: repeat(3, 1fr); } .grid-lg { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 960px) { .grid-md { grid-template-columns: repeat(4, 1fr); } .grid-lg { grid-template-columns: repeat(6, 1fr); } }
+
+.photo-card {
+  position: relative; aspect-ratio: 1;
+  border-radius: 12px; overflow: hidden;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+}
+.photo-card:hover { transform: scale(1.02); box-shadow: var(--shadow); }
+.photo-card:active { transform: scale(.98); }
+.photo-card img { width: 100%; height: 100%; object-fit: cover; }
+.photo-card.selected { outline: 3px solid var(--accent); outline-offset: -3px; }
+.photo-card .card-badge {
+  position: absolute; top: 6px; right: 6px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(0,0,0,.65); backdrop-filter: blur(8px);
+  display: grid; place-items: center; color: #ffd93d;
+}
+.photo-card .card-badge.like { color: var(--danger); }
+.photo-card .card-badge.album-badge { left: 6px; right: auto; color: #fff; background: rgba(124,92,255,.85); }
+.photo-card .select-check {
+  position: absolute; top: 6px; left: 6px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(0,0,0,.5); border: 2px solid #fff;
+  display: none; place-items: center; color: #fff;
+}
+.photo-card.selected .select-check { display: grid; background: var(--accent); border-color: var(--accent); }
+.photo-card .card-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 8px 8px;
+  background: linear-gradient(transparent, rgba(0,0,0,.8));
+  color: #fff; font-size: .72rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ============ ALBUMS ============ */
+.album-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px) { .album-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 960px) { .album-grid { grid-template-columns: repeat(4, 1fr); } }
+.album-card {
+  background: var(--surface-2); border-radius: 16px;
+  overflow: hidden; cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+  border: 1px solid var(--border);
+}
+.album-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.album-cover { aspect-ratio: 16/10; background: var(--surface-3); position: relative; }
+.album-cover img { width: 100%; height: 100%; object-fit: cover; }
+.album-cover .album-empty-ic { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-3); }
+.album-info { padding: 12px 14px; }
+.album-info h3 { font-size: .95rem; margin-bottom: 2px; }
+.album-info p { font-size: .78rem; color: var(--text-2); }
+.album-title { font-size: 1.1rem; font-weight: 700; flex: 1; }
+
+/* ============ EMPTY STATE ============ */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  padding: 60px 20px; color: var(--text-2); gap: 12px;
+}
+.empty-ic { width: 64px; height: 64px; color: var(--text-3); opacity: .5; }
+.empty-state h2 { font-size: 1.15rem; color: var(--text); }
+.empty-state p { font-size: .88rem; max-width: 320px; margin-bottom: 8px; }
+
+/* ============ BOTTOM NAV ============ */
+.bottom-nav {
+  display: none;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+  justify-content: space-around;
+}
+.bnav {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 6px 10px; border-radius: 10px; color: var(--text-2);
+  font-size: .68rem; font-weight: 500;
+  transition: color .2s;
+}
+.bnav.active { color: var(--accent); }
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+  .bottom-nav { display: flex; }
+  .topbar-title { font-size: 1rem; }
+}
+
+/* ============ SELECTION BAR ============ */
+.selection-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 90; box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+}
+.selection-bar span { font-weight: 600; }
+.sel-actions { display: flex; gap: 4px; }
+.sel-actions button {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: grid; place-items: center;
+  transition: background .2s;
+}
+.sel-actions button:hover { background: var(--surface-2); }
+@media (min-width: 768px) { .selection-bar { bottom: 0; } }
+
+/* ============ VIEWER ============ */
+.viewer {
+  position: fixed; inset: 0; z-index: 200;
+  background: #000; color: #fff;
+  display: flex; flex-direction: column;
+}
+.viewer-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(rgba(0,0,0,.8), transparent);
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+}
+.viewer-top .icon-btn { background: rgba(255,255,255,.15); color: #fff; }
+.viewer-titles { flex: 1; min-width: 0; }
+.viewer-titles h3 { font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.viewer-titles p { font-size: .75rem; opacity: .7; }
+.viewer-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 60px 0 100px; }
+.viewer-stage img { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; }
+.viewer-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,.5); color: #fff;
+  display: grid; place-items: center;
+  z-index: 3;
+}
+.viewer-nav.prev { left: 12px; }
+.viewer-nav.next { right: 12px; }
+.viewer-counter {
+  position: absolute; top: 68px; right: 16px; z-index: 2;
+  background: rgba(0,0,0,.5); padding: 4px 12px;
+  border-radius: 20px; font-size: .78rem;
+}
+.viewer-actions {
+  display: flex; justify-content: space-around;
+  padding: 8px 8px max(20px, env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, rgba(0,0,0,.85));
+  position: absolute; bottom: 0; left: 0; right: 0;
+  z-index: 2;
+}
+.viewer-actions button {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 4px; color: #fff; opacity: .85;
+  font-size: .7rem; min-width: 52px;
+  transition: opacity .15s;
+}
+.viewer-actions button:hover { opacity: 1; }
+.viewer-actions button.active { color: var(--danger); opacity: 1; }
+.viewer-actions button.active.fav { color: #ffd93d; }
+.viewer-spinner {
+  position: absolute; top: 50%; left: 50%;
+  width: 32px; height: 32px;
+  border: 3px solid rgba(255,255,255,.2);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin .7s linear infinite;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+.viewer-spinner.on { display: block; }
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+/* ============ SLIDESHOW ============ */
+.slideshow {
+  position: fixed; inset: 0; z-index: 250;
+  background: #000; display: flex; align-items: center; justify-content: center;
+}
+.slideshow img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.slideshow-bar {
+  position: absolute; bottom: 24px; left: 0; right: 0;
+  display: flex; justify-content: center; align-items: center; gap: 20px;
+  color: #fff;
+}
+.slideshow-bar .icon-btn { background: rgba(255,255,255,.15); }
+
+/* ============ SHEET ============ */
+.sheet { position: fixed; inset: 0; z-index: 100; }
+.sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
+.sheet-panel {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 12px 12px max(12px, env(safe-area-inset-bottom));
+  animation: slideUp .25s ease;
+}
+.sheet-panel button {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; width: 100%; border-radius: 12px;
+  font-weight: 500; text-align: left;
+}
+.sheet-panel button:hover { background: var(--surface-2); }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* ============ MODAL ============ */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 400;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
+  padding: 20px;
+}
+.modal {
+  background: var(--surface); border-radius: 18px;
+  padding: 24px; width: min(420px, 100%);
+  box-shadow: var(--shadow);
+}
+.modal h3 { margin-bottom: 8px; font-size: 1.1rem; }
+.modal p { color: var(--text-2); font-size: .9rem; margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.input {
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); outline: none;
+  transition: border-color .2s;
+}
+.input:focus { border-color: var(--accent); }
+
+/* ============ MEMBER SETUP ============ */
+.member-setup {
+  position: fixed; inset: 0; z-index: 500;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,.75); backdrop-filter: blur(10px);
+  padding: 20px;
+}
+.member-setup-card {
+  width: min(480px, 100%);
+  background: var(--surface); border-radius: 22px;
+  padding: 32px 24px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.member-setup-card h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.member-setup-card > p { color: var(--text-2); font-size: .9rem; margin-bottom: 24px; }
+.member-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.member-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 18px 8px; border-radius: 16px;
+  background: var(--surface-2); border: 2px solid transparent;
+  cursor: pointer; transition: .2s;
+}
+.member-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.member-card .mc-emoji { font-size: 2rem; }
+.member-card .mc-name { font-size: .85rem; font-weight: 600; }
+
+/* ============ LOG ============ */
+.log-timeline { display: flex; flex-direction: column; gap: 8px; }
+.log-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px; border-radius: 12px;
+  background: var(--surface-2);
+}
+.log-item .log-emoji {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--surface-3);
+  display: grid; place-items: center; font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.log-item .log-body { flex: 1; min-width: 0; }
+.log-item .log-text { font-size: .9rem; }
+.log-item .log-text strong { color: var(--accent); }
+.log-item .log-time { font-size: .75rem; color: var(--text-2); margin-top: 2px; }
+
+/* ============ STATS ============ */
+.stat-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  margin-bottom: 16px;
+}
+@media (min-width: 640px) { .stat-grid { grid-template-columns: repeat(4, 1fr); } }
+.stat-card {
+  background: var(--surface-2); border-radius: 16px;
+  padding: 16px; border: 1px solid var(--border);
+}
+.stat-card .stat-label { font-size: .78rem; color: var(--text-2); margin-bottom: 6px; }
+.stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
+.stat-card .stat-sub { font-size: .74rem; color: var(--text-3); margin-top: 4px; }
+.chart { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding: 12px 0; }
+.chart .bar { flex: 1; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; position: relative; transition: height .3s; }
+.chart .bar span { position: absolute; bottom: -22px; left: 0; right: 0; text-align: center; font-size: .65rem; color: var(--text-2); }
+.card {
+  background: var(--surface-2); border-radius: 16px;
+  padding: 16px; border: 1px solid var(--border);
+}
+
+/* ============ SETTINGS ============ */
+.settings-section { margin-bottom: 24px; }
+.settings-section h3 { font-size: .9rem; color: var(--text-2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; padding-left: 4px; }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 14px 16px;
+  background: var(--surface-2); border-radius: 12px;
+  margin-bottom: 8px;
+}
+.settings-row .sr-label { font-size: .92rem; }
+.settings-row .sr-sub { font-size: .78rem; color: var(--text-2); margin-top: 2px; }
+.settings-row .sr-action { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.info-banner {
+  background: rgba(124,92,255,.1); border: 1px solid rgba(124,92,255,.3);
+  color: var(--text); padding: 12px 16px; border-radius: 12px;
+  font-size: .85rem; line-height: 1.6; margin-bottom: 16px;
+}
+.info-banner.warn { background: rgba(255,84,112,.08); border-color: rgba(255,84,112,.3); }
+
+/* ============ UPLOAD PANEL ============ */
+.upload-panel {
+  position: fixed; bottom: 20px; left: 20px; right: 20px;
+  max-width: 400px; margin: 0 auto;
+  background: var(--surface); border-radius: 16px;
+  padding: 16px; box-shadow: var(--shadow);
+  z-index: 150;
+  border: 1px solid var(--border);
+}
+.upload-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: .9rem; font-weight: 600; }
+.upload-bar { height: 6px; background: var(--surface-3); border-radius: 3px; overflow: hidden; }
+.upload-bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+.upload-file { font-size: .75rem; color: var(--text-2); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ============ TOAST ============ */
+.toast-wrap { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 600; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+@media (min-width: 768px) { .toast-wrap { bottom: 24px; } }
+.toast {
+  background: var(--surface); color: var(--text);
+  padding: 12px 20px; border-radius: 12px;
+  box-shadow: var(--shadow); font-size: .88rem;
+  border: 1px solid var(--border);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .3s, transform .3s;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--danger); }
+</style>
+</head>
+<body>
+
+<!-- ICONS -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-feed" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-star-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-heart-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+</svg>
+
+<!-- APP SHELL -->
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">K</div>
+      <div class="brand-text"><strong>Kirana</strong><span>Family Gallery</span></div>
+    </div>
+    <nav class="side-nav">
+      <button class="nav-btn" data-nav="feed"><svg class="ic"><use href="#i-feed"/></svg>Feed</button>
+      <button class="nav-btn" data-nav="gallery"><svg class="ic"><use href="#i-grid"/></svg>Gallery</button>
+      <button class="nav-btn" data-nav="albums"><svg class="ic"><use href="#i-folder"/></svg>Albums</button>
+      <button class="nav-btn" data-nav="favorites"><svg class="ic"><use href="#i-star"/></svg>Favorites</button>
+      <button class="nav-btn" data-nav="memories"><svg class="ic"><use href="#i-clock"/></svg>Memories</button>
+      <button class="nav-btn" data-nav="trash"><svg class="ic"><use href="#i-trash"/></svg>Recently Deleted</button>
+      <button class="nav-btn" data-nav="log"><svg class="ic"><use href="#i-clock"/></svg>Activity Log</button>
+      <button class="nav-btn" data-nav="stats"><svg class="ic"><use href="#i-chart"/></svg>Statistics</button>
+      <button class="nav-btn" data-nav="settings"><svg class="ic"><use href="#i-gear"/></svg>Settings</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-mini">
+        <div class="storage-mini-bar"><i id="storage-mini-fill"></i></div>
+        <span id="storage-mini-text">Menghitung…</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title">Feed</div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="btn-member-switch" title="Ganti profil" aria-label="Ganti profil">
+          <span id="member-switch-emoji" style="font-size:1.2rem;">🙂</span>
+        </button>
+        <button class="icon-btn" id="btn-theme" title="Tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+        <button class="btn primary" id="btn-upload-top"><svg class="ic"><use href="#i-plus"/></svg><span>Upload</span></button>
+      </div>
+    </header>
+
+    <div class="views">
+      <!-- FEED -->
+      <section class="view view-feed" data-view="feed">
+        <div class="feed" id="feed"></div>
+        <div class="empty-state" id="feed-empty" hidden>
+          <svg class="empty-ic"><use href="#i-image"/></svg>
+          <h2>Belum ada foto</h2>
+          <p>Unggah foto keluarga pertama untuk memulai feed.</p>
+          <button class="btn primary" data-action="upload">Upload foto</button>
+        </div>
+        <div class="feed-float">
+          <button class="pill" id="feed-shuffle"><svg class="ic"><use href="#i-shuffle"/></svg>Acak</button>
+          <button class="pill" id="feed-fullscreen"><svg class="ic"><use href="#i-expand"/></svg>Layar Penuh</button>
+        </div>
+      </section>
+
+      <!-- GALLERY -->
+      <section class="view" data-view="gallery">
+        <div class="view-inner">
+          <div class="toolbar">
+            <div class="search-box">
+              <svg class="ic"><use href="#i-search"/></svg>
+              <input id="gallery-search" type="search" placeholder="Cari nama foto…" autocomplete="off" />
+            </div>
+            <select id="gallery-sort" class="select">
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+              <option value="random">Acak</option>
+              <option value="name">Nama A–Z</option>
+            </select>
+            <button class="btn ghost" id="btn-date-filter"><svg class="ic"><use href="#i-clock"/></svg>Tanggal</button>
+            <button class="btn ghost" id="btn-select-mode"><svg class="ic"><use href="#i-check"/></svg>Pilih</button>
+          </div>
+          <div class="filter-panel" id="date-filter-panel" hidden>
+            <label>Dari <input type="date" id="date-from" /></label>
+            <label>Sampai <input type="date" id="date-to" /></label>
+            <button class="btn ghost small" id="btn-clear-date">Reset</button>
+          </div>
+          <div class="result-line" id="gallery-count"></div>
+          <div class="grid grid-md" id="gallery-grid"></div>
+          <div class="empty-state" id="gallery-empty" hidden>
+            <svg class="empty-ic"><use href="#i-image"/></svg>
+            <h2>Tidak ada foto</h2>
+            <p>Tidak ada foto yang cocok dengan filter kamu.</p>
+            <button class="btn primary" data-action="upload">Upload foto</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALBUMS -->
+      <section class="view" data-view="albums">
+        <div class="view-inner">
+          <div class="toolbar">
+            <button class="btn primary" id="btn-new-album"><svg class="ic"><use href="#i-plus"/></svg>Album Baru</button>
+          </div>
+          <div class="album-grid" id="album-grid"></div>
+          <div class="empty-state" id="albums-empty" hidden>
+            <svg class="empty-ic"><use href="#i-folder"/></svg>
+            <h2>Belum ada album</h2>
+            <p>Buat album untuk mengelompokkan foto.</p>
+            <button class="btn primary" id="btn-new-album-2">Buat album</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALBUM DETAIL -->
+      <section class="view" data-view="album">
+        <div class="view-inner">
+          <div class="toolbar">
+            <button class="btn ghost" id="btn-album-back"><svg class="ic"><use href="#i-left"/></svg></button>
+            <h2 class="album-title" id="album-title"></h2>
+            <button class="btn ghost" id="btn-album-rename"><svg class="ic"><use href="#i-edit"/></svg></button>
+            <button class="btn ghost danger" id="btn-album-delete"><svg class="ic"><use href="#i-trash"/></svg></button>
+            <button class="btn ghost" id="btn-album-select"><svg class="ic"><use href="#i-check"/></svg>Pilih</button>
+          </div>
+          <div class="result-line" id="album-count"></div>
+          <div class="grid grid-md" id="album-photos"></div>
+          <div class="empty-state" id="album-empty" hidden>
+            <svg class="empty-ic"><use href="#i-image"/></svg>
+            <h2>Album kosong</h2>
+            <p>Pilih foto di Gallery dan pindahkan ke sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAVORITES -->
+      <section class="view" data-view="favorites">
+        <div class="view-inner">
+          <div class="toolbar">
+            <select id="fav-sort" class="select">
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+              <option value="name">Nama A–Z</option>
+              <option value="random">Acak</option>
+            </select>
+            <button class="btn ghost" id="btn-fav-select"><svg class="ic"><use href="#i-check"/></svg>Pilih</button>
+            <button class="btn ghost" id="btn-fav-slideshow"><svg class="ic"><use href="#i-feed"/></svg>Slideshow</button>
+          </div>
+          <div class="result-line" id="fav-count"></div>
+          <div class="grid grid-md" id="fav-grid"></div>
+          <div class="empty-state" id="fav-empty" hidden>
+            <svg class="empty-ic"><use href="#i-star"/></svg>
+            <h2>Belum ada favorit</h2>
+            <p>Ketuk bintang pada foto untuk menyimpannya di sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- MEMORIES -->
+      <section class="view" data-view="memories">
+        <div class="view-inner" id="memories-body"></div>
+        <div class="empty-state" id="memories-empty" hidden>
+          <svg class="empty-ic"><use href="#i-clock"/></svg>
+          <h2>Belum ada memori</h2>
+          <p>Unggah foto dan memori akan muncul di sini.</p>
+        </div>
+      </section>
+
+      <!-- TRASH -->
+      <section class="view" data-view="trash">
+        <div class="view-inner">
+          <div class="toolbar">
+            <button class="btn ghost danger" id="btn-empty-trash"><svg class="ic"><use href="#i-trash"/></svg>Kosongkan</button>
+          </div>
+          <p class="hint">Foto yang dihapus tetap di sini sampai kamu hapus permanen. Ketuk untuk memulihkan.</p>
+          <div class="grid grid-md" id="trash-grid"></div>
+          <div class="empty-state" id="trash-empty" hidden>
+            <svg class="empty-ic"><use href="#i-trash"/></svg>
+            <h2>Trash kosong</h2>
+            <p>Foto yang dihapus akan muncul di sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="view" data-view="stats">
+        <div class="view-inner">
+          <div class="stat-grid" id="stat-grid"></div>
+          <h3 class="section-title">Foto per bulan</h3>
+          <div class="chart" id="month-chart"></div>
+          <h3 class="section-title">Penyimpanan</h3>
+          <div class="card" id="storage-card"></div>
+        </div>
+      </section>
+
+      <!-- LOG -->
+      <section class="view" data-view="log">
+        <div class="view-inner">
+          <div class="toolbar">
+            <select id="log-filter" class="select"><option value="">Semua anggota</option></select>
+            <button class="btn ghost danger" id="btn-clear-log"><svg class="ic"><use href="#i-trash"/></svg>Hapus Log</button>
+          </div>
+          <div class="log-timeline" id="log-list"></div>
+          <div class="empty-state" id="log-empty" hidden>
+            <svg class="empty-ic"><use href="#i-clock"/></svg>
+            <h2>Belum ada aktivitas</h2>
+            <p>Setiap upload, favorit, dan perubahan akan tercatat di sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" data-view="settings">
+        <div class="view-inner" id="settings-body"></div>
+      </section>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="bnav" data-nav="feed"><svg class="ic"><use href="#i-feed"/></svg><span>Feed</span></button>
+      <button class="bnav" data-nav="gallery"><svg class="ic"><use href="#i-grid"/></svg><span>Gallery</span></button>
+      <button class="bnav" data-nav="albums"><svg class="ic"><use href="#i-folder"/></svg><span>Album</span></button>
+      <button class="bnav" data-nav="favorites"><svg class="ic"><use href="#i-star"/></svg><span>Favorit</span></button>
+      <button class="bnav" id="btn-more"><svg class="ic"><use href="#i-more"/></svg><span>Lainnya</span></button>
+    </nav>
+  </div>
+</div>
+
+<!-- SELECTION BAR -->
+<div class="selection-bar" id="selection-bar" hidden>
+  <span id="selection-count">0 dipilih</span>
+  <div class="sel-actions">
+    <button data-sel="favorite" title="Favoritkan"><svg class="ic"><use href="#i-star"/></svg></button>
+    <button data-sel="unfavorite" title="Hapus favorit"><svg class="ic"><use href="#i-star-fill"/></svg></button>
+    <button data-sel="move" title="Pindah album"><svg class="ic"><use href="#i-folder"/></svg></button>
+    <button data-sel="download" title="Download"><svg class="ic"><use href="#i-download"/></svg></button>
+    <button data-sel="delete" title="Hapus"><svg class="ic"><use href="#i-trash"/></svg></button>
+    <button data-sel="cancel" title="Batal"><svg class="ic"><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div class="viewer" id="viewer" hidden>
+  <div class="viewer-top">
+    <button class="icon-btn" id="viewer-close" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
+    <div class="viewer-titles">
+      <h3 id="viewer-name"></h3>
+      <p id="viewer-date"></p>
+    </div>
+    <button class="icon-btn" id="viewer-fullscreen" aria-label="Fullscreen"><svg class="ic"><use href="#i-expand"/></svg></button>
+  </div>
+  <div class="viewer-stage" id="viewer-stage">
+    <button class="viewer-nav prev" id="viewer-prev"><svg class="ic"><use href="#i-left"/></svg></button>
+    <img id="viewer-img" alt="" />
+    <button class="viewer-nav next" id="viewer-next"><svg class="ic"><use href="#i-right"/></svg></button>
+    <div class="viewer-spinner" id="viewer-spinner"></div>
+  </div>
+  <div class="viewer-counter" id="viewer-counter"></div>
+  <div class="viewer-actions">
+    <button id="viewer-like"><svg class="ic"><use href="#i-heart"/></svg><span>Suka</span></button>
+    <button id="viewer-fav"><svg class="ic"><use href="#i-star"/></svg><span>Favorit</span></button>
+    <button id="viewer-download"><svg class="ic"><use href="#i-download"/></svg><span>Unduh</span></button>
+    <button id="viewer-edit"><svg class="ic"><use href="#i-edit"/></svg><span>Edit</span></button>
+    <button id="viewer-info"><svg class="ic"><use href="#i-info"/></svg><span>Info</span></button>
+    <button id="viewer-delete"><svg class="ic"><use href="#i-trash"/></svg><span>Hapus</span></button>
+  </div>
+</div>
+
+<!-- SLIDESHOW -->
+<div class="slideshow" id="slideshow" hidden>
+  <img id="slideshow-img" alt="" />
+  <div class="slideshow-bar">
+    <button class="icon-btn" id="slideshow-play"><svg class="ic"><use href="#i-feed"/></svg></button>
+    <span id="slideshow-counter"></span>
+    <button class="icon-btn" id="slideshow-close"><svg class="ic"><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<!-- MORE SHEET -->
+<div class="sheet" id="more-sheet" hidden>
+  <div class="sheet-backdrop" data-sheet-close></div>
+  <div class="sheet-panel">
+    <button data-nav="memories"><svg class="ic"><use href="#i-clock"/></svg>Memories</button>
+    <button data-nav="trash"><svg class="ic"><use href="#i-trash"/></svg>Recently Deleted</button>
+    <button data-nav="log"><svg class="ic"><use href="#i-clock"/></svg>Activity Log</button>
+    <button data-nav="stats"><svg class="ic"><use href="#i-chart"/></svg>Statistics</button>
+    <button data-nav="settings"><svg class="ic"><use href="#i-gear"/></svg>Settings</button>
+  </div>
+</div>
+
+<!-- MEMBER SETUP -->
+<div class="member-setup" id="member-setup" hidden>
+  <div class="member-setup-card">
+    <h2>Siapa yang pakai HP ini?</h2>
+    <p>Pilih profil. Semua foto & aktivitas akan tercatat atas nama profil ini.</p>
+    <div class="member-cards" id="member-cards"></div>
+    <button class="btn ghost full" id="btn-add-member">+ Tambah anggota lain</button>
+  </div>
+</div>
+
+<!-- UPLOAD PANEL -->
+<div class="upload-panel" id="upload-panel" hidden>
+  <div class="upload-head"><span id="upload-title">Mengunggah…</span><span id="upload-percent">0%</span></div>
+  <div class="upload-bar"><i id="upload-fill"></i></div>
+  <div class="upload-file" id="upload-file"></div>
+</div>
+
+<input type="file" id="file-input" accept="image/*" multiple hidden />
+<input type="file" id="restore-input" accept=".kfg,.json,application/json" hidden />
+<div id="toast-wrap" class="toast-wrap"></div>
+<div id="modal-root"></div>
+
+<script>
+/* ============================================================
+   KIRANA FAMILY GALLERY — Single-file app
+   ============================================================ */
+
+/* ============ UTILS ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const uid = (p = 'id') => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const stripExt = n => n.replace(/\.[^.]+$/, '');
+const fmtDate = ts => new Date(ts).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+const fmtDateTime = ts => new Date(ts).toLocaleString('id-ID', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+const fmtSize = b => b < 1024 ? b + ' B' : b < 1048576 ? (b/1024).toFixed(1) + ' KB' : b < 1073741824 ? (b/1048576).toFixed(1) + ' MB' : (b/1073741824).toFixed(2) + ' GB';
+const shuffle = a => { const x = [...a]; for (let i = x.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [x[i],x[j]] = [x[j],x[i]]; } return x; };
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts)/1000);
+  if (s < 60) return 'baru saja';
+  if (s < 3600) return Math.floor(s/60) + ' menit lalu';
+  if (s < 86400) return Math.floor(s/3600) + ' jam lalu';
+  if (s < 604800) return Math.floor(s/86400) + ' hari lalu';
+  return fmtDate(ts);
+}
+
+function toast(msg, type = '') {
+  const w = $('#toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  w.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+}
+
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+async function makeThumb(file, max = 500) {
+  return new Promise(res => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const r = Math.min(max/img.width, max/img.height, 1);
+      const w = Math.round(img.width*r), h = Math.round(img.height*r);
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      c.toBlob(b => res(b), 'image/jpeg', 0.82);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); res(null); };
+    img.src = url;
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+function base64ToBlob(b64, mime) {
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
+function modalConfirm(title, msg) {
+  return new Promise(res => {
+    const el = document.createElement('div');
+    el.className = 'modal-backdrop';
+    el.innerHTML = `<div class="modal"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(msg)}</p><div class="modal-actions"><button class="btn ghost" data-a="c">Batal</button><button class="btn danger" data-a="k">Ya</button></div></div>`;
+    $('#modal-root').appendChild(el);
+    el.querySelector('[data-a="c"]').onclick = () => { el.remove(); res(false); };
+    el.querySelector('[data-a="k"]').onclick = () => { el.remove(); res(true); };
+    el.addEventListener('click', e => { if (e.target === el) { el.remove(); res(false); } });
+  });
+}
+
+function modalPrompt(title, value = '', placeholder = '') {
+  return new Promise(res => {
+    const el = document.createElement('div');
+    el.className = 'modal-backdrop';
+    el.innerHTML = `<div class="modal"><h3>${escapeHtml(title)}</h3><input class="input full" id="mp-in" value="${escapeHtml(value)}" placeholder="${escapeHtml(placeholder)}" /><div class="modal-actions"><button class="btn ghost" data-a="c">Batal</button><button class="btn primary" data-a="k">Simpan</button></div></div>`;
+    $('#modal-root').appendChild(el);
+    const inp = el.querySelector('#mp-in');
+    inp.focus(); inp.select();
+    const close = v => { el.remove(); res(v); };
+    el.querySelector('[data-a="c"]').onclick = () => close(null);
+    el.querySelector('[data-a="k"]').onclick = () => close(inp.value.trim());
+    inp.onkeydown = e => { if (e.key === 'Enter') close(inp.value.trim()); if (e.key === 'Escape') close(null); };
+    el.addEventListener('click', e => { if (e.target === el) close(null); });
+  });
+}
+
+/* ============ MEMBERS ============ */
+const Members = (() => {
+  const KEY = 'kfg_members', ACT = 'kfg_active';
+  const DEF = [
+    { id: 'ayah', name: 'Ayah', emoji: '👨', color: '#7c5cff' },
+    { id: 'ibu',  name: 'Ibu',  emoji: '👩', color: '#ff6b9d' },
+    { id: 'anak', name: 'Anak', emoji: '🧒', color: '#4ecdc4' },
+  ];
+  function load() {
+    try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch {}
+    return DEF.map(m => ({ ...m }));
+  }
+  function save(l) { localStorage.setItem(KEY, JSON.stringify(l)); }
+  function list() { return load(); }
+  function activeId() { return localStorage.getItem(ACT); }
+  function current() { const id = activeId(); return id ? list().find(m => m.id === id) : null; }
+  function setActive(id) { localStorage.setItem(ACT, id); window.dispatchEvent(new CustomEvent('kfg:member-switched')); }
+  function add(m) {
+    const l = load();
+    const n = { id: uid('m'), name: m.name.trim(), emoji: m.emoji || '🙂', color: m.color || '#7c5cff' };
+    l.push(n); save(l); return n;
+  }
+  function remove(id) {
+    save(load().filter(m => m.id !== id));
+    if (activeId() === id) localStorage.removeItem(ACT);
+  }
+  return { list, current, activeId, setActive, add, remove, DEF };
+})();
+
+/* ============ DB ============ */
+const DB_NAME = 'kfg_db', DB_VERSION = 1;
+let _db = null;
+function openDB() {
+  if (_db) return Promise.resolve(_db);
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DB_NAME, DB_VERSION);
+    r.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('photos')) {
+        const s = db.createObjectStore('photos', { keyPath: 'id' });
+        s.createIndex('uploadedAt', 'uploadedAt');
+        s.createIndex('albumId', 'albumId');
+      }
+      if (!db.objectStoreNames.contains('albums')) db.createObjectStore('albums', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('log')) {
+        const s = db.createObjectStore('log', { keyPath: 'id' });
+        s.createIndex('ts', 'ts');
+      }
+    };
+    r.onsuccess = () => { _db = r.result; res(_db); };
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbAll(store) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const r = db.transaction(store, 'readonly').objectStore(store).getAll();
+    r.onsuccess = () => res(r.result || []);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbGet(store, k) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const r = db.transaction(store, 'readonly').objectStore(store).get(k);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbPut(store, v) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const r = db.transaction(store, 'readwrite').objectStore(store).put(v);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbDel(store, k) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const r = db.transaction(store, 'readwrite').objectStore(store).delete(k);
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbClear(store) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const r = db.transaction(store, 'readwrite').objectStore(store).clear();
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  });
+}
+
+/* ============ ACTIVITY LOG ============ */
+const Log = {
+  async add(action, extra = {}) {
+    const m = Members.current();
+    const entry = {
+      id: uid('log'), ts: Date.now(), action,
+      memberId: m ? m.id : 'unknown',
+      memberName: m ? m.name : 'Tidak diketahui',
+      memberEmoji: m ? m.emoji : '🙂',
+      ...extra,
+    };
+    await dbPut('log', entry);
+    window.dispatchEvent(new CustomEvent('kfg:log-added'));
+    return entry;
+  },
+  async list(limit = 500) {
+    const all = await dbAll('log');
+    return all.sort((a, b) => b.ts - a.ts).slice(0, limit);
+  },
+  async clear() { await dbClear('log'); }
+};
+
+/* ============ URL CACHE ============ */
+const photoURLs = new Map(), thumbURLs = new Map();
+function getPhotoURL(p) {
+  if (!p) return '';
+  if (photoURLs.has(p.id)) return photoURLs.get(p.id);
+  const u = URL.createObjectURL(p.blob); photoURLs.set(p.id, u); return u;
+}
+function getThumbURL(p) {
+  if (!p) return '';
+  if (thumbURLs.has(p.id)) return thumbURLs.get(p.id);
+  const b = p.thumbBlob || p.blob;
+  const u = URL.createObjectURL(b); thumbURLs.set(p.id, u); return u;
+}
+function revokeURLs(id) {
+  if (photoURLs.has(id)) { URL.revokeObjectURL(photoURLs.get(id)); photoURLs.delete(id); }
+  if (thumbURLs.has(id)) { URL.revokeObjectURL(thumbURLs.get(id)); thumbURLs.delete(id); }
+}
+
+/* ============ STATE ============ */
+const State = {
+  view: 'feed',
+  photos: [], albums: [], deletedPhotos: [],
+  feedPhotos: [], feedIndex: 0,
+  galleryFilter: { search: '', sort: 'newest', from: null, to: null },
+  favSort: 'newest',
+  selection: { active: false, ids: new Set(), context: null },
+  currentAlbumId: null,
+  viewerPhotos: [], viewerIndex: 0,
+  recentViewed: JSON.parse(localStorage.getItem('kfg_recent_viewed') || '[]'),
+};
+
+/* ============ NAV ============ */
+const TITLES = {
+  feed: 'Feed', gallery: 'Gallery', albums: 'Album', album: 'Album',
+  favorites: 'Favorit', memories: 'Memories', trash: 'Recently Deleted',
+  stats: 'Statistik', settings: 'Pengaturan', log: 'Activity Log'
+};
+function setView(name) {
+  State.view = name;
+  $$('.view').forEach(v => v.classList.toggle('active', v.dataset.view === name));
+  $$('.nav-btn, .bnav').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
+  $('#topbar-title').textContent = TITLES[name] || name;
+  $('#more-sheet').hidden = true;
+  render();
+}
+function render() {
+  switch (State.view) {
+    case 'feed': return renderFeed();
+    case 'gallery': return renderGallery();
+    case 'albums': return renderAlbums();
+    case 'album': return renderAlbumDetail();
+    case 'favorites': return renderFavorites();
+    case 'memories': return renderMemories();
+    case 'trash': return renderTrash();
+    case 'stats': return renderStats();
+    case 'settings': return renderSettings();
+    case 'log': return renderLog();
+  }
+}
+
+/* ============ DATA ============ */
+async function reloadData() {
+  const all = await dbAll('photos');
+  State.photos = all.filter(p => !p.deleted).sort((a, b) => b.uploadedAt - a.uploadedAt);
+  State.deletedPhotos = all.filter(p => p.deleted).sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0));
+  State.albums = (await dbAll('albums')).sort((a, b) => b.createdAt - a.createdAt);
+}
+
+/* ============ UPLOAD ============ */
+async function handleUpload(files) {
+  const m = Members.current();
+  if (!m) { showMemberSetup(); toast('Pilih profil dulu ya', 'error'); return; }
+  const list = [...files].filter(f => f.type.startsWith('image/'));
+  if (!list.length) { toast('Tidak ada file gambar', 'error'); return; }
+
+  const panel = $('#upload-panel');
+  panel.hidden = false;
+  let done = 0;
+  const total = list.length;
+
+  for (const file of list) {
+    try {
+      const thumb = await makeThumb(file);
+      const photo = {
+        id: uid('p'),
+        name: stripExt(file.name),
+        mime: file.type || 'image/jpeg',
+        size: file.size,
+        blob: file,
+        thumbBlob: thumb,
+        uploadedAt: Date.now(),
+        memberId: m.id,
+        memberName: m.name,
+        memberEmoji: m.emoji,
+        favorite: false,
+        liked: false,
+        albumId: null,
+        description: '',
+        deleted: false,
+        deletedAt: null,
+      };
+      await dbPut('photos', photo);
+      getPhotoURL(photo); getThumbURL(photo);
+      done++;
+      const pct = Math.round(done / total * 100);
+      $('#upload-percent').textContent = pct + '%';
+      $('#upload-fill').style.width = pct + '%';
+      $('#upload-file').textContent = `${done}/${total} — ${file.name}`;
+      await Log.add('upload', { photoId: photo.id, photoName: photo.name });
+    } catch (e) { console.error('upload fail', e); }
+  }
+
+  setTimeout(() => { panel.hidden = true; $('#upload-fill').style.width = '0%'; }, 700);
+  await reloadData();
+  toast(`${done} foto diunggah`, 'success');
+  render();
+}
+
+/* ============ FEED ============ */
+function renderFeed() {
+  const feed = $('#feed');
+  const empty = $('#feed-empty');
+  if (!State.photos.length) {
+    feed.innerHTML = '';
+    empty.hidden = false;
+    return;
+  }
+  empty.hidden = true;
+  if (!State.feedPhotos.length || State.feedPhotos.length !== State.photos.length) {
+    State.feedPhotos = shuffle(State.photos);
+  }
+  feed.innerHTML = State.feedPhotos.map(p => `
+    <div class="feed-item" data-photo-id="${p.id}">
+      <img src="${getPhotoURL(p)}" alt="${escapeHtml(p.name)}" loading="lazy" />
+      <div class="feed-overlay">
+        <div class="feed-meta">
+          <h3>${escapeHtml(p.name)}</h3>
+          <p>${fmtDate(p.uploadedAt)}</p>
+          <p class="feed-by">oleh ${p.memberEmoji || '🙂'} ${escapeHtml(p.memberName || 'Anonim')}</p>
+        </div>
+        <div class="feed-actions">
+          <button data-feed-fav="${p.id}" class="${p.favorite ? 'active fav' : ''}" title="Favorit">
+            <svg class="ic"><use href="#${p.favorite ? 'i-star-fill' : 'i-star'}"/></svg>
+          </button>
+          <button data-feed-like="${p.id}" class="${p.liked ? 'active' : ''}" title="Suka">
+            <svg class="ic"><use href="#${p.liked ? 'i-heart-fill' : 'i-heart'}"/></svg>
+          </button>
+          <button data-feed-open="${p.id}" title="Info">
+            <svg class="ic"><use href="#i-info"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+$('#feed-shuffle').onclick = () => {
+  State.feedPhotos = shuffle(State.photos);
+  renderFeed();
+  toast('Feed diacak ulang');
+};
+$('#feed-fullscreen').onclick = () => {
+  const el = document.querySelector('.view-feed');
+  if (!document.fullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
+  } else document.exitFullscreen();
+};
+
+$('#feed').addEventListener('click', async e => {
+  const favBtn = e.target.closest('[data-feed-fav]');
+  const likeBtn = e.target.closest('[data-feed-like]');
+  const openBtn = e.target.closest('[data-feed-open]');
+  if (favBtn) {
+    const id = favBtn.dataset.feedFav;
+    const p = await dbGet('photos', id);
+    if (!p) return;
+    p.favorite = !p.favorite;
+    await dbPut('photos', p);
+    await Log.add(p.favorite ? 'favorite' : 'unfavorite', { photoId: p.id, photoName: p.name });
+    await reloadData();
+    renderFeed();
+  } else if (likeBtn) {
+    const id = likeBtn.dataset.feedLike;
+    const p = await dbGet('photos', id);
+    if (!p) return;
+    p.liked = !p.liked;
+    await dbPut('photos', p);
+    await reloadData();
+    renderFeed();
+  } else if (openBtn) {
+    const id = openBtn.dataset.feedOpen;
+    const idx = State.feedPhotos.findIndex(x => x.id === id);
+    if (idx >= 0) openViewer(State.feedPhotos, idx);
+  }
+});
+
+/* ============ GALLERY ============ */
+function applyGalleryFilter(list) {
+  const f = State.galleryFilter;
+  let out = [...list];
+  if (f.search) {
+    const q = f.search.toLowerCase();
+    out = out.filter(p => p.name.toLowerCase().includes(q));
+  }
+  if (f.from) {
+    const fromTs = new Date(f.from).setHours(0, 0, 0, 0);
+    out = out.filter(p => p.uploadedAt >= fromTs);
+  }
+  if (f.to) {
+    const toTs = new Date(f.to).setHours(23, 59, 59, 999);
+    out = out.filter(p => p.uploadedAt <= toTs);
+  }
+  if (f.sort === 'newest') out.sort((a, b) => b.uploadedAt - a.uploadedAt);
+  else if (f.sort === 'oldest') out.sort((a, b) => a.uploadedAt - b.uploadedAt);
+  else if (f.sort === 'name') out.sort((a, b) => a.name.localeCompare(b.name));
+  else if (f.sort === 'random') out = shuffle(out);
+  return out;
+}
+
+function photoCardHTML(p, ctx = 'gallery') {
+  const isSel = State.selection.active && State.selection.ids.has(p.id);
+  const album = p.albumId ? State.albums.find(a => a.id === p.albumId) : null;
+  return `
+    <div class="photo-card ${isSel ? 'selected' : ''}" data-photo-id="${p.id}" data-ctx="${ctx}">
+      <img src="${getThumbURL(p)}" alt="${escapeHtml(p.name)}" loading="lazy" />
+      <div class="select-check"><svg class="ic"><use href="#i-check"/></svg></div>
+      ${p.favorite ? '<div class="card-badge"><svg class="ic" style="width:16px;height:16px"><use href="#i-star-fill"/></svg></div>' : ''}
+      ${album ? '<div class="card-badge album-badge"><svg class="ic" style="width:14px;height:14px"><use href="#i-folder"/></svg></div>' : ''}
+      <div class="card-name">${escapeHtml(p.name)}</div>
+    </div>
+  `;
+}
+
+function renderGallery() {
+  const list = applyGalleryFilter(State.photos);
+  const grid = $('#gallery-grid');
+  const empty = $('#gallery-empty');
+  $('#gallery-count').textContent = `${list.length} foto`;
+  if (!list.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  grid.innerHTML = list.map(p => photoCardHTML(p, 'gallery')).join('');
+}
+
+$('#gallery-search').addEventListener('input', e => {
+  State.galleryFilter.search = e.target.value;
+  renderGallery();
+});
+$('#gallery-sort').addEventListener('change', e => {
+  State.galleryFilter.sort = e.target.value;
+  renderGallery();
+});
+$('#btn-date-filter').onclick = () => {
+  const p = $('#date-filter-panel');
+  p.hidden = !p.hidden;
+};
+$('#date-from').addEventListener('change', e => {
+  State.galleryFilter.from = e.target.value || null; renderGallery();
+});
+$('#date-to').addEventListener('change', e => {
+  State.galleryFilter.to = e.target.value || null; renderGallery();
+});
+$('#btn-clear-date').onclick = () => {
+  State.galleryFilter.from = null; State.galleryFilter.to = null;
+  $('#date-from').value = ''; $('#date-to').value = '';
+  renderGallery();
+};
+$('#btn-select-mode').onclick = () => startSelection('gallery');
+
+/* ============ ALBUMS ============ */
+function renderAlbums() {
+  const grid = $('#album-grid');
+  const empty = $('#albums-empty');
+  if (!State.albums.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  grid.innerHTML = State.albums.map(a => {
+    const photos = State.photos.filter(p => p.albumId === a.id);
+    const cover = photos[0];
+    return `
+      <div class="album-card" data-album-id="${a.id}">
+        <div class="album-cover">
+          ${cover ? `<img src="${getThumbURL(cover)}" alt="" />` : '<div class="album-empty-ic"><svg class="ic" style="width:32px;height:32px"><use href="#i-folder"/></svg></div>'}
+        </div>
+        <div class="album-info">
+          <h3>${escapeHtml(a.name)}</h3>
+          <p>${photos.length} foto</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+$('#album-grid').addEventListener('click', e => {
+  const c = e.target.closest('[data-album-id]');
+  if (!c) return;
+  State.currentAlbumId = c.dataset.albumId;
+  setView('album');
+});
+
+async function createAlbum() {
+  const m = Members.current();
+  if (!m) { showMemberSetup(); return; }
+  const name = await modalPrompt('Nama album baru', '', 'contoh: Liburan Bali');
+  if (!name) return;
+  const album = { id: uid('a'), name, createdAt: Date.now(), memberId: m.id, memberName: m.name };
+  await dbPut('albums', album);
+  await Log.add('album-create', { albumName: name });
+  await reloadData();
+  renderAlbums();
+  toast('Album dibuat', 'success');
+}
+
+$('#btn-new-album').onclick = createAlbum;
+$('#btn-new-album-2').onclick = createAlbum;
+
+/* ============ ALBUM DETAIL ============ */
+function renderAlbumDetail() {
+  const a = State.albums.find(x => x.id === State.currentAlbumId);
+  if (!a) { setView('albums'); return; }
+  $('#album-title').textContent = a.name;
+  const photos = State.photos.filter(p => p.albumId === a.id);
+  $('#album-count').textContent = `${photos.length} foto`;
+  const grid = $('#album-photos');
+  const empty = $('#album-empty');
+  if (!photos.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  grid.innerHTML = photos.map(p => photoCardHTML(p, 'album')).join('');
+}
+
+$('#btn-album-back').onclick = () => setView('albums');
+
+$('#btn-album-rename').onclick = async () => {
+  const a = State.albums.find(x => x.id === State.currentAlbumId);
+  if (!a) return;
+  const name = await modalPrompt('Ubah nama album', a.name);
+  if (!name) return;
+  a.name = name;
+  await dbPut('albums', a);
+  await Log.add('album-rename', { albumName: name });
+  await reloadData();
+  renderAlbumDetail();
+  toast('Album diperbarui');
+};
+
+$('#btn-album-delete').onclick = async () => {
+  const a = State.albums.find(x => x.id === State.currentAlbumId);
+  if (!a) return;
+  const ok = await modalConfirm('Hapus album?', `Album "${a.name}" akan dihapus. Foto tetap ada, hanya tidak terkelompok.`);
+  if (!ok) return;
+  const photos = State.photos.filter(p => p.albumId === a.id);
+  for (const p of photos) { p.albumId = null; await dbPut('photos', p); }
+  await dbDel('albums', a.id);
+  await Log.add('album-delete', { albumName: a.name });
+  await reloadData();
+  setView('albums');
+  toast('Album dihapus');
+};
+
+$('#btn-album-select').onclick = () => startSelection('album');
+
+/* ============ FAVORITES ============ */
+function renderFavorites() {
+  let list = State.photos.filter(p => p.favorite);
+  const sort = State.favSort;
+  if (sort === 'newest') list.sort((a, b) => b.uploadedAt - a.uploadedAt);
+  else if (sort === 'oldest') list.sort((a, b) => a.uploadedAt - b.uploadedAt);
+  else if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+  else if (sort === 'random') list = shuffle(list);
+  $('#fav-count').textContent = `${list.length} favorit`;
+  const grid = $('#fav-grid');
+  const empty = $('#fav-empty');
+  if (!list.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  grid.innerHTML = list.map(p => photoCardHTML(p, 'favorites')).join('');
+}
+$('#fav-sort').addEventListener('change', e => { State.favSort = e.target.value; renderFavorites(); });
+$('#btn-fav-select').onclick = () => startSelection('favorites');
+$('#btn-fav-slideshow').onclick = () => {
+  const list = State.photos.filter(p => p.favorite);
+  if (!list.length) { toast('Belum ada favorit', 'error'); return; }
+  openSlideshow(list);
+};
+
+/* ============ MEMORIES ============ */
+function renderMemories() {
+  const body = $('#memories-body');
+  const empty = $('#memories-empty');
+  if (!State.photos.length) { body.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+
+  const now = new Date();
+  const onThisDay = State.photos.filter(p => {
+    const d = new Date(p.uploadedAt);
+    return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() !== now.getFullYear();
+  });
+  const recent = State.photos.slice(0, 8);
+  const randomFavs = shuffle(State.photos.filter(p => p.favorite)).slice(0, 6);
+  const recentlyViewed = State.recentViewed
+    .map(id => State.photos.find(p => p.id === id))
+    .filter(Boolean).slice(0, 8);
+
+  const section = (title, list) => !list.length ? '' : `
+    <h3 class="section-title">${title}</h3>
+    <div class="grid grid-md">${list.map(p => photoCardHTML(p, 'memories')).join('')}</div>
+  `;
+
+  body.innerHTML = `
+    ${section('🗓️ Di hari ini, tahun-tahun lalu', onThisDay)}
+    ${section('🆕 Baru ditambahkan', recent)}
+    ${section('👀 Baru dilihat', recentlyViewed)}
+    ${section('⭐ Favorit acak', randomFavs)}
+  `;
+  if (!onThisDay.length && !recent.length && !randomFavs.length && !recentlyViewed.length) {
+    body.innerHTML = '<div class="empty-state"><h2>Belum ada memori</h2><p>Unggah lebih banyak foto untuk melihat memori.</p></div>';
+  }
+}
+
+/* ============ TRASH ============ */
+function renderTrash() {
+  const grid = $('#trash-grid');
+  const empty = $('#trash-empty');
+  if (!State.deletedPhotos.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  grid.innerHTML = State.deletedPhotos.map(p => photoCardHTML(p, 'trash')).join('');
+}
+$('#btn-empty-trash').onclick = async () => {
+  if (!State.deletedPhotos.length) return;
+  const ok = await modalConfirm('Kosongkan trash?', 'Semua foto di trash akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.');
+  if (!ok) return;
+  for (const p of State.deletedPhotos) {
+    await dbDel('photos', p.id);
+    revokeURLs(p.id);
+  }
+  await Log.add('trash-empty', { count: State.deletedPhotos.length });
+  await reloadData();
+  renderTrash();
+  toast('Trash dikosongkan');
+};
+
+/* ============ PHOTO GRID CLICK ============ */
+document.addEventListener('click', async e => {
+  const card = e.target.closest('.photo-card');
+  if (!card) return;
+  const id = card.dataset.photoId;
+  const ctx = card.dataset.ctx;
+
+  if (State.selection.active) {
+    if (State.selection.ids.has(id)) State.selection.ids.delete(id);
+    else State.selection.ids.add(id);
+    card.classList.toggle('selected', State.selection.ids.has(id));
+    updateSelectionBar();
+    return;
+  }
+
+  if (ctx === 'trash') {
+    const p = State.deletedPhotos.find(x => x.id === id);
+    if (!p) return;
+    const ok = await modalConfirm('Pulihkan foto?', `"${p.name}" akan dikembalikan ke galeri.`);
+    if (!ok) return;
+    p.deleted = false; p.deletedAt = null;
+    await dbPut('photos', p);
+    await Log.add('restore', { photoId: p.id, photoName: p.name });
+    await reloadData();
+    renderTrash();
+    toast('Foto dipulihkan');
+    return;
+  }
+
+  // Open viewer
+  let list = [];
+  if (ctx === 'gallery') list = applyGalleryFilter(State.photos);
+  else if (ctx === 'album') list = State.photos.filter(p => p.albumId === State.currentAlbumId);
+  else if (ctx === 'favorites') list = State.photos.filter(p => p.favorite);
+  else if (ctx === 'memories') list = State.photos;
+  if (!list.length) list = State.photos;
+  const idx = list.findIndex(p => p.id === id);
+  openViewer(list, Math.max(idx, 0));
+});
+
+/* ============ SELECTION ============ */
+function startSelection(ctx) {
+  State.selection.active = true;
+  State.selection.context = ctx;
+  State.selection.ids = new Set();
+  $('#selection-bar').hidden = false;
+  updateSelectionBar();
+  render();
+}
+function exitSelection() {
+  State.selection.active = false;
+  State.selection.ids = new Set();
+  $('#selection-bar').hidden = true;
+  render();
+}
+function updateSelectionBar() {
+  $('#selection-count').textContent = `${State.selection.ids.size} dipilih`;
+}
+$('#selection-bar').addEventListener('click', async e => {
+  const b = e.target.closest('[data-sel]');
+  if (!b) return;
+  const act = b.dataset.sel;
+  const ids = [...State.selection.ids];
+  if (act === 'cancel') return exitSelection();
+  if (!ids.length) { toast('Belum ada foto dipilih', 'error'); return; }
+
+  if (act === 'favorite' || act === 'unfavorite') {
+    const fav
