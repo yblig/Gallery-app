@@ -1,688 +1,2565 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0a0f">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kirana Gallery">
+<meta name="theme-color" content="#0a0a0f" id="meta-theme-color">
 <title>KIRANA FAMILY GALLERY</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --bg:#0a0a0f;--surface:#14141c;--surface2:#1c1c26;--text:#f2f2f7;--muted:#9a9ab0;
-  --accent:#7c5cff;--danger:#ff5c7a;--radius:16px;--shadow:0 8px 24px rgba(0,0,0,.35);--gap:8px;
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131d;
+  --surface-2: #1c1c2a;
+  --surface-3: #262638;
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border: #2a2a3d;
+  --accent: #7c5cff;
+  --accent-hover: #6a48f5;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.35);
+  --nav-h: 64px;
+  --sidebar-w: 240px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
-[data-theme="light"]{
-  --bg:#f7f7fb;--surface:#ffffff;--surface2:#f0f0f7;--text:#17171f;--muted:#6b6b80;
-  --shadow:0 8px 24px rgba(20,20,40,.10);
+[data-theme="light"] {
+  --bg: #f4f5f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f5;
+  --surface-3: #e2e5ed;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --border: #dcdfe6;
+  --shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
-html,body{height:100%}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s;font-size:14px}
-body.privacy .photocard img,body.privacy .feeditem img{filter:blur(10px)}
-button,a,input,select,textarea{outline:none}
-button:focus,a:focus,input:focus,select:focus,textarea:focus{outline:none;box-shadow:none}
-::selection{background:var(--accent);color:#fff}
-button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-input,select,textarea{font:inherit;color:inherit}
-img{display:block;max-width:100%}
-#app{display:flex;min-height:100dvh}
-#sidebar{display:none;width:230px;flex-shrink:0;background:var(--surface);border-right:1px solid rgba(128,128,160,.15);padding:18px 12px;position:sticky;top:0;height:100dvh}
-#sidebar .brand{font-weight:800;letter-spacing:.5px;font-size:15px;color:var(--accent);margin-bottom:18px;padding:0 8px}
-#sidebar button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;color:var(--muted);font-size:14px;transition:.2s}
-#sidebar button:hover{background:var(--surface2);color:var(--text)}
-#sidebar button.active{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
-#sidebar svg{width:18px;height:18px}
-#content{flex:1;min-width:0;display:flex;flex-direction:column}
-#topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 14px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid rgba(128,128,160,.12)}
-#topbar h1{font-size:15px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#topCount{font-size:11px;color:var(--muted)}
-.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:var(--surface2);transition:.2s}
-.iconbtn:hover{background:var(--accent);color:#fff}
-.iconbtn svg{width:18px;height:18px}
-#main{flex:1;padding:14px 14px 90px;max-width:1200px;width:100%;margin:0 auto}
-#bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);border-top:1px solid rgba(128,128,160,.12);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
-#bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px;font-size:10px;color:var(--muted);border-radius:12px;transition:.2s}
-#bottomnav button.active{color:var(--accent)}
-#bottomnav svg{width:20px;height:20px}
-.card{background:var(--surface);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-size:13px;font-weight:600;transition:.2s}
-.btn:hover{filter:brightness(1.1)}
-.btn.ghost{background:var(--surface2);color:var(--text)}
-.btn.danger{background:var(--danger)}
-.btn svg{width:16px;height:16px}
-.grid{display:grid;gap:var(--gap)}
-.grid[data-cols="2"]{grid-template-columns:repeat(2,1fr)}
-.grid[data-cols="3"]{grid-template-columns:repeat(3,1fr)}
-.grid[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
-.grid[data-cols="6"]{grid-template-columns:repeat(6,1fr)}
-@media(min-width:640px){.grid[data-cols="2"]{grid-template-columns:repeat(3,1fr)}.grid[data-cols="3"]{grid-template-columns:repeat(4,1fr)}.grid[data-cols="4"]{grid-template-columns:repeat(5,1fr)}.grid[data-cols="6"]{grid-template-columns:repeat(8,1fr)}}
-@media(min-width:900px){#sidebar{display:block}#bottomnav{display:none}#main{padding-bottom:30px}}
-.photocard{position:relative;border-radius:14px;overflow:hidden;background:var(--surface2);cursor:pointer;transition:transform .2s}
-.photocard:hover{transform:translateY(-2px)}
-.photocard img{width:100%;aspect-ratio:1;object-fit:cover}
-.photocard .label{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.photocard .fav{position:absolute;top:6px;right:6px;color:#ff5c7a}
-.photocard .pin{position:absolute;top:6px;right:28px;color:var(--accent)}
-.photocard .chk{position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;color:#fff}
-.photocard.selected{outline:3px solid var(--accent)}
-.empty{text-align:center;padding:50px 20px;color:var(--muted)}
-.empty .big{font-size:44px;margin-bottom:10px}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
-.toolbar input,.toolbar select{background:var(--surface2);border:1px solid rgba(128,128,160,.2);border-radius:10px;padding:9px 12px;font-size:13px;outline:none}
-.toolbar input:focus,.toolbar select:focus{border-color:var(--accent)}
-#feed{height:calc(100dvh - 60px);overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none}
-#feed::-webkit-scrollbar{display:none}
-.feeditem{scroll-snap-align:start;height:100%;position:relative;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden}
-.feeditem img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;display:block;margin:0 auto;transition:transform .2s;pointer-events:none}
-.feeditem .overlay{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 24px;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff}
-.feeditem .actions{position:absolute;right:12px;bottom:90px;display:flex;flex-direction:column;gap:14px}
-.feeditem .actions button{color:#fff;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.feeditem .actions svg{width:24px;height:24px}
-.feeditem .actions .on{color:#ff5c7a}
-#viewer{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.96);display:none;flex-direction:column}
-#viewer.open{display:flex}
-#viewer .vtop{display:flex;align-items:center;gap:8px;padding:10px 12px;color:#fff}
-#viewer .vtop .name{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#viewer .vimg{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-#viewer .vimg img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .2s}
-#viewer .vnav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center}
-#viewer .vnav.prev{left:10px}#viewer .vnav.next{right:10px}
-#viewer .vbottom{display:flex;gap:6px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));justify-content:center;flex-wrap:wrap}
-#viewer .vbottom button{color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.08)}
-#viewer .vbottom button.on{color:#ff5c7a}
-#viewer .counter{position:absolute;top:14px;left:50%;transform:translateX(-50%);color:#fff;font-size:12px;background:rgba(0,0,0,.5);padding:4px 12px;border-radius:20px}
-#modalRoot{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);padding:20px}
-#modalRoot.open{display:flex}
-.modal{background:var(--surface);border-radius:20px;padding:22px;max-width:380px;width:100%;box-shadow:var(--shadow);animation:pop .2s;max-height:85dvh;overflow-y:auto}
-@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-.modal h3{font-size:16px;margin-bottom:8px}
-.modal p{font-size:13px;color:var(--muted);margin-bottom:16px}
-.modal input,.modal select,.modal textarea{width:100%;background:var(--surface2);border:1px solid rgba(128,128,160,.2);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px;outline:none}
-.modal .row{display:flex;gap:8px;justify-content:flex-end}
-#toastRoot{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
-.toast{background:var(--surface);color:var(--text);padding:10px 18px;border-radius:12px;font-size:13px;box-shadow:var(--shadow);animation:pop .2s;pointer-events:auto}
-.toast.clickable{cursor:pointer;border:1px solid var(--accent)}
-#memberModal{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
-#memberModal.open{display:flex}
-#memberModal .box{background:var(--surface);border-radius:20px;padding:24px;max-width:420px;width:100%;max-height:85dvh;overflow-y:auto}
-#memberModal h2{font-size:17px;margin-bottom:16px;text-align:center}
-.membergrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.membercard{background:var(--surface2);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:.2s;border:2px solid transparent;position:relative}
-.membercard:hover{transform:translateY(-2px)}
-.membercard img{width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto 6px}
-.membercard .em{font-size:32px}
-.membercard .nm{font-size:12px;margin-top:6px;color:var(--muted)}
-.membercard .mact{position:absolute;top:6px;right:6px;display:flex;gap:4px}
-.membercard .mact button{width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
-.progress{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-top:8px}
-.progress>div{height:100%;background:var(--accent);transition:width .2s}
-.banner{background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:12px;padding:12px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.statrow{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.statbox{background:var(--surface);border-radius:14px;padding:14px;text-align:center}
-.statbox .v{font-size:22px;font-weight:800;color:var(--accent)}
-.statbox .l{font-size:11px;color:var(--muted);margin-top:3px}
-.chart{display:flex;align-items:flex-end;gap:4px;height:120px;margin-top:10px}
-.chart .bar{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px;position:relative}
-.chart .bar span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:9px;color:var(--muted)}
-.logitem{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(128,128,160,.1);font-size:13px}
-.logitem .em{font-size:20px}
-.logitem .t{color:var(--muted);font-size:11px;margin-top:2px}
-.albumcard{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:14px;padding:14px;cursor:pointer;transition:.2s;margin-bottom:8px}
-.albumcard:hover{background:var(--surface2)}
-.albumcard img{width:44px;height:44px;border-radius:10px;object-fit:cover}
-.albumcard .cnt{margin-left:auto;font-size:12px;color:var(--muted)}
-.sheet{position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--surface);border-radius:20px 20px 0 0;padding:18px;box-shadow:var(--shadow);transform:translateY(100%);transition:.25s}
-.sheet.open{transform:translateY(0)}
-.sheet button{display:flex;align-items:center;gap:12px;width:100%;padding:13px;border-radius:12px;font-size:14px}
-.sheet button:hover{background:var(--surface2)}
-.sheet svg{width:18px;height:18px;color:var(--accent)}
-#bulkbar{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:40;display:none;gap:6px;background:var(--surface);padding:8px;border-radius:16px;box-shadow:var(--shadow);flex-wrap:wrap;justify-content:center;max-width:95vw}
-#bulkbar.show{display:flex}
-#bulkbar button{padding:8px 12px;border-radius:10px;background:var(--surface2);font-size:12px}
-#lockScreen{position:fixed;inset:0;z-index:400;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px}
-#lockScreen.open{display:flex}
-#lockScreen input{background:var(--surface2);border:1px solid rgba(128,128,160,.2);border-radius:12px;padding:12px 16px;font-size:18px;text-align:center;letter-spacing:6px;width:200px}
-.hidden{display:none!important}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+  overflow-x: hidden;
+  transition: background 0.2s, color 0.2s;
+}
+button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  outline: none;
+  transition: all 0.2s;
+}
+button { cursor: pointer; }
+svg.icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+svg.icon-sm { width: 16px; height: 16px; }
+svg.icon-lg { width: 32px; height: 32px; }
+
+/* Layout */
+#app { display: flex; min-height: 100vh; padding-top: var(--safe-top); padding-bottom: calc(var(--nav-h) + var(--safe-bottom)); }
+.sidebar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  flex-direction: column;
+  z-index: 40;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; letter-spacing: 0.5px; padding: 6px 10px 20px; color: var(--accent); }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  color: var(--text-muted); font-weight: 600; font-size: 14px;
+  width: 100%; text-align: left; margin-bottom: 4px;
+}
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+.nav-item.active { background: var(--accent); color: #fff; }
+.nav-badge { margin-left: auto; background: var(--surface-3); color: var(--text); font-size: 11px; padding: 2px 7px; border-radius: 99px; }
+.nav-item.active .nav-badge { background: rgba(255,255,255,0.25); color: #fff; }
+
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around; align-items: center;
+  z-index: 40;
+}
+.bnav-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; color: var(--text-muted); font-size: 11px; font-weight: 600;
+  padding: 6px 10px; border-radius: var(--radius-sm);
+}
+.bnav-btn.active { color: var(--accent); }
+
+.main-wrap { flex: 1; width: 100%; max-width: 1400px; margin: 0 auto; }
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+[data-theme="light"] .topbar { background: rgba(255,255,255,0.85); }
+.topbar-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); display: inline-block; }
+.sync-dot.online { background: var(--success); box-shadow: 0 0 8px var(--success); }
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600;
+  background: var(--surface-2); color: var(--text);
+}
+.btn:hover { background: var(--surface-3); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: #fff; }
+.btn-icon { padding: 8px; border-radius: var(--radius-sm); background: var(--surface-2); }
+
+.member-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 6px; border-radius: 99px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  font-size: 13px; font-weight: 600;
+}
+.member-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; overflow: hidden; flex-shrink: 0;
+}
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Views */
+.view { display: none; padding: 16px; }
+.view.active { display: block; }
+.view-feed { padding: 0 !important; }
+
+/* Progress Bar */
+#upload-bar-wrap {
+  display: none; position: fixed; top: var(--safe-top); left: 0; right: 0;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 10px 16px; z-index: 60; box-shadow: var(--shadow);
+}
+.progress-track { height: 6px; background: var(--surface-3); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
+
+/* Controls Bar */
+.controls-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center;
+}
+.search-box {
+  flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 8px 12px; border-radius: var(--radius-sm);
+}
+.search-box input { width: 100%; font-size: 14px; }
+.select-box {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px;
+}
+
+/* Photo Grid */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), 1fr);
+  gap: 8px;
+}
+.photo-card {
+  position: relative; aspect-ratio: 1 / 1;
+  background: var(--surface); border-radius: var(--radius-sm);
+  overflow: hidden; cursor: pointer; border: 1px solid var(--border);
+}
+.photo-card img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.2s, filter 0.2s;
+}
+.privacy-blur .photo-card img { filter: blur(18px); transform: scale(1.1); }
+.photo-card:hover img { transform: scale(1.03); }
+.privacy-blur .photo-card:hover img { transform: scale(1.12); }
+.photo-badges {
+  position: absolute; top: 6px; left: 6px; right: 6px;
+  display: flex; justify-content: space-between; pointer-events: none;
+}
+.badge-group { display: flex; gap: 4px; }
+.p-badge {
+  background: rgba(0,0,0,0.65); color: #fff;
+  padding: 3px 6px; border-radius: 6px; font-size: 11px;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.photo-meta-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  color: #fff; padding: 16px 8px 6px; font-size: 11px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.select-check {
+  position: absolute; top: 8px; right: 8px;
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid #fff; background: rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center; color: #fff;
+}
+.selecting .select-check { display: flex; }
+.photo-card.selected .select-check { background: var(--accent); border-color: var(--accent); }
+.photo-card.selected { outline: 3px solid var(--accent); }
+
+/* Bulk Bar */
+#bulk-bar {
+  display: none; position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 10px);
+  left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 10px 14px; border-radius: var(--radius);
+  box-shadow: var(--shadow); z-index: 45;
+  gap: 8px; align-items: center; flex-wrap: wrap; max-width: 95vw;
+}
+#bulk-bar.active { display: flex; }
+
+/* TikTok Feed */
+.feed-container {
+  height: calc(100vh - var(--nav-h) - var(--safe-bottom) - 53px);
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  background: #000;
+}
+.feed-item {
+  position: relative;
+  width: 100%; height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex; align-items: center; justify-content: center;
+  background: #000;
+}
+.feed-item img {
+  width: 100%; height: 100%;
+  object-fit: contain; /* WAJIB: tidak terpotong */
+}
+.privacy-blur .feed-item img { filter: blur(22px); }
+.feed-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  padding: 40px 70px 20px 16px; color: #fff;
+  pointer-events: none;
+}
+.feed-actions {
+  position: absolute; right: 12px; bottom: 24px;
+  display: flex; flex-direction: column; gap: 16px; align-items: center;
+  z-index: 5;
+}
+.feed-act-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: #fff; font-size: 12px; font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+.feed-act-circle {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,0.16); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+}
+.feed-act-btn.liked .feed-act-circle { color: #ef4444; background: rgba(239,68,68,0.25); }
+.feed-act-btn.faved .feed-act-circle { color: #f59e0b; background: rgba(245,158,11,0.25); }
+
+/* Cards & Grids */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.album-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; cursor: pointer;
+}
+.album-cover {
+  aspect-ratio: 4 / 3; background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.album-cover img { width: 100%; height: 100%; object-fit: cover; }
+.album-info { padding: 10px 12px; }
+
+/* Stats & Chart */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-box { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); }
+.stat-val { font-size: 24px; font-weight: 800; color: var(--accent); margin-top: 4px; }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 150px; padding-top: 20px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.bar-fill { width: 100%; max-width: 36px; background: var(--accent); border-radius: 6px 6px 0 0; min-height: 4px; transition: height 0.3s; }
+
+/* Viewer Modal */
+#viewer-modal {
+  display: none; position: fixed; inset: 0; background: #000;
+  z-index: 80; flex-direction: column;
+}
+#viewer-modal.active { display: flex; }
+.viewer-top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: calc(12px + var(--safe-top)) 16px 12px;
+  background: rgba(0,0,0,0.7); color: #fff; z-index: 5;
+}
+.viewer-stage {
+  flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; touch-action: none;
+}
+.viewer-stage img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+  transition: transform 0.2s; user-select: none;
+}
+.viewer-nav-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(255,255,255,0.18); color: #fff;
+  display: flex; align-items: center; justify-content: center; z-index: 5;
+}
+.viewer-prev { left: 12px; }
+.viewer-next { right: 12px; }
+.viewer-bottom {
+  background: rgba(15,15,22,0.92); color: #fff;
+  padding: 12px 16px calc(12px + var(--safe-bottom));
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.viewer-tools { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+.v-tool {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.12);
+  color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+
+/* Modals & Sheets */
+.modal-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
+  z-index: 90; align-items: center; justify-content: center; padding: 16px;
+}
+.modal-backdrop.active { display: flex; }
+.modal-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); width: 100%; max-width: 440px;
+  max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: var(--shadow);
+}
+.sheet-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 70;
+  align-items: flex-end; justify-content: center;
+}
+.sheet-backdrop.active { display: flex; }
+.sheet-box {
+  background: var(--surface); border-top: 1px solid var(--border);
+  border-radius: 22px 22px 0 0; width: 100%; max-width: 540px;
+  padding: 16px 16px calc(20px + var(--safe-bottom));
+  max-height: 85vh; overflow-y: auto;
+}
+.sheet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.sheet-item {
+  background: var(--surface-2); padding: 14px 8px; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; text-align: center;
+}
+.sheet-item:hover { background: var(--accent); color: #fff; }
+
+/* Member Cards */
+.member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; margin: 14px 0; }
+.member-card {
+  position: relative; background: var(--surface-2); border: 2px solid transparent;
+  border-radius: var(--radius); padding: 14px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+}
+.member-card:hover { border-color: var(--accent); }
+.member-card-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; overflow: hidden;
+}
+.member-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.member-edit-btn {
+  position: absolute; top: 6px; right: 6px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Form Elements */
+.form-group { margin-bottom: 12px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+.form-input {
+  width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+  padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px;
+}
+.form-input:focus { border-color: var(--accent); }
+
+/* Toast */
+#toast-wrap {
+  position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 14px);
+  left: 50%; transform: translateX(-50%);
+  z-index: 100; display: flex; flex-direction: column; gap: 8px;
+  width: max-content; max-width: 92vw;
+}
+.toast {
+  background: var(--surface-3); color: var(--text);
+  border: 1px solid var(--border);
+  padding: 11px 16px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 12px;
+  animation: fadeUp 0.2s ease;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Empty State */
+.empty-state {
+  text-align: center; padding: 48px 20px; color: var(--text-muted);
+}
+.empty-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--surface-2); color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;
+}
+
+/* App Lock Overlay */
+#lock-screen {
+  display: none; position: fixed; inset: 0; background: var(--bg);
+  z-index: 95; flex-direction: column; align-items: center; justify-content: center; padding: 24px;
+}
+#lock-screen.active { display: flex; }
+
+/* Responsive Desktop */
+@media (min-width: 840px) {
+  #app { padding-left: var(--sidebar-w); padding-bottom: 0; }
+  .sidebar { display: flex; }
+  .bottom-nav { display: none; }
+  .feed-container { height: calc(100vh - 55px); }
+  #bulk-bar { bottom: 20px; }
+  #toast-wrap { bottom: 24px; }
+}
 </style>
 </head>
-<body data-theme="dark">
+<body>
+
+<!-- Inline SVG Sprite -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-<symbol id="i-home" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z"/></symbol>
-<symbol id="i-grid" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></symbol>
-<symbol id="i-folder" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h6l2 2h10v12H3z"/></symbol>
-<symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></symbol>
-<symbol id="i-dots" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></symbol>
-<symbol id="i-plus" viewBox="0 0 24 24"><path fill="currentColor" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></symbol>
-<symbol id="i-upload" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l5 5h-3v7h-4V8H7zM5 19h14v2H5z"/></symbol>
-<symbol id="i-search" viewBox="0 0 24 24"><path fill="currentColor" d="M10 2a8 8 0 105.3 14l5.7 5.7 1.4-1.4-5.7-5.7A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/></symbol>
-<symbol id="i-trash" viewBox="0 0 24 24"><path fill="currentColor" d="M9 3h6l1 2h4v2H4V5h4zM6 9h12l-1 12H7z"/></symbol>
-<symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></symbol>
-<symbol id="i-clock" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></symbol>
-<symbol id="i-chart" viewBox="0 0 24 24"><path fill="currentColor" d="M4 20V10h3v10zM10 20V4h3v16zM16 20v-7h3v7z"/></symbol>
-<symbol id="i-settings" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2.1-.6a7 7 0 00-.6-1.5l1.1-1.9-1.4-1.4-1.9 1.1a7 7 0 00-1.5-.6L14 5h-4l-.6 2.1a7 7 0 00-1.5.6L6 6.6 4.6 8l1.1 1.9a7 7 0 00-.6 1.5L3 12l.6 2.1-1.1 1.9L4 17.4l1.9-1.1c.5.3 1 .5 1.5.6L8 19h4l.6-2.1c.5-.1 1-.3 1.5-.6l1.9 1.1 1.4-1.4-1.1-1.9c.3-.5.5-1 .6-1.5z"/></symbol>
-<symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
-<symbol id="i-left" viewBox="0 0 24 24"><path fill="currentColor" d="M15 4l-8 8 8 8 1.5-1.5L10 12l6.5-6.5z"/></symbol>
-<symbol id="i-right" viewBox="0 0 24 24"><path fill="currentColor" d="M9 4l8 8-8 8-1.5-1.5L14 12 7.5 5.5z"/></symbol>
-<symbol id="i-down" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16l-5-5h3V4h4v7h3zM5 19h14v2H5z"/></symbol>
-<symbol id="i-info" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></symbol>
-<symbol id="i-edit" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.2V21h3.8L18 9.8 14.2 6zM20.7 7.3l-4-4 1.4-1.4 4 4z"/></symbol>
-<symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5l12 7-12 7z"/></symbol>
-<symbol id="i-full" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h6v2H6v4H4zM14 4h6v6h-2V6h-4zM4 14h2v4h4v2H4zM18 14h2v6h-6v-2h4z"/></symbol>
-<symbol id="i-restore" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V2L7 6l5 4V7a5 5 0 11-5 5H5a7 7 0 107-7z"/></symbol>
-<symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol>
-<symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M14 3l7 7-4 1-4 4 1 6-7-7-4 1 1-4 4-4z"/></symbol>
-<symbol id="i-share" viewBox="0 0 24 24"><path fill="currentColor" d="M18 16a3 3 0 00-2.8 2H8.8A3 3 0 006 16a3 3 0 100 6 3 3 0 002.8-2h6.4a3 3 0 002.8 2 3 3 0 100-6zm0-10a3 3 0 00-2.8 2H8.8A3 3 0 006 6a3 3 0 100 6 3 3 0 002.8-2h6.4A3 3 0 0018 12a3 3 0 100-6z"/></symbol>
-<symbol id="i-copy" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4a2 2 0 00-2 2v14h2V3h12zM20 5H8a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2z"/></symbol>
-<symbol id="i-rotate" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1L7 6l5 5V7a5 5 0 11-5 5H5a7 7 0 107-7z"/></symbol>
-<symbol id="i-tag" viewBox="0 0 24 24"><path fill="currentColor" d="M21 12l-9-9H4v8l9 9 8-8zM7 8a2 2 0 110-4 2 2 0 010 4z"/></symbol>
-<symbol id="i-lock" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a5 5 0 00-5 5v3H5v12h14V10h-2V7a5 5 0 00-5-5zm0 2a3 3 0 013 3v3H9V7a3 3 0 013-3z"/></symbol>
-<symbol id="i-cloud" viewBox="0 0 24 24"><path fill="currentColor" d="M19 18H6a4 4 0 010-8 6 6 0 0111.3-2A4.5 4.5 0 0119 18z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-feed" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></symbol>
+  <symbol id="i-album" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-rotate" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></symbol>
 </svg>
 
+<div id="upload-bar-wrap">
+  <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+    <span id="upload-status-text">Mengunggah foto...</span>
+    <span id="upload-pct-text">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="upload-progress-fill"></div></div>
+</div>
+
+<input type="file" id="file-input" accept="image/*" multiple style="display:none">
+
 <div id="app">
-<aside id="sidebar">
-  <div class="brand">KIRANA FAMILY GALLERY</div>
-  <button data-nav="feed"><svg><use href="#i-play"/></svg>Feed</button>
-  <button data-nav="gallery" class="active"><svg><use href="#i-grid"/></svg>Galeri</button>
-  <button data-nav="albums"><svg><use href="#i-folder"/></svg>Album</button>
-  <button data-nav="favorites"><svg><use href="#i-heart"/></svg>Favorit</button>
-  <button data-nav="memories"><svg><use href="#i-spark"/></svg>Memories</button>
-  <button data-nav="archive"><svg><use href="#i-folder"/></svg>Arsip</button>
-  <button data-nav="trash"><svg><use href="#i-trash"/></svg>Tempat Sampah</button>
-  <button data-nav="log"><svg><use href="#i-clock"/></svg>Log Aktivitas</button>
-  <button data-nav="stats"><svg><use href="#i-chart"/></svg>Statistik</button>
-  <button data-nav="settings"><svg><use href="#i-settings"/></svg>Pengaturan</button>
-</aside>
-<div id="content">
-  <header id="topbar">
-    <button class="iconbtn" id="memberBtn" title="Ganti profil"><span id="memberEmoji">👨</span></button>
-    <h1 id="topTitle">KIRANA FAMILY GALLERY</h1>
-    <span id="topCount"></span>
-    <button class="iconbtn" id="fsBtn" title="Full Screen"><svg><use href="#i-full"/></svg></button>
-    <button class="iconbtn" id="uploadBtn" title="Upload foto"><svg><use href="#i-upload"/></svg></button>
-  </header>
-  <main id="main"></main>
-  <nav id="bottomnav">
-    <button data-nav="feed"><svg><use href="#i-play"/></svg>Feed</button>
-    <button data-nav="gallery" class="active"><svg><use href="#i-grid"/></svg>Galeri</button>
-    <button data-nav="albums"><svg><use href="#i-folder"/></svg>Album</button>
-    <button data-nav="favorites"><svg><use href="#i-heart"/></svg>Favorit</button>
-    <button id="moreBtn"><svg><use href="#i-dots"/></svg>Lainnya</button>
+  <!-- Desktop Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="icon"><use href="#i-sparkles"/></svg>
+      <span>KIRANA GALLERY</span>
+    </div>
+    <button class="nav-item active" data-view="gallery"><svg class="icon"><use href="#i-grid"/></svg>Galeri <span class="nav-badge" id="badge-gallery">0</span></button>
+    <button class="nav-item" data-view="feed"><svg class="icon"><use href="#i-feed"/></svg>Feed Layar Penuh</button>
+    <button class="nav-item" data-view="albums"><svg class="icon"><use href="#i-album"/></svg>Album <span class="nav-badge" id="badge-albums">0</span></button>
+    <button class="nav-item" data-view="favorites"><svg class="icon"><use href="#i-star"/></svg>Favorit <span class="nav-badge" id="badge-fav">0</span></button>
+    <button class="nav-item" data-view="memories"><svg class="icon"><use href="#i-clock"/></svg>Kenangan</button>
+    <button class="nav-item" data-view="archive"><svg class="icon"><use href="#i-archive"/></svg>Arsip <span class="nav-badge" id="badge-archive">0</span></button>
+    <button class="nav-item" data-view="trash"><svg class="icon"><use href="#i-trash"/></svg>Sampah <span class="nav-badge" id="badge-trash">0</span></button>
+    <button class="nav-item" data-view="stats"><svg class="icon"><use href="#i-chart"/></svg>Statistik</button>
+    <button class="nav-item" data-view="logs"><svg class="icon"><use href="#i-list"/></svg>Log Aktivitas</button>
+    <button class="nav-item" data-view="settings"><svg class="icon"><use href="#i-settings"/></svg>Pengaturan</button>
+    <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+      <button class="btn" onclick="openSurprise()"><svg class="icon icon-sm"><use href="#i-sparkles"/></svg>Kejutan Foto</button>
+      <button class="btn" onclick="lockApp()"><svg class="icon icon-sm"><use href="#i-lock"/></svg>Kunci Aplikasi</button>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-title">
+        <span class="sync-dot" id="sync-dot" title="Status Sinkronisasi"></span>
+        <span id="page-title">Galeri</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-privacy" title="Mode Privat (Blur)" onclick="togglePrivacy()"><svg class="icon icon-sm"><use href="#i-eye-off"/></svg></button>
+        <button class="btn btn-primary" onclick="triggerUpload()"><svg class="icon icon-sm"><use href="#i-upload"/></svg><span>Upload</span></button>
+        <button class="member-pill" id="active-member-btn" onclick="openMemberModal()">
+          <span class="member-avatar" id="active-member-avatar">👨</span>
+          <span id="active-member-name">Pilih</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- VIEW: GALLERY -->
+    <section id="view-gallery" class="view active">
+      <div class="controls-bar">
+        <div class="search-box">
+          <svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-search"/></svg>
+          <input type="text" id="search-input" placeholder="Cari nama, deskripsi, atau #tag... (/)">
+        </div>
+        <select class="select-box" id="sort-select">
+          <option value="newest">Terbaru</option>
+          <option value="oldest">Terlama</option>
+          <option value="name">Nama A-Z</option>
+          <option value="likes">Terbanyak Disukai</option>
+        </select>
+        <input type="date" class="select-box" id="date-filter" title="Filter Tanggal">
+        <select class="select-box" id="cols-select" title="Jumlah Kolom">
+          <option value="2">2 Kolom</option>
+          <option value="3" selected>3 Kolom</option>
+          <option value="4">4 Kolom</option>
+          <option value="6">6 Kolom</option>
+        </select>
+        <button class="btn" id="btn-toggle-select" onclick="toggleSelectMode()">Pilih</button>
+        <button class="btn" onclick="startSlideshow('gallery')"><svg class="icon icon-sm"><use href="#i-play"/></svg>Slideshow</button>
+      </div>
+      <div id="gallery-grid" class="photo-grid"></div>
+    </section>
+
+    <!-- VIEW: FEED -->
+    <section id="view-feed" class="view view-feed">
+      <div id="feed-container" class="feed-container"></div>
+    </section>
+
+    <!-- VIEW: ALBUMS -->
+    <section id="view-albums" class="view">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 id="album-view-heading">Semua Album</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn" id="btn-album-back" style="display:none" onclick="closeAlbumDetail()">Kembali</button>
+          <button class="btn btn-primary" id="btn-new-album" onclick="createAlbumFlow()">+ Album Baru</button>
+        </div>
+      </div>
+      <div id="albums-grid" class="album-grid"></div>
+      <div id="album-photos-grid" class="photo-grid" style="display:none"></div>
+    </section>
+
+    <!-- VIEW: FAVORITES -->
+    <section id="view-favorites" class="view">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3>Foto Favorit</h3>
+        <button class="btn btn-primary" onclick="startSlideshow('favorites')"><svg class="icon icon-sm"><use href="#i-play"/></svg>Putar Slideshow</button>
+      </div>
+      <div id="favorites-grid" class="photo-grid"></div>
+    </section>
+
+    <!-- VIEW: MEMORIES -->
+    <section id="view-memories" class="view">
+      <div id="memories-content"></div>
+    </section>
+
+    <!-- VIEW: ARCHIVE -->
+    <section id="view-archive" class="view">
+      <div style="margin-bottom:14px"><h3>Foto Diarsipkan</h3></div>
+      <div id="archive-grid" class="photo-grid"></div>
+    </section>
+
+    <!-- VIEW: TRASH -->
+    <section id="view-trash" class="view">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div>
+          <h3>Sampah</h3>
+          <p style="font-size:12px;color:var(--text-muted)">Otomatis dihapus permanen setelah 30 hari.</p>
+        </div>
+        <button class="btn btn-danger" onclick="emptyTrashFlow()">Kosongkan Sampah</button>
+      </div>
+      <div id="trash-grid" class="photo-grid"></div>
+    </section>
+
+    <!-- VIEW: STATS -->
+    <section id="view-stats" class="view">
+      <div id="stats-content"></div>
+    </section>
+
+    <!-- VIEW: LOGS -->
+    <section id="view-logs" class="view">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <h3>Log Aktivitas Keluarga</h3>
+        <div style="display:flex;gap:8px">
+          <select class="select-box" id="log-member-filter" onchange="renderLogs()">
+            <option value="all">Semua Anggota</option>
+          </select>
+          <button class="btn btn-danger" onclick="clearLogsFlow()">Hapus Log</button>
+        </div>
+      </div>
+      <div id="logs-list"></div>
+    </section>
+
+    <!-- VIEW: SETTINGS -->
+    <section id="view-settings" class="view">
+      <div class="card">
+        <h3 style="margin-bottom:12px">Tampilan & Tema</h3>
+        <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Mode Terang / Gelap</span>
+          <button class="btn" onclick="toggleTheme()" id="btn-theme-toggle">Ganti Tema</button>
+        </div>
+        <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Warna Aksen</span>
+          <input type="color" id="accent-picker" value="#7c5cff" style="width:44px;height:34px;border-radius:8px;cursor:pointer">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">Keamanan & Privasi</h3>
+        <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:600;font-size:14px">PIN Kunci Aplikasi</div>
+            <div style="font-size:12px;color:var(--text-muted)" id="pin-status-text">Belum diatur</div>
+          </div>
+          <button class="btn" onclick="setupPinFlow()">Atur PIN</button>
+        </div>
+        <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:600;font-size:14px">Pindai Foto Duplikat</div>
+            <div style="font-size:12px;color:var(--text-muted)">Cek foto berdasarkan nama & ukuran file</div>
+          </div>
+          <button class="btn" onclick="scanDuplicates()">Pindai Sekarang</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">Backup & Sinkronisasi</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+          <button class="btn btn-primary" onclick="exportBackup()"><svg class="icon icon-sm"><use href="#i-download"/></svg>Export Backup (.kfg)</button>
+          <button class="btn" onclick="document.getElementById('backup-input').click()"><svg class="icon icon-sm"><use href="#i-upload"/></svg>Import Backup (.kfg)</button>
+          <input type="file" id="backup-input" accept=".kfg,.json" style="display:none" onchange="importBackup(event)">
+          <button class="btn" onclick="syncFromSupabase(true)">Sinkron Ulang Cloud</button>
+        </div>
+        <div id="sync-info-box" style="font-size:12px;color:var(--text-muted);line-height:1.5"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:8px">Pasang di iPhone (PWA)</h3>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6">
+          1. Buka halaman ini menggunakan browser <b>Safari</b> di iPhone.<br>
+          2. Ketuk tombol <b>Share</b> (ikon kotak dengan panah ke atas di bagian bawah layar).<br>
+          3. Gulir ke bawah dan pilih <b>Add to Home Screen</b> (Tambahkan ke Layar Utama).
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="bnav-btn active" data-view="gallery"><svg class="icon"><use href="#i-grid"/></svg><span>Galeri</span></button>
+    <button class="bnav-btn" data-view="feed"><svg class="icon"><use href="#i-feed"/></svg><span>Feed</span></button>
+    <button class="bnav-btn" data-view="albums"><svg class="icon"><use href="#i-album"/></svg><span>Album</span></button>
+    <button class="bnav-btn" data-view="favorites"><svg class="icon"><use href="#i-star"/></svg><span>Favorit</span></button>
+    <button class="bnav-btn" onclick="openMoreSheet()"><svg class="icon"><use href="#i-more"/></svg><span>Lainnya</span></button>
   </nav>
 </div>
+
+<!-- Bulk Action Bar -->
+<div id="bulk-bar">
+  <span id="bulk-count" style="font-weight:700;font-size:13px">0 dipilih</span>
+  <button class="btn" onclick="bulkAction('fav')">Favorit</button>
+  <button class="btn" onclick="bulkAction('pin')">Pin</button>
+  <button class="btn" onclick="bulkAction('archive')">Arsip</button>
+  <button class="btn" onclick="bulkMoveAlbum()">Album</button>
+  <button class="btn" onclick="bulkDownload()">Unduh</button>
+  <button class="btn btn-danger" onclick="bulkAction('delete')">Hapus</button>
+  <button class="btn-icon" onclick="toggleSelectMode()"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
 </div>
 
-<div id="bulkbar"></div>
-<div class="sheet" id="moreSheet">
-  <button data-nav="memories"><svg><use href="#i-spark"/></svg>Memories</button>
-  <button data-nav="archive"><svg><use href="#i-folder"/></svg>Arsip</button>
-  <button data-nav="trash"><svg><use href="#i-trash"/></svg>Tempat Sampah</button>
-  <button data-nav="log"><svg><use href="#i-clock"/></svg>Log Aktivitas</button>
-  <button data-nav="stats"><svg><use href="#i-chart"/></svg>Statistik</button>
-  <button data-nav="settings"><svg><use href="#i-settings"/></svg>Pengaturan</button>
-  <button id="surpriseBtn"><svg><use href="#i-spark"/></svg>Surprise Me</button>
-  <button id="lockBtn"><svg><use href="#i-lock"/></svg>Kunci Aplikasi</button>
-</div>
-
-<div id="memberModal">
-  <div class="box">
-    <h2>Siapa yang pakai HP ini?</h2>
-    <div class="membergrid" id="memberGrid"></div>
-    <button class="btn ghost" id="addMemberBtn" style="width:100%"><svg><use href="#i-plus"/></svg> Tambah anggota lain</button>
+<!-- More Sheet (Mobile) -->
+<div class="sheet-backdrop" id="more-sheet" onclick="if(event.target===this)closeMoreSheet()">
+  <div class="sheet-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3>Menu Lainnya</h3>
+      <button class="btn-icon" onclick="closeMoreSheet()"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="sheet-grid">
+      <button class="sheet-item" onclick="closeMoreSheet();switchView('memories')"><svg class="icon"><use href="#i-clock"/></svg>Kenangan</button>
+      <button class="sheet-item" onclick="closeMoreSheet();switchView('archive')"><svg class="icon"><use href="#i-archive"/></svg>Arsip</button>
+      <button class="sheet-item" onclick="closeMoreSheet();switchView('trash')"><svg class="icon"><use href="#i-trash"/></svg>Sampah</button>
+      <button class="sheet-item" onclick="closeMoreSheet();switchView('logs')"><svg class="icon"><use href="#i-list"/></svg>Log Aktivitas</button>
+      <button class="sheet-item" onclick="closeMoreSheet();switchView('stats')"><svg class="icon"><use href="#i-chart"/></svg>Statistik</button>
+      <button class="sheet-item" onclick="closeMoreSheet();switchView('settings')"><svg class="icon"><use href="#i-settings"/></svg>Pengaturan</button>
+      <button class="sheet-item" onclick="closeMoreSheet();openSurprise()"><svg class="icon"><use href="#i-sparkles"/></svg>Surprise Me</button>
+      <button class="sheet-item" onclick="closeMoreSheet();lockApp()"><svg class="icon"><use href="#i-lock"/></svg>Kunci Aplikasi</button>
+    </div>
   </div>
 </div>
 
-<div id="lockScreen">
-  <div style="font-size:40px">🔒</div>
-  <div style="font-size:14px;color:var(--muted)">Masukkan PIN untuk membuka</div>
-  <input type="password" id="lockPin" maxlength="8" inputmode="numeric">
-  <button class="btn" id="lockOk">Buka</button>
-</div>
-
-<div id="viewer">
-  <div class="vtop">
-    <button class="iconbtn" id="viewerClose"><svg><use href="#i-x"/></svg></button>
-    <div class="name" id="viewerName"></div>
+<!-- Fullscreen Photo Viewer -->
+<div id="viewer-modal">
+  <div class="viewer-top">
+    <button class="btn-icon" onclick="closeViewer()"><svg class="icon"><use href="#i-x"/></svg></button>
+    <div style="text-align:center">
+      <div id="viewer-title" style="font-weight:700;font-size:14px">Judul Foto</div>
+      <div id="viewer-subtitle" style="font-size:11px;color:#9ca3af">Info</div>
+    </div>
+    <button class="btn-icon" id="viewer-slideshow-btn" onclick="toggleViewerSlideshow()" title="Slideshow"><svg class="icon"><use href="#i-play"/></svg></button>
   </div>
-  <div class="vimg" id="viewerImgWrap">
-    <button class="vnav prev" id="viewerPrev"><svg><use href="#i-left"/></svg></button>
-    <img id="viewerImg" alt="">
-    <button class="vnav next" id="viewerNext"><svg><use href="#i-right"/></svg></button>
-    <div class="counter" id="viewerCounter"></div>
+  <div class="viewer-stage" id="viewer-stage">
+    <button class="viewer-nav-btn viewer-prev" onclick="viewerNav(-1)"><svg class="icon"><use href="#i-left"/></svg></button>
+    <img id="viewer-img" src="" alt="Preview">
+    <button class="viewer-nav-btn viewer-next" onclick="viewerNav(1)"><svg class="icon"><use href="#i-right"/></svg></button>
   </div>
-  <div class="vbottom">
-    <button id="vLike"><svg><use href="#i-heart"/></svg>Suka</button>
-    <button id="vFav"><svg><use href="#i-star"/></svg>Favorit</button>
-    <button id="vPin"><svg><use href="#i-pin"/></svg>Pin</button>
-    <button id="vTag"><svg><use href="#i-tag"/></svg>Tag</button>
-    <button id="vInfo"><svg><use href="#i-info"/></svg>Info</button>
-    <button id="vEdit"><svg><use href="#i-edit"/></svg>Edit</button>
-    <button id="vRotate"><svg><use href="#i-rotate"/></svg>Putar</button>
-    <button id="vShare"><svg><use href="#i-share"/></svg>Bagikan</button>
-    <button id="vCopy"><svg><use href="#i-copy"/></svg>Salin</button>
-    <button id="vDownload"><svg><use href="#i-down"/></svg>Unduh</button>
-    <button id="vDelete"><svg><use href="#i-trash"/></svg>Hapus</button>
+  <div class="viewer-bottom">
+    <div id="viewer-desc" style="font-size:13px;margin-bottom:4px"></div>
+    <div id="viewer-tags" style="font-size:12px;color:var(--accent);margin-bottom:10px"></div>
+    <div class="viewer-tools" id="viewer-tools"></div>
   </div>
 </div>
 
-<div id="modalRoot"></div>
-<div id="toastRoot"></div>
-<input type="file" id="fileInput" multiple accept="image/*" hidden>
-<input type="file" id="avatarInput" accept="image/*" hidden>
+<!-- Member Selection & Management Modal -->
+<div class="modal-backdrop" id="member-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3>Siapa yang pakai HP ini?</h3>
+      <button class="btn-icon" id="close-member-modal-btn" onclick="closeMemberModal()"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Pilih profil anggota keluarga untuk mulai mengunggah dan mencatat aktivitas.</p>
+    <div class="member-grid" id="member-list-grid"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="openMemberForm()">+ Tambah Anggota Keluarga</button>
+  </div>
+</div>
+
+<!-- Member Add/Edit Form Modal -->
+<div class="modal-backdrop" id="member-form-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 id="member-form-title">Tambah Anggota</h3>
+      <button class="btn-icon" onclick="closeMemberForm()"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nama Anggota</label>
+      <input type="text" class="form-input" id="mf-name" placeholder="Contoh: Kakak">
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Emoji</label>
+        <input type="text" class="form-input" id="mf-emoji" value="😊" maxlength="4">
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Warna Profil</label>
+        <input type="color" class="form-input" id="mf-color" value="#7c5cff" style="height:42px;padding:4px">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Foto Profil (Opsional)</label>
+      <input type="file" class="form-input" id="mf-avatar" accept="image/*">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password Anggota (Opsional - kosongkan jika tanpa password)</label>
+      <input type="password" class="form-input" id="mf-pass" placeholder="Masukkan password baru">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-danger" id="mf-delete-btn" style="display:none" onclick="deleteCurrentEditingMember()">Hapus</button>
+      <button class="btn btn-primary" style="flex:1" onclick="saveMemberForm()">Simpan Profil</button>
+    </div>
+  </div>
+</div>
+
+<!-- Generic Dialog Modal (Prompt & Confirm) -->
+<div class="modal-backdrop" id="dialog-modal">
+  <div class="modal-box">
+    <h3 id="dialog-title" style="margin-bottom:8px">Konfirmasi</h3>
+    <p id="dialog-message" style="font-size:13px;color:var(--text-muted);margin-bottom:14px"></p>
+    <div id="dialog-inputs"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+      <button class="btn" id="dialog-cancel">Batal</button>
+      <button class="btn btn-primary" id="dialog-ok">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- App Lock Screen -->
+<div id="lock-screen">
+  <div class="card" style="max-width:340px;width:100%;text-align:center">
+    <div class="empty-icon"><svg class="icon icon-lg"><use href="#i-lock"/></svg></div>
+    <h3 style="margin-bottom:6px">Aplikasi Terkunci</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Masukkan PIN untuk membuka Kirana Family Gallery</p>
+    <input type="password" inputmode="numeric" class="form-input" id="unlock-pin-input" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:8px;margin-bottom:12px">
+    <button class="btn btn-primary" style="width:100%" onclick="unlockApp()">Buka Kunci</button>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
 
 <script>
-const SUPABASE_URL='https://GANTI-DENGAN-PROJECT-URL.supabase.co';
-const SUPABASE_ANON_KEY='GANTI-DENGAN-ANON-PUBLIC-KEY';
+// ============================================================================
+// KONFIGURASI SUPABASE (Ganti dengan Project URL & Anon Public Key Anda)
+// ============================================================================
+const SUPABASE_URL = 'GANTI-DENGAN-PROJECT-URL';
+const SUPABASE_ANON_KEY = 'GANTI-DENGAN-ANON-PUBLIC-KEY';
 
-const $=s=>document.querySelector(s);
-const $$=s=>Array.from(document.querySelectorAll(s));
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-const escapeHtml=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function fmtDate(ts){const d=new Date(ts);return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});}
-function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB';}
-function shuffle(a){const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
-function timeAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return 'baru saja';const m=Math.floor(s/60);if(m<60)return m+' menit lalu';const h=Math.floor(m/60);if(h<24)return h+' jam lalu';const d=Math.floor(h/24);if(d<30)return d+' hari lalu';const mo=Math.floor(d/30);if(mo<12)return mo+' bulan lalu';return Math.floor(mo/12)+' tahun lalu';}
-function vibrate(){if(navigator.vibrate)navigator.vibrate(10);}
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;$('#toastRoot').appendChild(t);setTimeout(()=>t.remove(),2600);}
-function toastUndo(msg,fn){const t=document.createElement('div');t.className='toast clickable';t.textContent=msg;t.onclick=()=>{fn();t.remove();};$('#toastRoot').appendChild(t);setTimeout(()=>t.remove(),5000);}
-function modalConfirm(title,msg){return new Promise(res=>{const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>'+escapeHtml(title)+'</h3><p>'+escapeHtml(msg)+'</p><div class="row"><button class="btn ghost" id="mcNo">Batal</button><button class="btn danger" id="mcYes">Ya</button></div></div>';r.classList.add('open');$('#mcNo').onclick=()=>{r.classList.remove('open');res(false);};$('#mcYes').onclick=()=>{r.classList.remove('open');res(true);};});}
-function modalPrompt(title,label,defaultVal,isPassword){return new Promise(res=>{const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>'+escapeHtml(title)+'</h3><input id="mpIn" type="'+(isPassword?'password':'text')+'" value="'+escapeHtml(defaultVal||'')+'" placeholder="'+escapeHtml(label)+'"><div class="row"><button class="btn ghost" id="mpNo">Batal</button><button class="btn" id="mpYes">Simpan</button></div></div>';r.classList.add('open');const inp=$('#mpIn');inp.focus();$('#mpNo').onclick=()=>{r.classList.remove('open');res(null);};$('#mpYes').onclick=()=>{const v=inp.value;r.classList.remove('open');res(v);};inp.onkeydown=e=>{if(e.key==='Enter')$('#mpYes').click();if(e.key==='Escape')$('#mpNo').click();};});}
-function downloadBlob(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000);}
-function makeThumb(blob){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(blob);img.onload=()=>{try{const max=500;const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(url);if(b)res(b);else rej(new Error('thumbnail gagal'));},'image/jpeg',0.82);}catch(e){URL.revokeObjectURL(url);rej(e);}};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('gambar tidak bisa dibaca'));};img.src=url;});}
-function blobToBase64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(blob);});}
-function base64ToBlob(dataUrl){const parts=dataUrl.split(',');const mime=parts[0].match(/:(.*?);/)[1];const bin=atob(parts[1]);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime});}
-function fileToBlob(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(new Blob([r.result],{type:file.type||'image/jpeg'}));r.onerror=()=>rej(r.error);r.readAsArrayBuffer(file);});}
+// ============================================================================
+// 1. UTILS
+// ============================================================================
+const $ = id => document.getElementById(id);
+const uid = () => Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = ts => ts ? new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+const fmtDateTime = ts => ts ? new Date(ts).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
+const fmtBytes = b => !b ? '0 B' : b < 1024 ? b + ' B' : b < 1048576 ? (b/1024).toFixed(1) + ' KB' : (b/1048576).toFixed(2) + ' MB';
 
-let members=[];let activeMember=null;
-function loadMembers(){try{members=JSON.parse(localStorage.getItem('kfg_members'))||[];}catch(e){members=[];}
-if(!members.length){members=[{id:'m1',name:'Ayah',emoji:'👨',color:'#7c5cff',photo:'',pass:''},{id:'m2',name:'Ibu',emoji:'👩',color:'#ff7ab8',photo:'',pass:''},{id:'m3',name:'Anak',emoji:'🧒',color:'#4fd1c5',photo:'',pass:''}];saveMembers();}
-const aid=localStorage.getItem('kfg_active');activeMember=members.find(m=>m.id===aid)||null;}
-function saveMembers(){localStorage.setItem('kfg_members',JSON.stringify(members));}
-function setActiveMember(id){activeMember=members.find(m=>m.id===id)||null;if(activeMember)localStorage.setItem('kfg_active',id);$('#memberEmoji').textContent=activeMember?(activeMember.photo?'🖼️':activeMember.emoji):'👤';}
-
-const DB_NAME='kfg_db';const DB_VERSION=1;let db=null;
-function openDB(){return new Promise((res,rej)=>{const rq=indexedDB.open(DB_NAME,DB_VERSION);rq.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('photos')){const s=d.createObjectStore('photos',{keyPath:'id'});s.createIndex('uploadedAt','uploadedAt');s.createIndex('albumId','albumId');}if(!d.objectStoreNames.contains('albums')){d.createObjectStore('albums',{keyPath:'id'});}if(!d.objectStoreNames.contains('log')){const s=d.createObjectStore('log',{keyPath:'id'});s.createIndex('ts','ts');}};rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);});}
-function dbAll(store){return new Promise((res,rej)=>{const t=db.transaction(store,'readonly');const rq=t.objectStore(store).getAll();rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);});}
-function dbPut(store,val){return new Promise((res,rej)=>{const t=db.transaction(store,'readwrite');const rq=t.objectStore(store).put(val);rq.onsuccess=()=>res();rq.onerror=()=>rej(rq.error);});}
-function dbDel(store,key){return new Promise((res,rej)=>{const t=db.transaction(store,'readwrite');const rq=t.objectStore(store).delete(key);rq.onsuccess=()=>res();rq.onerror=()=>rej(rq.error);});}
-function dbClear(store){return new Promise((res,rej)=>{const t=db.transaction(store,'readwrite');const rq=t.objectStore(store).clear();rq.onsuccess=()=>res();rq.onerror=()=>rej(rq.error);});}
-
-let sb=null;
-function isCloud(){return sb!==null;}
-function initCloud(){
-  if(!SUPABASE_URL||SUPABASE_URL.includes('GANTI-DENGAN')||!SUPABASE_ANON_KEY||SUPABASE_ANON_KEY.includes('GANTI-DENGAN'))return;
-  try{sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(e){console.warn('Supabase init gagal',e);}
+function showToast(msg, actionLabel = null, actionFn = null, duration = 3800) {
+  const wrap = $('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span>${esc(msg)}</span>`;
+  if (actionLabel && actionFn) {
+    const btn = document.createElement('button');
+    btn.style.cssText = 'color:var(--accent);font-weight:800;text-decoration:underline;';
+    btn.textContent = actionLabel;
+    btn.onclick = () => { actionFn(); el.remove(); };
+    el.appendChild(btn);
+  }
+  wrap.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, duration);
 }
 
-async function addLog(action,extra){extra=extra||{};const m=activeMember||{id:'unknown',name:'Unknown',emoji:'👤'};const entry={id:uid(),ts:Date.now(),action,memberId:m.id,memberName:m.name,memberEmoji:m.emoji,photoId:extra.photoId||null,photoName:extra.photoName||null,albumName:extra.albumName||null,detail:extra.detail||null};
-try{await dbPut('log',entry);}catch(e){}
-if(isCloud()){try{await sb.from('logs').insert({id:entry.id,ts:new Date(entry.ts).toISOString(),action,member_id:m.id,member_name:m.name,member_emoji:m.emoji,photo_id:entry.photoId,photo_name:entry.photoName,album_name:entry.albumName,detail:entry.detail});}catch(e){}}}
-async function listLogs(){if(isCloud()){try{const {data,error}=await sb.from('logs').select('*').order('ts',{ascending:false}).limit(200);if(!error&&data)return data.map(r=>({id:r.id,ts:new Date(r.ts).getTime(),action:r.action,memberId:r.member_id,memberName:r.member_name,memberEmoji:r.member_emoji,photoId:r.photo_id,photoName:r.photo_name,albumName:r.album_name,detail:r.detail}));}catch(e){}}
-const all=await dbAll('log');return all.sort((a,b)=>b.ts-a.ts);}
-async function clearLogs(){await dbClear('log');if(isCloud()){try{await sb.from('logs').delete().neq('id','');}catch(e){}}}
+function showDialog({ title, message = '', fields = [], okText = 'Simpan', danger = false }) {
+  return new Promise(resolve => {
+    $('dialog-title').textContent = title;
+    $('dialog-message').textContent = message;
+    const box = $('dialog-inputs');
+    box.innerHTML = '';
+    fields.forEach(f => {
+      const g = document.createElement('div');
+      g.className = 'form-group';
+      if (f.label) g.innerHTML += `<label class="form-label">${esc(f.label)}</label>`;
+      if (f.type === 'select') {
+        const sel = document.createElement('select');
+        sel.className = 'form-input';
+        sel.id = 'dlg-' + f.name;
+        (f.options || []).forEach(o => {
+          const opt = document.createElement('option');
+          opt.value = o.value;
+          opt.textContent = o.label;
+          if (o.value === f.value) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        g.appendChild(sel);
+      } else {
+        const inp = document.createElement('input');
+        inp.className = 'form-input';
+        inp.type = f.type || 'text';
+        inp.id = 'dlg-' + f.name;
+        inp.value = f.value || '';
+        inp.placeholder = f.placeholder || '';
+        g.appendChild(inp);
+      }
+      box.appendChild(g);
+    });
+    const okBtn = $('dialog-ok');
+    okBtn.textContent = okText;
+    okBtn.className = danger ? 'btn btn-danger' : 'btn btn-primary';
+    $('dialog-modal').classList.add('active');
+    if (fields[0]) setTimeout(() => $('dlg-' + fields[0].name)?.focus(), 50);
 
-const urlCache=new Map();
-function getPhotoURL(p){if(p.publicUrl)return p.publicUrl;if(!urlCache.has('full_'+p.id))urlCache.set('full_'+p.id,URL.createObjectURL(p.blob));return urlCache.get('full_'+p.id);}
-function getThumbURL(p){if(p.publicUrl)return p.publicUrl;if(!urlCache.has('thumb_'+p.id))urlCache.set('thumb_'+p.id,URL.createObjectURL(p.thumb||p.blob));return urlCache.get('thumb_'+p.id);}
-function revokeURLs(id){const f=urlCache.get('full_'+id);if(f){URL.revokeObjectURL(f);urlCache.delete('full_'+id);}const t=urlCache.get('thumb_'+id);if(t){URL.revokeObjectURL(t);urlCache.delete('thumb_'+id);}}
+    const cleanup = val => {
+      $('dialog-modal').classList.remove('active');
+      okBtn.onclick = null;
+      $('dialog-cancel').onclick = null;
+      resolve(val);
+    };
+    $('dialog-cancel').onclick = () => cleanup(null);
+    okBtn.onclick = () => {
+      if (!fields.length) return cleanup(true);
+      const res = {};
+      fields.forEach(f => { res[f.name] = $('dlg-' + f.name)?.value ?? ''; });
+      cleanup(res);
+    };
+  });
+}
 
-const state={photos:[],albums:[],view:'gallery',selected:new Set(),selectMode:false,filters:{q:'',sort:'newest',from:'',to:'',tag:'',member:''},albumId:null,viewerList:[],viewerIndex:0,slideshowTimer:null,slideshowPlaying:false,albumSort:'date'};
-let listLogsCache=[];let lastDeleted=null;
+function createThumbnail(fileOrBlob, maxDim = 500, quality = 0.82) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(fileOrBlob);
+    img.onload = () => {
+      let { width: w, height: h } = img;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(blob => resolve(blob || fileOrBlob), 'image/jpeg', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(fileOrBlob); };
+    img.src = url;
+  });
+}
 
-function activePhotos(){return state.photos.filter(p=>!p.deleted&&!p.archived);}
-function getAlbum(id){return state.albums.find(a=>a.id===id)||null;}
-function getPhoto(id){return state.photos.find(p=>p.id===id)||null;}
+function blobToDataURL(blob) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.readAsDataURL(blob);
+  });
+}
 
-function applyAccent(color){document.documentElement.style.setProperty('--accent',color);localStorage.setItem('kfg_accent',color);}
-function applyFont(size){document.body.style.fontSize=size+'px';localStorage.setItem('kfg_font',size);}
-function applyDensity(d){document.documentElement.style.setProperty('--gap',d==='compact'?'4px':'8px');localStorage.setItem('kfg_density',d);}
-function applyTheme(t){if(t==='auto'){const dark=window.matchMedia('(prefers-color-scheme: dark)').matches;document.body.dataset.theme=dark?'dark':'light';}else document.body.dataset.theme=t;localStorage.setItem('kfg_theme',t);}
-function setView(v){state.view=v;state.selectMode=false;state.selected.clear();updateBulkbar();$$('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===v));const titles={feed:'Feed',gallery:'Galeri',albums:'Album',favorites:'Favorit',memories:'Memories',archive:'Arsip',trash:'Tempat Sampah',log:'Log Aktivitas',stats:'Statistik',settings:'Pengaturan'};$('#topTitle').textContent=titles[v]||'KIRANA FAMILY GALLERY';render();closeSheet();}
-function render(){const v=state.view;const m=$('#main');m.innerHTML='';$('#topCount').textContent=activePhotos().length+' foto';
-if(v==='feed')renderFeed(m);else if(v==='gallery')renderGallery(m);else if(v==='albums')renderAlbums(m);else if(v==='favorites')renderFavorites(m);else if(v==='memories')renderMemories(m);else if(v==='archive')renderArchive(m);else if(v==='trash')renderTrash(m);else if(v==='log')renderLog(m);else if(v==='stats')renderStats(m);else if(v==='settings')renderSettings(m);}
+// ============================================================================
+// 2. MEMBERS (Profil Anggota Keluarga)
+// ============================================================================
+const DEFAULT_MEMBERS = [
+  { id: 'mem_ayah', name: 'Ayah', emoji: '👨', color: '#3b82f6', avatar: '', password: '' },
+  { id: 'mem_ibu', name: 'Ibu', emoji: '👩', color: '#ec4899', avatar: '', password: '' },
+  { id: 'mem_anak', name: 'Anak', emoji: '🧒', color: '#10b981', avatar: '', password: '' }
+];
 
-async function deletePhoto(p){p.deleted=true;p.deletedAt=Date.now();await dbPut('photos',p);await addLog('delete',{photoId:p.id,photoName:p.name});lastDeleted=p;vibrate();
-if(isCloud()){try{await sb.from('photos').update({deleted:true,deleted_at:new Date().toISOString()}).eq('id',p.id);}catch(e){}}
-toastUndo('Dipindah ke Tempat Sampah — ketuk untuk urungkan',async()=>{p.deleted=false;p.deletedAt=null;await dbPut('photos',p);await addLog('restore',{photoId:p.id,photoName:p.name});
-if(isCloud()){try{await sb.from('photos').update({deleted:false,deleted_at:null}).eq('id',p.id);}catch(e){}}
-toast('Dipulihkan');render();});}
+let editingMemberId = null;
 
-function waitForDB(){return new Promise(res=>{if(db)return res();const t=setInterval(()=>{if(db){clearInterval(t);res();}},50);});}
+function renderActiveMemberUI() {
+  const m = state.members.find(x => x.id === state.currentMemberId) || state.members[0];
+  if (!m) return;
+  $('active-member-name').textContent = m.name;
+  const av = $('active-member-avatar');
+  av.style.background = m.color || 'var(--accent)';
+  av.innerHTML = m.avatar ? `<img src="${m.avatar}" alt="">` : esc(m.emoji || '😊');
+}
 
-$('#uploadBtn').onclick=()=>$('#fileInput').click();
-$('#fileInput').onchange=async e=>{const files=Array.from(e.target.files||[]);if(!files.length)return;e.target.value='';
-await waitForDB();
-const total=files.length;let done=0;let fail=0;
-const bar=document.createElement('div');bar.className='card';bar.innerHTML='<div class="upLabel" style="font-size:13px;margin-bottom:6px">Mengunggah 0/'+total+'</div><div class="progress"><div class="upBar" style="width:0%"></div></div>';
-$('#main').prepend(bar);const prog=bar.querySelector('.upBar');const label=bar.querySelector('.upLabel');
-for(const f of files){try{if(!f.type.startsWith('image/')){fail++;continue;}
-const blob=await fileToBlob(f);
-let thumb;try{thumb=await makeThumb(blob);}catch(err){thumb=blob;}
-const p={id:uid(),name:f.name,desc:'',tags:[],blob,thumb,size:blob.size,type:blob.type||f.type,uploadedAt:Date.now(),albumId:null,fav:false,likes:0,pinned:false,archived:false,deleted:false,deletedAt:null,rot:0,memberId:activeMember?activeMember.id:'unknown',memberName:activeMember?activeMember.name:'Unknown',memberEmoji:activeMember?activeMember.emoji:'👤',viewedAt:null,publicUrl:null,storagePath:null};
-await dbPut('photos',p);state.photos.push(p);await addLog('upload',{photoId:p.id,photoName:p.name});
-if(isCloud()){try{const path='photos/'+p.id+'_'+f.name.replace(/[^\w.\-]/g,'_');
-const {error:upErr}=await sb.storage.from('photos').upload(path,blob,{contentType:blob.type});
-if(!upErr){const {data}=sb.storage.from('photos').getPublicUrl(path);p.publicUrl=data.publicUrl;p.storagePath=path;
-await dbPut('photos',p);
-await sb.from('photos').insert({id:p.id,name:p.name,desc:'',tags:[],size:p.size,type:p.type,uploaded_at:new Date(p.uploadedAt).toISOString(),album_id:null,fav:false,likes:0,pinned:false,archived:false,deleted:false,rot:0,member_id:p.memberId,member_name:p.memberName,member_emoji:p.memberEmoji,storage_path:path,public_url:p.publicUrl});}
-else{toast('Cloud upload gagal: '+upErr.message);}}
-catch(err){toast('Cloud sync gagal: '+err.message);}}}
-catch(err){fail++;toast('Gagal upload '+f.name+': '+(err&&err.message?err.message:'error'));}
-done++;label.textContent='Mengunggah '+done+'/'+total;prog.style.width=(done/total*100)+'%';}
-setTimeout(()=>bar.remove(),600);
-if(fail===0)toast(total+' foto berhasil diunggah');
-else toast((total-fail)+' berhasil, '+fail+' gagal');
-vibrate();render();};
+function openMemberModal() {
+  renderMemberCards();
+  $('close-member-modal-btn').style.display = state.currentMemberId ? 'flex' : 'none';
+  $('member-modal').classList.add('active');
+}
 
-$('#fsBtn').onclick=async()=>{
-  const el=document.documentElement;
-  if(!document.fullscreenElement){
-    try{await el.requestFullscreen();if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('portrait').catch(()=>{});toast('Mode fullscreen aktif');}
-    catch(e){toast('Fullscreen tidak didukung browser ini');}
-  }else{try{await document.exitFullscreen();toast('Fullscreen dimatikan');}catch(e){}}
+function closeMemberModal() {
+  if (!state.currentMemberId) return showToast('Pilih salah satu anggota keluarga terlebih dahulu.');
+  $('member-modal').classList.remove('active');
+}
+
+function renderMemberCards() {
+  const grid = $('member-list-grid');
+  grid.innerHTML = state.members.map(m => `
+    <div class="member-card" onclick="selectMember('${m.id}')">
+      <button class="member-edit-btn" title="Edit Profil" onclick="event.stopPropagation();requestEditMember('${m.id}')">
+        <svg class="icon icon-sm"><use href="#i-edit"/></svg>
+      </button>
+      <div class="member-card-avatar" style="background:${esc(m.color || '#7c5cff')}">
+        ${m.avatar ? `<img src="${m.avatar}" alt="">` : esc(m.emoji || '😊')}
+      </div>
+      <div style="font-weight:700;font-size:14px">${esc(m.name)}</div>
+      <div style="font-size:11px;color:var(--text-muted)">${m.password ? '🔒 Terkunci' : 'Tanpa Password'}</div>
+    </div>
+  `).join('');
+}
+
+async function selectMember(id) {
+  const m = state.members.find(x => x.id === id);
+  if (!m) return;
+  if (m.password) {
+    const res = await showDialog({
+      title: `Password ${m.name}`,
+      message: 'Masukkan password anggota untuk menggunakan profil ini.',
+      fields: [{ name: 'pass', type: 'password', placeholder: 'Password...' }],
+      okText: 'Masuk'
+    });
+    if (!res) return;
+    if (res.pass !== m.password) return showToast('Password salah!');
+  }
+  state.currentMemberId = m.id;
+  localStorage.setItem('kfg_member_id', m.id);
+  renderActiveMemberUI();
+  $('member-modal').classList.remove('active');
+  showToast(`Halo, ${m.name}!`);
+}
+
+async function requestEditMember(id) {
+  const m = state.members.find(x => x.id === id);
+  if (!m) return;
+  // WAJIB: Edit profil wajib password dulu jika anggota punya password
+  if (m.password) {
+    const res = await showDialog({
+      title: `Verifikasi ${m.name}`,
+      message: 'Masukkan password anggota sebelum mengedit profil ini.',
+      fields: [{ name: 'pass', type: 'password', placeholder: 'Password saat ini...' }],
+      okText: 'Verifikasi'
+    });
+    if (!res) return;
+    if (res.pass !== m.password) return showToast('Password salah! Tidak dapat mengedit profil.');
+  }
+  openMemberForm(m);
+}
+
+function openMemberForm(member = null) {
+  editingMemberId = member ? member.id : null;
+  $('member-form-title').textContent = member ? 'Edit Anggota' : 'Tambah Anggota';
+  $('mf-name').value = member ? member.name : '';
+  $('mf-emoji').value = member ? member.emoji : '😊';
+  $('mf-color').value = member ? member.color : '#7c5cff';
+  $('mf-pass').value = member ? (member.password || '') : '';
+  $('mf-avatar').value = '';
+  $('mf-delete-btn').style.display = (member && state.members.length > 1) ? 'inline-flex' : 'none';
+  $('member-form-modal').classList.add('active');
+}
+
+function closeMemberForm() {
+  $('member-form-modal').classList.remove('active');
+}
+
+async function saveMemberForm() {
+  const name = $('mf-name').value.trim();
+  if (!name) return showToast('Nama anggota wajib diisi.');
+  const emoji = $('mf-emoji').value.trim() || '😊';
+  const color = $('mf-color').value || '#7c5cff';
+  const password = $('mf-pass').value;
+  const file = $('mf-avatar').files[0];
+
+  let avatar = editingMemberId ? (state.members.find(x => x.id === editingMemberId)?.avatar || '') : '';
+  if (file) {
+    const thumb = await createThumbnail(file, 200, 0.8);
+    avatar = await blobToDataURL(thumb);
+  }
+
+  const record = {
+    id: editingMemberId || ('mem_' + uid()),
+    name, emoji, color, avatar, password
+  };
+
+  await dbPut('members', record);
+  const idx = state.members.findIndex(x => x.id === record.id);
+  if (idx >= 0) state.members[idx] = record;
+  else state.members.push(record);
+
+  await pushMemberSupabase(record);
+  closeMemberForm();
+  renderMemberCards();
+  renderActiveMemberUI();
+  updateLogMemberFilter();
+  showToast('Profil anggota disimpan.');
+}
+
+async function deleteCurrentEditingMember() {
+  if (!editingMemberId || state.members.length <= 1) return;
+  const ok = await showDialog({ title: 'Hapus Anggota?', message: 'Profil anggota ini akan dihapus.', okText: 'Hapus', danger: true });
+  if (!ok) return;
+  await dbDelete('members', editingMemberId);
+  await deleteMemberSupabase(editingMemberId);
+  state.members = state.members.filter(x => x.id !== editingMemberId);
+  if (state.currentMemberId === editingMemberId) {
+    state.currentMemberId = state.members[0]?.id || '';
+    localStorage.setItem('kfg_member_id', state.currentMemberId);
+  }
+  closeMemberForm();
+  renderMemberCards();
+  renderActiveMemberUI();
+  showToast('Anggota dihapus.');
+}
+
+// ============================================================================
+// 3. DB WRAPPER (IndexedDB)
+// ============================================================================
+const DB_NAME = 'KiranaFamilyGalleryDB';
+const DB_VER = 1;
+let idb = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('blobs')) db.createObjectStore('blobs', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('albums')) db.createObjectStore('albums', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('members')) db.createObjectStore('members', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('logs')) db.createObjectStore('logs', { keyPath: 'id' });
+    };
+    req.onsuccess = () => { idb = req.result; resolve(idb); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbAll(store) {
+  return new Promise(res => {
+    const tx = idb.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result || []);
+    req.onerror = () => res([]);
+  });
+}
+
+function dbGet(store, key) {
+  return new Promise(res => {
+    const tx = idb.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => res(req.result || null);
+    req.onerror = () => res(null);
+  });
+}
+
+function dbPut(store, val) {
+  return new Promise(res => {
+    const tx = idb.transaction(store, 'readwrite');
+    tx.objectStore(store).put(val);
+    tx.oncomplete = () => res(true);
+    tx.onerror = () => res(false);
+  });
+}
+
+function dbDelete(store, key) {
+  return new Promise(res => {
+    const tx = idb.transaction(store, 'readwrite');
+    tx.objectStore(store).delete(key);
+    tx.oncomplete = () => res(true);
+    tx.onerror = () => res(false);
+  });
+}
+
+// ============================================================================
+// 4. LOG HELPER
+// ============================================================================
+async function addLog(action, detail = '') {
+  const m = state.members.find(x => x.id === state.currentMemberId) || { id: 'unknown', name: 'Keluarga', emoji: '👨‍👩‍👧' };
+  const entry = {
+    id: 'log_' + uid(),
+    action,
+    detail,
+    member_id: m.id,
+    member_name: m.name,
+    member_emoji: m.emoji,
+    created_at: Date.now()
+  };
+  await dbPut('logs', entry);
+  state.logs.unshift(entry);
+  if (state.view === 'logs') renderLogs();
+  pushLogSupabase(entry);
+}
+
+// ============================================================================
+// 5. URL CACHE (Object URL & Cloud Public URL Resolver)
+// ============================================================================
+const urlCache = new Map();
+
+async function getPhotoSrc(photo, preferThumb = true) {
+  const key = photo.id + (preferThumb ? '_t' : '_f');
+  if (urlCache.has(key)) return urlCache.get(key);
+
+  const blobRec = await dbGet('blobs', photo.id);
+  if (blobRec) {
+    const b = preferThumb && blobRec.thumb ? blobRec.thumb : blobRec.full;
+    if (b) {
+      const u = URL.createObjectURL(b);
+      urlCache.set(key, u);
+      return u;
+    }
+  }
+  if (photo.public_url) {
+    urlCache.set(key, photo.public_url);
+    return photo.public_url;
+  }
+  return '';
+}
+
+function revokePhotoUrl(photoId) {
+  ['_t', '_f'].forEach(s => {
+    const u = urlCache.get(photoId + s);
+    if (u && u.startsWith('blob:')) URL.revokeObjectURL(u);
+    urlCache.delete(photoId + s);
+  });
+}
+
+// ============================================================================
+// 6. STATE
+// ============================================================================
+const state = {
+  view: 'gallery',
+  members: [],
+  currentMemberId: localStorage.getItem('kfg_member_id') || '',
+  photos: [],
+  albums: [],
+  logs: [],
+  activeAlbumId: null,
+  selecting: false,
+  selectedIds: new Set(),
+  privacyMode: false,
+  viewerList: [],
+  viewerIndex: 0,
+  viewerZoom: 1,
+  slideshowTimer: null,
+  supabase: null,
+  online: false
 };
-document.addEventListener('fullscreenchange',()=>{const on=!!document.fullscreenElement;$('#fsBtn').style.background=on?'var(--accent)':'';$('#fsBtn').style.color=on?'#fff':'';});
 
-function renderFeed(m){const photos=shuffle(activePhotos());if(!photos.length){m.innerHTML='<div class="empty"><div class="big">🎬</div><p>Belum ada foto. Upload foto pertamamu!</p></div>';return;}
-m.innerHTML='<div id="feed">'+photos.map((p,i)=>'<div class="feeditem" data-idx="'+i+'"><img src="'+getPhotoURL(p)+'" alt="'+escapeHtml(p.name)+'"><div class="overlay"><div style="font-size:14px;font-weight:600">'+escapeHtml(p.name)+'</div><div style="font-size:11px;opacity:.7">'+escapeHtml(p.memberEmoji+' '+p.memberName)+' · '+timeAgo(p.uploadedAt)+'</div></div><div class="actions"><button class="act-like '+(p.likes>0?'on':'')+'" data-id="'+p.id+'"><svg><use href="#i-heart"/></svg>'+p.likes+'</button><button class="act-fav '+(p.fav?'on':'')+'" data-id="'+p.id+'"><svg><use href="#i-star"/></svg></button><button class="act-info" data-id="'+p.id+'"><svg><use href="#i-info"/></svg></button><button class="act-full" data-id="'+p.id+'"><svg><use href="#i-full"/></svg></button></div></div>').join('')+'</div>';
-m.querySelectorAll('.act-like').forEach(b=>b.onclick=async()=>{const p=getPhoto(b.dataset.id);p.likes=p.likes>0?0:1;await dbPut('photos',p);await addLog(p.likes>0?'like':'unlike',{photoId:p.id,photoName:p.name});vibrate();if(isCloud()){try{await sb.from('photos').update({likes:p.likes}).eq('id',p.id);}catch(e){}}toast(p.likes>0?'Disukai':'Batal suka');render();});
-m.querySelectorAll('.act-fav').forEach(b=>b.onclick=async()=>{const p=getPhoto(b.dataset.id);p.fav=!p.fav;await dbPut('photos',p);await addLog(p.fav?'favorite':'unfavorite',{photoId:p.id,photoName:p.name});vibrate();if(isCloud()){try{await sb.from('photos').update({fav:p.fav}).eq('id',p.id);}catch(e){}}toast(p.fav?'Ditambahkan ke favorit':'Dihapus dari favorit');render();});
-m.querySelectorAll('.act-info').forEach(b=>b.onclick=()=>openViewer(b.dataset.id,photos));
-m.querySelectorAll('.act-full').forEach(b=>b.onclick=()=>{const el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen();});}
+// ============================================================================
+// 7. NAV & ROUTING
+// ============================================================================
+const VIEW_TITLES = {
+  gallery: 'Galeri Keluarga',
+  feed: 'Feed Layar Penuh',
+  albums: 'Album Foto',
+  favorites: 'Foto Favorit',
+  memories: 'Kenangan',
+  archive: 'Arsip',
+  trash: 'Sampah',
+  stats: 'Statistik Keluarga',
+  logs: 'Log Aktivitas',
+  settings: 'Pengaturan'
+};
 
-function filteredPhotos(){let list=activePhotos();const f=state.filters;if(f.q){const q=f.q.toLowerCase();list=list.filter(p=>p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q)||(p.tags||[]).some(t=>t.toLowerCase().includes(q)));}
-if(f.tag)list=list.filter(p=>(p.tags||[]).includes(f.tag));
-if(f.member)list=list.filter(p=>p.memberId===f.member);
-if(f.from)list=list.filter(p=>p.uploadedAt>=new Date(f.from).getTime());
-if(f.to)list=list.filter(p=>p.uploadedAt<=new Date(f.to).getTime()+86400000);
-if(f.sort==='newest')list.sort((a,b)=>b.uploadedAt-a.uploadedAt);
-else if(f.sort==='oldest')list.sort((a,b)=>a.uploadedAt-b.uploadedAt);
-else if(f.sort==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
-else if(f.sort==='random')list=shuffle(list);
-return list;}
-
-function renderGallery(m){const list=filteredPhotos();const cols=localStorage.getItem('kfg_grid')||'3';
-const pinned=list.filter(p=>p.pinned);const normal=list.filter(p=>!p.pinned);
-const allTags=[...new Set(state.photos.flatMap(p=>p.tags||[]))];
-const allMembers=members;
-m.innerHTML='<div class="toolbar"><input id="gSearch" placeholder="Cari nama, deskripsi, tag..." value="'+escapeHtml(state.filters.q)+'" style="flex:1;min-width:120px"><select id="gSort"><option value="newest">Terbaru</option><option value="oldest">Terlama</option><option value="random">Acak</option><option value="name">Nama</option></select><select id="gTag"><option value="">Semua tag</option>'+allTags.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+'</select><select id="gMember"><option value="">Semua uploader</option>'+allMembers.map(mm=>'<option value="'+mm.id+'">'+escapeHtml(mm.emoji+' '+mm.name)+'</option>').join('')+'</select><input type="date" id="gFrom" value="'+state.filters.from+'"><input type="date" id="gTo" value="'+state.filters.to+'"><button class="btn ghost" id="gSelect">'+(state.selectMode?'Batal':'Pilih')+'</button></div>'+
-(pinned.length?'<div class="card"><div style="font-weight:700;font-size:13px;margin-bottom:8px">📌 Disematkan</div><div class="grid" data-cols="'+cols+'">'+pinned.map(p=>'<div class="photocard" data-id="'+p.id+'"><img loading="lazy" src="'+getThumbURL(p)+'"><div class="label">'+escapeHtml(p.name)+'</div></div>').join('')+'</div></div>':'')+
-(normal.length?'<div class="grid" data-cols="'+cols+'">'+normal.map(p=>'<div class="photocard '+(state.selected.has(p.id)?'selected':'')+'" data-id="'+p.id+'">'+(state.selectMode?'<div class="chk">'+(state.selected.has(p.id)?'✓':'')+'</div>':'')+(p.fav?'<div class="fav">❤️</div>':'')+(p.pinned?'<div class="pin">📌</div>':'')+'<img loading="lazy" src="'+getThumbURL(p)+'" alt="'+escapeHtml(p.name)+'"><div class="label">'+escapeHtml(p.name)+'</div></div>').join('')+'</div>':(pinned.length?'':'<div class="empty"><div class="big">🖼️</div><p>Belum ada foto yang cocok.</p></div>'));
-$('#gSearch').oninput=e=>{state.filters.q=e.target.value;render();};
-$('#gSort').value=state.filters.sort;$('#gSort').onchange=e=>{state.filters.sort=e.target.value;render();};
-$('#gTag').value=state.filters.tag;$('#gTag').onchange=e=>{state.filters.tag=e.target.value;render();};
-$('#gMember').value=state.filters.member;$('#gMember').onchange=e=>{state.filters.member=e.target.value;render();};
-$('#gFrom').onchange=e=>{state.filters.from=e.target.value;render();};
-$('#gTo').onchange=e=>{state.filters.to=e.target.value;render();};
-$('#gSelect').onclick=()=>{state.selectMode=!state.selectMode;state.selected.clear();updateBulkbar();render();};
-m.querySelectorAll('.photocard').forEach(c=>c.onclick=()=>{const id=c.dataset.id;if(state.selectMode){if(state.selected.has(id))state.selected.delete(id);else state.selected.add(id);updateBulkbar();render();}else openViewer(id,filteredPhotos());});}
-
-function updateBulkbar(){const bar=$('#bulkbar');if(state.selectMode&&state.selected.size>0){bar.classList.add('show');bar.innerHTML='<button id="bFav">Favorit</button><button id="bUnfav">Batal Favorit</button><button id="bPin">Pin</button><button id="bArchive">Arsipkan</button><button id="bMove">Pindah Album</button><button id="bDown">Unduh</button><button id="bDel">Hapus</button>';
-$('#bFav').onclick=async()=>{for(const id of state.selected){const p=getPhoto(id);if(p){p.fav=true;await dbPut('photos',p);await addLog('favorite',{photoId:id,photoName:p.name});if(isCloud()){try{await sb.from('photos').update({fav:true}).eq('id',id);}catch(e){}}}}toast('Ditambahkan ke favorit');state.selected.clear();updateBulkbar();render();};
-$('#bUnfav').onclick=async()=>{for(const id of state.selected){const p=getPhoto(id);if(p){p.fav=false;await dbPut('photos',p);await addLog('unfavorite',{photoId:id,photoName:p.name});if(isCloud()){try{await sb.from('photos').update({fav:false}).eq('id',id);}catch(e){}}}}toast('Dihapus dari favorit');state.selected.clear();updateBulkbar();render();};
-$('#bPin').onclick=async()=>{for(const id of state.selected){const p=getPhoto(id);if(p){p.pinned=true;await dbPut('photos',p);if(isCloud()){try{await sb.from('photos').update({pinned:true}).eq('id',id);}catch(e){}}}}toast('Foto disematkan');state.selected.clear();updateBulkbar();render();};
-$('#bArchive').onclick=async()=>{for(const id of state.selected){const p=getPhoto(id);if(p){p.archived=true;await dbPut('photos',p);await addLog('archive',{photoId:id,photoName:p.name});if(isCloud()){try{await sb.from('photos').update({archived:true}).eq('id',id);}catch(e){}}}}toast('Foto diarsipkan');state.selected.clear();updateBulkbar();render();};
-$('#bMove').onclick=async()=>{const name=await modalPrompt('Pindah ke album','Nama album','');if(!name)return;let alb=state.albums.find(a=>a.name.toLowerCase()===name.toLowerCase());if(!alb){alb={id:uid(),name,createdAt:Date.now(),memberId:activeMember.id,memberName:activeMember.name,memberEmoji:activeMember.emoji};state.albums.push(alb);await dbPut('albums',alb);await addLog('album-create',{albumName:name});if(isCloud()){try{await sb.from('albums').insert({id:alb.id,name:alb.name,created_at:new Date().toISOString(),member_id:alb.memberId,member_name:alb.memberName,member_emoji:alb.memberEmoji});}catch(e){}}}
-for(const id of state.selected){const p=getPhoto(id);if(p){p.albumId=alb.id;await dbPut('photos',p);await addLog('move-album',{photoId:id,photoName:p.name,albumName:name});if(isCloud()){try{await sb.from('photos').update({album_id:alb.id}).eq('id',id);}catch(e){}}}}toast('Dipindah ke '+name);state.selected.clear();updateBulkbar();render();};
-$('#bDown').onclick=()=>{for(const id of state.selected){const p=getPhoto(id);if(p){if(p.blob)downloadBlob(p.blob,p.name);else if(p.publicUrl)window.open(p.publicUrl,'_blank');}}toast('Mengunduh '+state.selected.size+' foto');};
-$('#bDel').onclick=async()=>{const ok=await modalConfirm('Hapus foto?','Foto akan dipindah ke Tempat Sampah.');if(!ok)return;for(const id of state.selected){const p=getPhoto(id);if(p)await deletePhoto(p);}state.selected.clear();updateBulkbar();render();};}
-else bar.classList.remove('show');}
-
-function renderAlbums(m){if(state.albumId){const alb=getAlbum(state.albumId);if(!alb){state.albumId=null;render();return;}
-const photos=activePhotos().filter(p=>p.albumId===alb.id);
-m.innerHTML='<button class="btn ghost" id="backAlbums" style="margin-bottom:12px">← Kembali</button><div class="card"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-weight:700;font-size:16px">'+escapeHtml(alb.name)+'</div><div style="font-size:11px;color:var(--muted)">'+photos.length+' foto · oleh '+escapeHtml(alb.memberEmoji+' '+alb.memberName)+'</div></div><button class="iconbtn" id="albRename"><svg><use href="#i-edit"/></svg></button><button class="iconbtn" id="albDelete"><svg><use href="#i-trash"/></svg></button></div></div>'+(photos.length?'<div class="grid" data-cols="3">'+photos.map(p=>'<div class="photocard" data-id="'+p.id+'"><img loading="lazy" src="'+getThumbURL(p)+'"><div class="label">'+escapeHtml(p.name)+'</div></div>').join('')+'</div>':'<div class="empty"><div class="big">📁</div><p>Album kosong.</p></div>');
-$('#backAlbums').onclick=()=>{state.albumId=null;render();};
-$('#albRename').onclick=async()=>{const v=await modalPrompt('Rename album','Nama album',alb.name);if(!v)return;alb.name=v;await dbPut('albums',alb);await addLog('album-rename',{albumName:v});if(isCloud()){try{await sb.from('albums').update({name:v}).eq('id',alb.id);}catch(e){}}toast('Album diubah');render();};
-$('#albDelete').onclick=async()=>{const ok=await modalConfirm('Hapus album?','Foto di dalamnya tidak akan dihapus.');if(!ok)return;await dbDel('albums',alb.id);state.albums=state.albums.filter(a=>a.id!==alb.id);for(const p of state.photos){if(p.albumId===alb.id){p.albumId=null;await dbPut('photos',p);if(isCloud()){try{await sb.from('photos').update({album_id:null}).eq('id',p.id);}catch(e){}}}}await addLog('album-delete',{albumName:alb.name});if(isCloud()){try{await sb.from('albums').delete().eq('id',alb.id);}catch(e){}}state.albumId=null;toast('Album dihapus');render();};
-m.querySelectorAll('.photocard').forEach(c=>c.onclick=()=>openViewer(c.dataset.id,photos));return;}
-let albums=state.albums.slice();
-if(state.albumSort==='name')albums.sort((a,b)=>a.name.localeCompare(b.name));
-else if(state.albumSort==='count')albums.sort((a,b)=>activePhotos().filter(p=>p.albumId===b.id).length-activePhotos().filter(p=>p.albumId===a.id).length);
-else albums.sort((a,b)=>b.createdAt-a.createdAt);
-m.innerHTML='<div class="toolbar"><button class="btn" id="newAlbum"><svg><use href="#i-plus"/></svg> Buat Album</button><select id="albSort"><option value="date">Terbaru</option><option value="name">Nama</option><option value="count">Jumlah foto</option></select></div>'+(albums.length?albums.map(a=>{const ph=activePhotos().filter(p=>p.albumId===a.id);const cover=ph[0];
-return '<div class="albumcard" data-id="'+a.id+'">'+(cover?'<img src="'+getThumbURL(cover)+'">':'<div style="font-size:24px">📁</div>')+'<div><div style="font-weight:600;font-size:14px">'+escapeHtml(a.name)+'</div><div style="font-size:11px;color:var(--muted)">'+escapeHtml(a.memberEmoji+' '+a.memberName)+'</div></div><div class="cnt">'+ph.length+' foto</div></div>';}).join(''):'<div class="empty"><div class="big">📁</div><p>Belum ada album. Buat album pertamamu!</p></div>');
-$('#albSort').value=state.albumSort;$('#albSort').onchange=e=>{state.albumSort=e.target.value;render();};
-$('#newAlbum').onclick=async()=>{const v=await modalPrompt('Buat album','Nama album','');if(!v)return;const alb={id:uid(),name:v,createdAt:Date.now(),memberId:activeMember.id,memberName:activeMember.name,memberEmoji:activeMember.emoji};state.albums.push(alb);await dbPut('albums',alb);await addLog('album-create',{albumName:v});if(isCloud()){try{await sb.from('albums').insert({id:alb.id,name:alb.name,created_at:new Date().toISOString(),member_id:alb.memberId,member_name:alb.memberName,member_emoji:alb.memberEmoji});}catch(e){}}toast('Album dibuat');render();};
-m.querySelectorAll('.albumcard').forEach(c=>c.onclick=()=>{state.albumId=c.dataset.id;render();});}
-
-function renderFavorites(m){let list=activePhotos().filter(p=>p.fav);const f=state.filters;if(f.sort==='newest')list.sort((a,b)=>b.uploadedAt-a.uploadedAt);else if(f.sort==='oldest')list.sort((a,b)=>a.uploadedAt-b.uploadedAt);else if(f.sort==='random')list=shuffle(list);else if(f.sort==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
-m.innerHTML='<div class="toolbar"><select id="fSort"><option value="newest">Terbaru</option><option value="oldest">Terlama</option><option value="random">Acak</option><option value="name">Nama</option></select><button class="btn" id="slideBtn"><svg><use href="#i-play"/></svg> Slideshow</button></div>'+(list.length?'<div class="grid" data-cols="3">'+list.map(p=>'<div class="photocard" data-id="'+p.id+'"><img loading="lazy" src="'+getThumbURL(p)+'"><div class="label">'+escapeHtml(p.name)+'</div></div>').join('')+'</div>':'<div class="empty"><div class="big">⭐</div><p>Belum ada foto favorit.</p></div>');
-$('#fSort').value=state.filters.sort;$('#fSort').onchange=e=>{state.filters.sort=e.target.value;render();};
-$('#slideBtn').onclick=()=>startSlideshow(list);
-m.querySelectorAll('.photocard').forEach(c=>c.onclick=()=>openViewer(c.dataset.id,list));}
-
-function renderMemories(m){const now=new Date();const today=activePhotos().filter(p=>{const d=new Date(p.uploadedAt);return d.getMonth()===now.getMonth()&&d.getDate()===now.getDate()&&d.getFullYear()<now.getFullYear();});
-const recent=activePhotos().sort((a,b)=>b.uploadedAt-a.uploadedAt).slice(0,10);
-const viewed=activePhotos().filter(p=>p.viewedAt).sort((a,b)=>b.viewedAt-a.viewedAt).slice(0,10);
-const favRandom=shuffle(activePhotos().filter(p=>p.fav)).slice(0,10);
-const potd=shuffle(activePhotos().filter(p=>{const d=new Date(p.uploadedAt);return d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();})).slice(0,1);
-const section=(title,items)=>'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">'+title+'</div>'+(items.length?'<div class="grid" data-cols="3">'+items.map(p=>'<div class="photocard" data-id="'+p.id+'"><img loading="lazy" src="'+getThumbURL(p)+'"></div>').join('')+'</div>':'<p style="font-size:12px;color:var(--muted)">Belum ada.</p>')+'</div>';
-m.innerHTML=section('Foto Hari Ini',potd)+section('Di hari ini tahun lalu',today)+section('Baru ditambahkan',recent)+section('Baru dilihat',viewed)+section('Favorit acak',favRandom);
-m.querySelectorAll('.photocard').forEach(c=>c.onclick=()=>openViewer(c.dataset.id,activePhotos()));}
-
-function renderArchive(m){const list=state.photos.filter(p=>p.archived&&!p.deleted).sort((a,b)=>b.uploadedAt-a.uploadedAt);
-m.innerHTML='<div class="toolbar"><button class="btn ghost" id="unarchiveAll"><svg><use href="#i-restore"/></svg> Pulihkan Semua</button></div>'+(list.length?'<div class="grid" data-cols="3">'+list.map(p=>'<div class="photocard" data-id="'+p.id+'"><img loading="lazy" src="'+getThumbURL(p)+'"><div class="label">'+escapeHtml(p.name)+'</div></div>').join('')+'</div>':'<div class="empty"><div class="big">📦</div><p>Arsip kosong.</p></div>');
-$('#unarchiveAll').onclick=async()=>{for(const p of list){p.archived=false;await dbPut('photos',p);if(isCloud()){try{await sb.from('photos').update({archived:false}).eq('id',p.id);}catch(e){}}}toast('Semua foto dipulihkan');render();};
-m.querySelectorAll('.photocard').forEach(c=>{c.onclick=async()=>{const p=getPhoto(c.dataset.id);p.archived=false;await dbPut('photos',p);await addLog('unarchive',{photoId:p.id,photoName:p.name});if(isCloud()){try{await sb.from('photos').update({archived:false}).eq('id',p.id);}catch(e){}}toast('Foto dipulihkan');render();};});}
-
-function renderTrash(m){const list=state.photos.filter(p=>p.deleted).sort((a,b)=>(b.deletedAt||b.uploadedAt)-(a.deletedAt||a.uploadedAt));
-m.innerHTML='<div class="toolbar"><button class="btn danger" id="emptyTrash"><svg><use href="#i-trash"/></svg> Kosongkan Tempat Sampah</button></div>'+(list.length?'<div class="grid" data-cols="3">'+list.map(p=>'<div class="photocard" data-id="'+p.id+'"><img loading="lazy" src="'+getThumbURL(p)+'"><div class="label">'+escapeHtml(p.name)+'</div></div>').join('')+'</div>':'<div class="empty"><div class="big">🗑️</div><p>Tempat sampah kosong.</p></div>');
-$('#emptyTrash').onclick=async()=>{const ok=await modalConfirm('Kosongkan Tempat Sampah?','Semua foto di tempat sampah akan dihapus permanen.');if(!ok)return;for(const p of state.photos.filter(x=>x.deleted)){await dbDel('photos',p.id);revokeURLs(p.id);await addLog('trash-empty',{photoId:p.id,photoName:p.name});if(isCloud()){try{await sb.from('photos').delete().eq('id',p.id);if(p.storagePath)await sb.storage.from('photos').remove([p.storagePath]);}catch(e){}}}
-state.photos=state.photos.filter(p=>!p.deleted);toast('Tempat sampah dikosongkan');render();};
-m.querySelectorAll('.photocard').forEach(c=>{c.onclick=async()=>{const p=getPhoto(c.dataset.id);const ok=await modalConfirm('Pulihkan foto?','"'+p.name+'" akan dikembalikan ke galeri.');if(!ok)return;p.deleted=false;p.deletedAt=null;await dbPut('photos',p);await addLog('restore',{photoId:p.id,photoName:p.name});if(isCloud()){try{await sb.from('photos').update({deleted:false,deleted_at:null}).eq('id',p.id);}catch(e){}}toast('Foto dipulihkan');render();};});}
-
-function renderLog(m){const logs=listLogsCache;const membersInLog=[...new Set(logs.map(l=>l.memberId))];
-m.innerHTML='<div class="toolbar"><select id="logFilter"><option value="">Semua anggota</option>'+membersInLog.map(id=>{const mem=members.find(x=>x.id===id);return '<option value="'+id+'">'+escapeHtml(mem?mem.emoji+' '+mem.name:id)+'</option>';}).join('')+'</select><button class="btn danger" id="clearLog"><svg><use href="#i-trash"/></svg> Hapus Log</button></div><div class="card">'+(logs.length?logs.map(l=>{const act={upload:'menambahkan foto',favorite:'menambahkan ke favorit',unfavorite:'menghapus dari favorit',like:'menyukai',unlike:'membatalkan suka',rename:'mengubah nama foto',delete:'menghapus',restore:'memulihkan',archive:'mengarsipkan',unarchive:'memulihkan dari arsip',pin:'menyematkan',unpin:'melepas sematan','move-album':'memindahkan','album-create':'membuat album','album-rename':'mengubah nama album','album-delete':'menghapus album','trash-empty':'mengosongkan tempat sampah','backup-export':'mengekspor backup','backup-import':'mengimpor backup'}[l.action]||l.action;
-let txt=escapeHtml(l.memberName)+' '+act;if(l.photoName)txt+=' "'+escapeHtml(l.photoName)+'"';if(l.albumName)txt+=' album "'+escapeHtml(l.albumName)+'"';
-return '<div class="logitem"><div class="em">'+escapeHtml(l.memberEmoji)+'</div><div><div>'+txt+'</div><div class="t">'+timeAgo(l.ts)+'</div></div></div>';}).join(''):'<div class="empty"><div class="big">📜</div><p>Belum ada aktivitas.</p></div>')+'</div>';
-$('#logFilter').onchange=render;
-$('#clearLog').onclick=async()=>{const ok=await modalConfirm('Hapus semua log?','Log aktivitas akan dihapus permanen.');if(!ok)return;await clearLogs();listLogsCache=[];toast('Log dihapus');render();};}
-
-function renderStats(m){const photos=activePhotos();const totalSize=photos.reduce((s,p)=>s+p.size,0);
-const months={};photos.forEach(p=>{const d=new Date(p.uploadedAt);const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');months[key]=(months[key]||0)+1;});
-const keys=Object.keys(months).sort().slice(-12);const max=Math.max(1,...keys.map(k=>months[k]));
-const perMember=members.map(mm=>({name:mm.name,emoji:mm.emoji,count:photos.filter(p=>p.memberId===mm.id).length})).sort((a,b)=>b.count-a.count);
-m.innerHTML='<div class="statrow"><div class="statbox"><div class="v">'+photos.length+'</div><div class="l">Total Foto</div></div><div class="statbox"><div class="v">'+photos.filter(p=>p.fav).length+'</div><div class="l">Favorit</div></div><div class="statbox"><div class="v">'+state.albums.length+'</div><div class="l">Album</div></div><div class="statbox"><div class="v">'+fmtSize(totalSize)+'</div><div class="l">Total Ukuran</div></div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:6px">Foto per Bulan</div><div class="chart">'+(keys.length?keys.map(k=>'<div class="bar" style="height:'+(months[k]/max*100)+'%"><span>'+k.slice(5)+'</span></div>').join(''):'<p style="font-size:12px;color:var(--muted)">Belum ada data.</p>')+'</div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:8px">🏆 Leaderboard Upload</div>'+(perMember.length?perMember.map((mm,i)=>'<div class="logitem"><div class="em">'+mm.emoji+'</div><div style="flex:1">'+(i+1)+'. '+escapeHtml(mm.name)+'</div><div class="cnt">'+mm.count+' foto</div></div>').join(''):'<p style="font-size:12px;color:var(--muted)">Belum ada data.</p>')+'</div>';}
-
-function renderSettings(m){const theme=localStorage.getItem('kfg_theme')||'dark';const grid=localStorage.getItem('kfg_grid')||'3';const slide=localStorage.getItem('kfg_slide')||'4000';const accent=localStorage.getItem('kfg_accent')||'#7c5cff';const font=localStorage.getItem('kfg_font')||'14';const density=localStorage.getItem('kfg_density')||'comfort';const pin=localStorage.getItem('kfg_pin')||'';const privacy=localStorage.getItem('kfg_privacy')==='1';
-m.innerHTML='<div class="banner">'+(isCloud()?'☁️ <b>Cloud sync aktif.</b> Foto yang diupload di HP ini otomatis muncul di HP anggota keluarga lain (dan sebaliknya).':'📴 <b>Mode offline.</b> Isi SUPABASE_URL & SUPABASE_ANON_KEY di bagian atas script untuk mengaktifkan sinkronisasi antar HP.')+'</div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Tampilan</div><div class="toolbar"><select id="themeSel"><option value="dark">Gelap</option><option value="light">Terang</option><option value="auto">Ikuti Sistem</option></select><input type="color" id="accentPick" value="'+accent+'"><select id="gridSel"><option value="2">2 kolom</option><option value="3">3 kolom</option><option value="4">4 kolom</option><option value="6">6 kolom</option></select><select id="densitySel"><option value="comfort">Nyaman</option><option value="compact">Padat</option></select><select id="fontSel"><option value="13">Kecil</option><option value="14">Sedang</option><option value="16">Besar</option></select></div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Keamanan & Privasi</div><div class="toolbar"><button class="btn ghost" id="pinBtn">'+(pin?'Ubah PIN':'Set PIN')+'</button><button class="btn ghost" id="privacyBtn">Mode Privat: '+(privacy?'ON':'OFF')+'</button></div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Slideshow</div><div class="toolbar"><input type="number" id="slideInt" value="'+slide+'" min="1000" step="500" style="width:100px"> <span style="font-size:12px;color:var(--muted)">ms per foto</span></div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Pemeliharaan</div><div class="toolbar"><button class="btn ghost" id="dupBtn">Scan Duplikat</button><button class="btn ghost" id="purgeBtn">Bersihkan Sampah &gt;30 hari</button></div><div id="dupResult" style="font-size:12px;color:var(--muted);margin-top:8px"></div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Penyimpanan</div><div id="storageInfo" style="font-size:13px;color:var(--muted)">Menghitung...</div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Backup Lokal</div><div class="toolbar"><button class="btn" id="exportBtn"><svg><use href="#i-down"/></svg> Export Backup</button><button class="btn ghost" id="importBtn"><svg><use href="#i-upload"/></svg> Import Backup</button><input type="file" id="importFile" accept=".kfg,.json" hidden></div><div class="progress hidden" id="backupProg"><div></div></div></div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Keyboard Shortcut</div><p style="font-size:12px;color:var(--muted)">G=Galeri · F=Feed · A=Album · V=Favorit · M=Memories · R=Arsip · T=Trash · L=Log · S=Statistik · /=Cari · Esc=Tutup · ←/→=Navigasi viewer</p></div>'+
-'<div class="card"><button class="btn" id="installBtn" style="width:100%;margin-bottom:10px">Install PWA</button><button class="btn danger" id="wipeBtn" style="width:100%">Hapus Semua Data</button></div>';
-$('#themeSel').value=theme;$('#themeSel').onchange=e=>{applyTheme(e.target.value);render();};
-$('#accentPick').oninput=e=>{applyAccent(e.target.value);toast('Warna aksen diubah');};
-$('#gridSel').value=grid;$('#gridSel').onchange=e=>{localStorage.setItem('kfg_grid',e.target.value);toast('Ukuran grid diubah');};
-$('#densitySel').value=density;$('#densitySel').onchange=e=>{applyDensity(e.target.value);toast('Kerapatan grid diubah');};
-$('#fontSel').value=font;$('#fontSel').onchange=e=>{applyFont(e.target.value);toast('Ukuran font diubah');};
-$('#pinBtn').onclick=async()=>{const v=await modalPrompt('Set PIN','PIN (4-8 digit)','',true);if(v===null)return;if(v&&v.length<4){toast('PIN minimal 4 digit');return;}localStorage.setItem('kfg_pin',v);toast(v?'PIN disimpan':'PIN dihapus');render();};
-$('#privacyBtn').onclick=()=>{const nv=!privacy;localStorage.setItem('kfg_privacy',nv?'1':'0');document.body.classList.toggle('privacy',nv);toast('Mode privat '+(nv?'aktif':'nonaktif'));render();};
-$('#slideInt').onchange=e=>{localStorage.setItem('kfg_slide',e.target.value);toast('Interval slideshow diubah');};
-$('#dupBtn').onclick=()=>{const map={};state.photos.forEach(p=>{const k=p.name+'|'+p.size;map[k]=(map[k]||0)+1;});const dups=Object.values(map).filter(c=>c>1).length;$('#dupResult').textContent=dups?dups+' kelompok duplikat ditemukan':'Tidak ada duplikat.';};
-$('#purgeBtn').onclick=async()=>{const cutoff=Date.now()-30*86400000;const old=state.photos.filter(p=>p.deleted&&(p.deletedAt||0)<cutoff);for(const p of old){await dbDel('photos',p.id);revokeURLs(p.id);if(isCloud()){try{await sb.from('photos').delete().eq('id',p.id);if(p.storagePath)await sb.storage.from('photos').remove([p.storagePath]);}catch(e){}}}state.photos=state.photos.filter(p=>!old.includes(p));toast(old.length+' foto lama dihapus permanen');render();};
-if(navigator.storage&&navigator.storage.estimate){navigator.storage.estimate().then(est=>{const el=$('#storageInfo');if(el)el.textContent='Terpakai: '+fmtSize(est.usage||0)+' dari '+fmtSize(est.quota||0);});}else{const el=$('#storageInfo');if(el)el.textContent='Info storage tidak tersedia di browser ini.';}
-$('#exportBtn').onclick=exportBackup;
-$('#importBtn').onclick=()=>$('#importFile').click();
-$('#importFile').onchange=importBackup;
-$('#installBtn').onclick=()=>{toast('Di iPhone: buka di Safari → Share → Add to Home Screen.');};
-$('#wipeBtn').onclick=async()=>{const ok=await modalConfirm('Hapus semua data?','Semua foto, album, dan log akan dihapus permanen.');if(!ok)return;await dbClear('photos');await dbClear('albums');await dbClear('log');state.photos=[];state.albums=[];listLogsCache=[];if(isCloud()){try{await sb.from('photos').delete().neq('id','');await sb.from('albums').delete().neq('id','');await sb.from('logs').delete().neq('id','');}catch(e){}}toast('Semua data dihapus');render();};}
-
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
-
-async function exportBackup(){const photos=state.photos;const albums=state.albums;const logs=await listLogs();const bar=$('#backupProg');if(bar){bar.classList.remove('hidden');}
-const data={photos:[],albums,logs};
-let done=0;for(const p of photos){let b64='';let tb64='';if(p.blob){b64=await blobToBase64(p.blob);}if(p.thumb){tb64=await blobToBase64(p.thumb);}
-data.photos.push({id:p.id,name:p.name,desc:p.desc,tags:p.tags||[],size:p.size,type:p.type,uploadedAt:p.uploadedAt,albumId:p.albumId,fav:p.fav,likes:p.likes,pinned:p.pinned,archived:p.archived,deleted:p.deleted,rot:p.rot||0,memberId:p.memberId,memberName:p.memberName,memberEmoji:p.memberEmoji,viewedAt:p.viewedAt,publicUrl:p.publicUrl,storagePath:p.storagePath,blobB64:b64,thumbB64:tb64});done++;if(bar)bar.querySelector('div').style.width=(done/photos.length*100)+'%';}
-const json=JSON.stringify(data);const blob=new Blob([json],{type:'application/json'});downloadBlob(blob,'kfg-backup-'+Date.now()+'.kfg');await addLog('backup-export',{detail:photos.length+' foto'});toast('Backup diekspor');if(bar)setTimeout(()=>bar.classList.add('hidden'),800);}
-
-async function importBackup(e){const file=e.target.files[0];if(!file)return;e.target.value='';const text=await file.text();let data;try{data=JSON.parse(text);}catch(err){toast('File backup tidak valid');return;}
-const bar=$('#backupProg');if(bar){bar.classList.remove('hidden');}
-const existing=new Set(state.photos.map(p=>p.name+'|'+p.size+'|'+p.uploadedAt));
-let added=0,skipped=0;const total=data.photos.length;let done=0;
-for(const pd of data.photos){const key=pd.name+'|'+pd.size+'|'+pd.uploadedAt;if(existing.has(key)){skipped++;}else{
-let blob=null,thumb=null;
-if(pd.blobB64){blob=base64ToBlob(pd.blobB64);thumb=pd.thumbB64?base64ToBlob(pd.thumbB64):blob;}
-const p={id:pd.id||uid(),name:pd.name,desc:pd.desc||'',tags:pd.tags||[],blob,thumb,size:pd.size,type:pd.type,uploadedAt:pd.uploadedAt,albumId:pd.albumId||null,fav:!!pd.fav,likes:pd.likes||0,pinned:!!pd.pinned,archived:!!pd.archived,deleted:!!pd.deleted,rot:pd.rot||0,memberId:pd.memberId,memberName:pd.memberName,memberEmoji:pd.memberEmoji,viewedAt:pd.viewedAt||null,publicUrl:pd.publicUrl||null,storagePath:pd.storagePath||null};
-await dbPut('photos',p);state.photos.push(p);existing.add(key);added++;
-if(isCloud()&&pd.blobB64){try{const path='photos/'+p.id+'_'+pd.name.replace(/[^\w.\-]/g,'_');
-await sb.storage.from('photos').upload(path,blob,{contentType:pd.type});
-const {data}=sb.storage.from('photos').getPublicUrl(path);p.publicUrl=data.publicUrl;p.storagePath=path;await dbPut('photos',p);
-await sb.from('photos').insert({id:p.id,name:p.name,desc:p.desc,tags:p.tags,size:p.size,type:p.type,uploaded_at:new Date(p.uploadedAt).toISOString(),album_id:p.albumId,fav:p.fav,likes:p.likes,pinned:p.pinned,archived:p.archived,deleted:p.deleted,rot:p.rot,member_id:p.memberId,member_name:p.memberName,member_emoji:p.memberEmoji,storage_path:path,public_url:p.publicUrl});}catch(err){}}}
-done++;if(bar)bar.querySelector('div').style.width=(done/total*100)+'%';}
-for(const ad of (data.albums||[])){if(!state.albums.find(a=>a.id===ad.id)){state.albums.push(ad);await dbPut('albums',ad);if(isCloud()){try{await sb.from('albums').insert({id:ad.id,name:ad.name,created_at:new Date(ad.createdAt).toISOString(),member_id:ad.memberId,member_name:ad.memberName,member_emoji:ad.memberEmoji});}catch(err){}}}}
-for(const ld of (data.logs||[])){await dbPut('log',ld);}
-await addLog('backup-import',{detail:added+' ditambah, '+skipped+' dilewati'});
-toast('Import selesai: '+added+' ditambah, '+skipped+' dilewati');if(bar)setTimeout(()=>bar.classList.add('hidden'),800);render();}
-
-function openViewer(id,list){const idx=list.findIndex(p=>p.id===id);if(idx<0)return;state.viewerList=list;state.viewerIndex=idx;$('#viewer').classList.add('open');showViewerPhoto();
-const p=getPhoto(id);if(p){p.viewedAt=Date.now();dbPut('photos',p);if(isCloud()){try{sb.from('photos').update({viewed_at:new Date().toISOString()}).eq('id',p.id);}catch(e){}}
-const recent=JSON.parse(localStorage.getItem('kfg_recent')||'[]');const nr=[id,...recent.filter(x=>x!==id)].slice(0,50);localStorage.setItem('kfg_recent',JSON.stringify(nr));}}
-function showViewerPhoto(){const p=state.viewerList[state.viewerIndex];if(!p){closeViewer();return;}
-const img=$('#viewerImg');img.src=getPhotoURL(p);img.style.transform='rotate('+((p.rot||0))+'deg) scale('+(img.dataset.zoom==='1'?'2':'1')+')';
-$('#viewerName').textContent=p.name;$('#viewerCounter').textContent=(state.viewerIndex+1)+' / '+state.viewerList.length;
-$('#vLike').classList.toggle('on',p.likes>0);$('#vFav').classList.toggle('on',p.fav);$('#vPin').classList.toggle('on',p.pinned);}
-function closeViewer(){stopSlideshow();$('#viewer').classList.remove('open');render();}
-function viewerNext(){if(state.viewerIndex<state.viewerList.length-1){state.viewerIndex++;showViewerPhoto();}else if(state.slideshowPlaying){state.viewerIndex=0;showViewerPhoto();}}
-function viewerPrev(){if(state.viewerIndex>0){state.viewerIndex--;showViewerPhoto();}}
-$('#viewerClose').onclick=closeViewer;
-$('#viewerNext').onclick=viewerNext;
-$('#viewerPrev').onclick=viewerPrev;
-$('#vLike').onclick=async()=>{const p=state.viewerList[state.viewerIndex];p.likes=p.likes>0?0:1;await dbPut('photos',p);await addLog(p.likes>0?'like':'unlike',{photoId:p.id,photoName:p.name});vibrate();if(isCloud()){try{await sb.from('photos').update({likes:p.likes}).eq('id',p.id);}catch(e){}}showViewerPhoto();toast(p.likes>0?'Disukai':'Batal suka');};
-$('#vFav').onclick=async()=>{const p=state.viewerList[state.viewerIndex];p.fav=!p.fav;await dbPut('photos',p);await addLog(p.fav?'favorite':'unfavorite',{photoId:p.id,photoName:p.name});vibrate();if(isCloud()){try{await sb.from('photos').update({fav:p.fav}).eq('id',p.id);}catch(e){}}showViewerPhoto();toast(p.fav?'Ditambahkan ke favorit':'Dihapus dari favorit');};
-$('#vPin').onclick=async()=>{const p=state.viewerList[state.viewerIndex];p.pinned=!p.pinned;await dbPut('photos',p);await addLog(p.pinned?'pin':'unpin',{photoId:p.id,photoName:p.name});vibrate();if(isCloud()){try{await sb.from('photos').update({pinned:p.pinned}).eq('id',p.id);}catch(e){}}showViewerPhoto();toast(p.pinned?'Disematkan':'Sematan dilepas');};
-$('#vTag').onclick=async()=>{const p=state.viewerList[state.viewerIndex];const v=await modalPrompt('Tag foto','Pisahkan dengan koma',(p.tags||[]).join(', '));if(v===null)return;p.tags=v.split(',').map(t=>t.trim()).filter(Boolean);await dbPut('photos',p);if(isCloud()){try{await sb.from('photos').update({tags:p.tags}).eq('id',p.id);}catch(e){}}toast('Tag disimpan');};
-$('#vInfo').onclick=()=>{const p=state.viewerList[state.viewerIndex];const alb=getAlbum(p.albumId);const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>'+escapeHtml(p.name)+'</h3><p>Ukuran: '+fmtSize(p.size)+'<br>Tanggal: '+fmtDate(p.uploadedAt)+'<br>Uploader: '+escapeHtml(p.memberEmoji+' '+p.memberName)+'<br>Album: '+escapeHtml(alb?alb.name:'-')+'<br>Tag: '+escapeHtml((p.tags||[]).join(', ')||'-')+'<br>Deskripsi: '+escapeHtml(p.desc||'-')+'</p><div class="row"><button class="btn" id="infoClose">Tutup</button></div></div>';r.classList.add('open');$('#infoClose').onclick=()=>r.classList.remove('open');};
-$('#vEdit').onclick=async()=>{const p=state.viewerList[state.viewerIndex];const name=await modalPrompt('Edit nama foto','Nama foto',p.name);if(name===null)return;const desc=await modalPrompt('Edit deskripsi','Deskripsi foto',p.desc);if(desc===null)return;p.name=name;p.desc=desc;await dbPut('photos',p);await addLog('rename',{photoId:p.id,photoName:p.name});if(isCloud()){try{await sb.from('photos').update({name,desc}).eq('id',p.id);}catch(e){}}toast('Foto diperbarui');showViewerPhoto();render();};
-$('#vRotate').onclick=async()=>{const p=state.viewerList[state.viewerIndex];p.rot=((p.rot||0)+90)%360;await dbPut('photos',p);if(isCloud()){try{await sb.from('photos').update({rot:p.rot}).eq('id',p.id);}catch(e){}}showViewerPhoto();toast('Diputar '+p.rot+'°');};
-$('#vShare').onclick=async()=>{const p=state.viewerList[state.viewerIndex];try{if(p.publicUrl){if(navigator.share){await navigator.share({title:p.name,url:p.publicUrl});}else{window.open(p.publicUrl,'_blank');}}
-else{const file=new File([p.blob],p.name,{type:p.type});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:p.name});}else{downloadBlob(p.blob,p.name);}}}catch(e){toast('Berbagi dibatalkan');}};
-$('#vCopy').onclick=async()=>{const p=state.viewerList[state.viewerIndex];try{if(p.publicUrl){await navigator.clipboard.writeText(p.publicUrl);toast('Link foto disalin');}
-else{await navigator.clipboard.write([new ClipboardItem({[p.type]:p.blob})]);toast('Foto disalin');}}catch(e){toast('Gagal menyalin');}};
-$('#vDownload').onclick=()=>{const p=state.viewerList[state.viewerIndex];if(p.blob)downloadBlob(p.blob,p.name);else if(p.publicUrl)window.open(p.publicUrl,'_blank');toast('Mengunduh '+p.name);};
-$('#vExport').onclick=async()=>{const p=state.viewerList[state.viewerIndex];let b64='';if(p.blob)b64=await blobToBase64(p.blob);
-const data={meta:{name:p.name,desc:p.desc,tags:p.tags,size:p.size,type:p.type,uploadedAt:p.uploadedAt,memberName:p.memberName,publicUrl:p.publicUrl},blobB64:b64};
-downloadBlob(new Blob([JSON.stringify(data)],{type:'application/json'}),p.name+'.json');toast('Foto diekspor dengan metadata');};
-$('#vDelete').onclick=async()=>{const p=state.viewerList[state.viewerIndex];const ok=await modalConfirm('Hapus foto?','"'+p.name+'" akan dipindah ke Tempat Sampah.');if(!ok)return;await deletePhoto(p);closeViewer();};
-
-let zoomed=false;
-$('#viewerImg').addEventListener('dblclick',()=>{zoomed=!zoomed;const img=$('#viewerImg');const p=state.viewerList[state.viewerIndex];img.style.transform='rotate('+((p.rot||0))+'deg) scale('+(zoomed?'2':'1')+')';});
-let touchX=0;
-$('#viewerImgWrap').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;});
-$('#viewerImgWrap').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX;if(dx<-50)viewerNext();else if(dx>50)viewerPrev();});
-
-function startSlideshow(list){if(!list.length){toast('Tidak ada foto untuk slideshow');return;}
-openViewer(list[0].id,list);state.slideshowPlaying=true;const interval=parseInt(localStorage.getItem('kfg_slide')||'4000');
-state.slideshowTimer=setInterval(viewerNext,interval);toast('Slideshow dimulai');}
-function stopSlideshow(){if(state.slideshowTimer){clearInterval(state.slideshowTimer);state.slideshowTimer=null;}state.slideshowPlaying=false;}
-
-document.addEventListener('keydown',e=>{if($('#viewer').classList.contains('open')){if(e.key==='ArrowRight')viewerNext();else if(e.key==='ArrowLeft')viewerPrev();else if(e.key==='Escape')closeViewer();return;}
-if(e.key==='g')setView('gallery');else if(e.key==='f')setView('feed');else if(e.key==='a')setView('albums');else if(e.key==='v')setView('favorites');else if(e.key==='m')setView('memories');else if(e.key==='r')setView('archive');else if(e.key==='t')setView('trash');else if(e.key==='l')setView('log');else if(e.key==='s')setView('stats');else if(e.key==='/'){e.preventDefault();setView('gallery');setTimeout(()=>{const s=$('#gSearch');if(s)s.focus();},50);}else if(e.key==='Escape'){closeSheet();$('#modalRoot').classList.remove('open');}});
-
-function closeSheet(){$('#moreSheet').classList.remove('open');}
-$('#moreBtn').onclick=()=>{$('#moreSheet').classList.toggle('open');};
-$('#surpriseBtn').onclick=()=>{const list=activePhotos();if(!list.length){toast('Belum ada foto');return;}const p=shuffle(list)[0];openViewer(p.id,list);};
-$('#lockBtn').onclick=async()=>{const v=await modalPrompt('Kunci Aplikasi','PIN (4-8 digit)','',true);if(v===null)return;if(v&&v.length<4){toast('PIN minimal 4 digit');return;}localStorage.setItem('kfg_pin',v);toast(v?'PIN disimpan':'PIN dihapus');};
-document.addEventListener('click',e=>{if(!$('#moreSheet').contains(e.target)&&e.target.id!=='moreBtn'&&!e.target.closest('#moreBtn'))closeSheet();});
-
-$$('[data-nav]').forEach(b=>b.onclick=()=>setView(b.dataset.nav));
-
-$('#memberBtn').onclick=()=>{$('#memberModal').classList.add('open');renderMemberGrid();};
-function renderMemberGrid(){const g=$('#memberGrid');g.innerHTML=members.map(m=>'<div class="membercard" data-id="'+m.id+'" style="border-color:'+(activeMember&&activeMember.id===m.id?m.color:'transparent')+'">'+(m.photo?'<img src="'+m.photo+'">':'<div class="em">'+m.emoji+'</div>')+'<div class="nm">'+escapeHtml(m.name)+(m.pass?' 🔒':'')+'</div><div class="mact"><button class="medit" data-id="'+m.id+'">✏️</button><button class="mdel" data-id="'+m.id+'">🗑️</button></div></div>').join('');
-g.querySelectorAll('.membercard').forEach(c=>{c.onclick=async e=>{if(e.target.closest('.mact'))return;const id=c.dataset.id;const mem=members.find(x=>x.id===id);
-if(mem.pass){$('#memberModal').classList.remove('open');const pw=await modalPrompt('Password','Masukkan password '+mem.name,'',true);
-if(pw===null||pw!==mem.pass){$('#memberModal').classList.add('open');if(pw!==null)toast('Password salah');return;}}
-setActiveMember(id);$('#memberModal').classList.remove('open');vibrate();toast('Profil: '+mem.name);};});
-g.querySelectorAll('.medit').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.id;const mem=members.find(x=>x.id===id);
-if(mem.pass){$('#memberModal').classList.remove('open');const pw=await modalPrompt('Password','Masukkan password '+mem.name,'',true);
-if(pw===null||pw!==mem.pass){$('#memberModal').classList.add('open');if(pw!==null)toast('Password salah');return;}}
-$('#memberModal').classList.remove('open');openMemberEditor(id);});
-g.querySelectorAll('.mdel').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.id;if(members.length<=1){toast('Minimal harus ada 1 anggota');return;}
-const mem=members.find(x=>x.id===id);$('#memberModal').classList.remove('open');
-const ok=await modalConfirm('Hapus anggota?','"'+mem.name+'" akan dihapus dari daftar profil.');if(!ok){$('#memberModal').classList.add('open');return;}
-members=members.filter(x=>x.id!==id);saveMembers();if(activeMember&&activeMember.id===id){setActiveMember(members[0].id);}
-if(isCloud()){try{await sb.from('members').delete().eq('id',id);}catch(e){}}
-$('#memberModal').classList.add('open');renderMemberGrid();toast('Anggota dihapus');});}
-
-let pendingAvatar=null;
-function openMemberEditor(id){const mem=members.find(x=>x.id===id);pendingAvatar=mem.photo||'';
-const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Edit Anggota</h3><input id="meName" value="'+escapeHtml(mem.name)+'" placeholder="Nama"><input id="meEmoji" value="'+escapeHtml(mem.emoji)+'" placeholder="Emoji"><input type="color" id="meColor" value="'+escapeHtml(mem.color)+'"><input type="password" id="mePass" value="'+escapeHtml(mem.pass)+'" placeholder="Password (opsional)"><button class="btn ghost" id="mePhotoBtn" style="width:100%;margin-bottom:10px">Pilih Foto Profil</button><div class="row"><button class="btn ghost" id="meNo">Batal</button><button class="btn" id="meYes">Simpan</button></div></div>';
-r.classList.add('open');
-$('#mePhotoBtn').onclick=()=>{const inp=$('#avatarInput');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{pendingAvatar=rd.result;toast('Foto profil dipilih');};rd.readAsDataURL(f);};inp.click();};
-$('#meNo').onclick=()=>{r.classList.remove('open');$('#memberModal').classList.add('open');};
-$('#meYes').onclick=async()=>{mem.name=$('#meName').value.trim()||mem.name;mem.emoji=$('#meEmoji').value.trim()||mem.emoji;mem.color=$('#meColor').value;mem.pass=$('#mePass').value;mem.photo=pendingAvatar;saveMembers();if(activeMember&&activeMember.id===mem.id)setActiveMember(mem.id);
-if(isCloud()){try{await sb.from('members').upsert({id:mem.id,name:mem.name,emoji:mem.emoji,color:mem.color,photo:mem.photo,pass:mem.pass});}catch(e){}}
-r.classList.remove('open');$('#memberModal').classList.add('open');renderMemberGrid();toast('Anggota diperbarui');};}
-
-$('#addMemberBtn').onclick=async()=>{$('#memberModal').classList.remove('open');
-const name=await modalPrompt('Tambah anggota','Nama anggota','');if(name===null){$('#memberModal').classList.add('open');return;}
-const emoji=await modalPrompt('Emoji anggota','Emoji (misal: 🐶)','🙂')||'🙂';const color=await modalPrompt('Warna','Kode warna hex','#7c5cff')||'#7c5cff';const pass=await modalPrompt('Password','Password (opsional)','',true)||'';
-const m={id:uid(),name,emoji,color,pass,photo:''};
-const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Foto Profil (opsional)</h3><button class="btn ghost" id="amPhotoBtn" style="width:100%;margin-bottom:10px">Pilih Foto Profil</button><div class="row"><button class="btn" id="amDone">Selesai</button></div></div>';r.classList.add('open');
-$('#amPhotoBtn').onclick=()=>{const inp=$('#avatarInput');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{m.photo=rd.result;toast('Foto profil dipilih');};rd.readAsDataURL(f);};inp.click();};
-$('#amDone').onclick=async()=>{members.push(m);saveMembers();
-if(isCloud()){try{await sb.from('members').upsert({id:m.id,name:m.name,emoji:m.emoji,color:m.color,photo:m.photo,pass:m.pass});}catch(e){}}
-r.classList.remove('open');$('#memberModal').classList.add('open');renderMemberGrid();toast('Anggota ditambahkan');};};
-
-async function syncFromCloud(){
-  try{
-    const {data:memData,error:memErr}=await sb.from('members').select('*');
-    if(!memErr&&memData){const cloud=memData.map(r=>({id:r.id,name:r.name,emoji:r.emoji,color:r.color,photo:r.photo||'',pass:r.pass||''}));
-      for(const cm of cloud){if(!members.find(m=>m.id===cm.id))members.push(cm);}
-      saveMembers();}
-    const {data:albData,error:albErr}=await sb.from('albums').select('*');
-    if(!albErr&&albData){for(const r of albData){if(!state.albums.find(a=>a.id===r.id)){const alb={id:r.id,name:r.name,createdAt:new Date(r.created_at).getTime(),memberId:r.member_id,memberName:r.member_name,memberEmoji:r.member_emoji};state.albums.push(alb);await dbPut('albums',alb);}}}
-    const {data:phData,error:phErr}=await sb.from('photos').select('*').order('uploaded_at',{ascending:false}).limit(500);
-    if(!phErr&&phData){for(const r of phData){if(!state.photos.find(p=>p.id===r.id)){
-      let blob=null,thumb=null;
-      if(r.public_url){try{const res=await fetch(r.public_url);if(res.ok){blob=await res.blob();thumb=await makeThumb(blob);}}catch(e){}}
-      const p={id:r.id,name:r.name,desc:r.desc||'',tags:r.tags||[],blob,thumb,size:r.size||0,type:r.type||'image/jpeg',uploadedAt:new Date(r.uploaded_at).getTime(),albumId:r.album_id,fav:r.fav,likes:r.likes||0,pinned:r.pinned,archived:r.archived,deleted:r.deleted,deletedAt:r.deleted_at?new Date(r.deleted_at).getTime():null,rot:r.rot||0,memberId:r.member_id,memberName:r.member_name,memberEmoji:r.member_emoji,viewedAt:r.viewed_at?new Date(r.viewed_at).getTime():null,publicUrl:r.public_url,storagePath:r.storage_path};
-      await dbPut('photos',p);state.photos.push(p);}}}
-    await refreshLogs();
-  }catch(e){console.warn('syncFromCloud gagal',e);}
+function switchView(v) {
+  if (!VIEW_TITLES[v]) return;
+  state.view = v;
+  $('page-title').textContent = VIEW_TITLES[v];
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  $('view-' + v)?.classList.add('active');
+  document.querySelectorAll('.nav-item, .bnav-btn').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === v);
+  });
+  if (state.selecting && v !== 'gallery') toggleSelectMode(false);
+  renderCurrentView();
 }
 
-function subscribeRealtime(){
-  try{
-    sb.channel('photos-changes').on('postgres_changes',{event:'INSERT',schema:'public',table:'photos'},async payload=>{
-      const r=payload.new;if(state.photos.find(p=>p.id===r.id))return;
-      let blob=null,thumb=null;
-      if(r.public_url){try{const res=await fetch(r.public_url);if(res.ok){blob=await res.blob();thumb=await makeThumb(blob);}}catch(e){}}
-      const p={id:r.id,name:r.name,desc:r.desc||'',tags:r.tags||[],blob,thumb,size:r.size||0,type:r.type||'image/jpeg',uploadedAt:new Date(r.uploaded_at).getTime(),albumId:r.album_id,fav:r.fav,likes:r.likes||0,pinned:r.pinned,archived:r.archived,deleted:r.deleted,deletedAt:r.deleted_at?new Date(r.deleted_at).getTime():null,rot:r.rot||0,memberId:r.member_id,memberName:r.member_name,memberEmoji:r.member_emoji,viewedAt:r.viewed_at?new Date(r.viewed_at).getTime():null,publicUrl:r.public_url,storagePath:r.storage_path};
-      await dbPut('photos',p);state.photos.push(p);toast('Foto baru dari '+p.memberName);vibrate();render();
-    }).subscribe();
-    sb.channel('members-changes').on('postgres_changes',{event:'*',schema:'public',table:'members'},async payload=>{
-      const {data,error}=await sb.from('members').select('*');if(!error&&data){members=data.map(r=>({id:r.id,name:r.name,emoji:r.emoji,color:r.color,photo:r.photo||'',pass:r.pass||''}));saveMembers();if(activeMember){const upd=members.find(m=>m.id===activeMember.id);if(upd)activeMember=upd;}renderMemberGrid();render();}
-    }).subscribe();
-  }catch(e){console.warn('realtime gagal',e);}
+function renderCurrentView() {
+  updateBadges();
+  switch (state.view) {
+    case 'gallery': renderGallery(); break;
+    case 'feed': renderFeed(); break;
+    case 'albums': renderAlbums(); break;
+    case 'favorites': renderFavorites(); break;
+    case 'memories': renderMemories(); break;
+    case 'archive': renderArchive(); break;
+    case 'trash': renderTrash(); break;
+    case 'stats': renderStats(); break;
+    case 'logs': renderLogs(); break;
+    case 'settings': renderSettings(); break;
+  }
 }
 
-async function init(){initCloud();db=await openDB();loadMembers();setActiveMember(localStorage.getItem('kfg_active')||members[0].id);
-state.photos=await dbAll('photos');state.albums=await dbAll('albums');
-await refreshLogs();
-const cutoff=Date.now()-30*86400000;const old=state.photos.filter(p=>p.deleted&&(p.deletedAt||p.uploadedAt)<cutoff);
-for(const p of old){await dbDel('photos',p.id);revokeURLs(p.id);}
-if(old.length)state.photos=state.photos.filter(p=>!old.includes(p));
-applyTheme(localStorage.getItem('kfg_theme')||'dark');
-applyAccent(localStorage.getItem('kfg_accent')||'#7c5cff');
-applyFont(localStorage.getItem('kfg_font')||'14');
-applyDensity(localStorage.getItem('kfg_density')||'comfort');
-document.body.classList.toggle('privacy',localStorage.getItem('kfg_privacy')==='1');
-if(isCloud()){await syncFromCloud();subscribeRealtime();}
-const pin=localStorage.getItem('kfg_pin');
-if(pin){$('#lockScreen').classList.add('open');$('#lockOk').onclick=()=>{if($('#lockPin').value===pin){$('#lockScreen').classList.remove('open');$('#lockPin').value='';setView('gallery');}else{toast('PIN salah');$('#lockPin').value='';}};$('#lockPin').onkeydown=e=>{if(e.key==='Enter')$('#lockOk').click();};}
-else setView('gallery');
-if(!localStorage.getItem('kfg_onboarded')){const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Selamat datang! 👋</h3><p>1. Pilih profil anggota keluarga.<br>2. Upload foto lewat tombol upload di atas.<br>3. Foto otomatis tersinkron ke HP anggota lain (jika cloud aktif).<br>4. Atur tema & privasi di Pengaturan.</p><div class="row"><button class="btn" id="obOk">Mulai</button></div></div>';r.classList.add('open');$('#obOk').onclick=()=>{r.classList.remove('open');localStorage.setItem('kfg_onboarded','1');};}
-if('serviceWorker' in navigator){try{const swCode="self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('fetch',e=>{});";const blob=new Blob([swCode],{type:'text/javascript'});await navigator.serviceWorker.register(URL.createObjectURL(blob));}catch(e){}}
-const manifest={name:'KIRANA FAMILY GALLERY',short_name:'KFG',start_url:'.',display:'standalone',background_color:'#0a0a0f',theme_color:'#7c5cff',icons:[]};
-const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(mBlob);document.head.appendChild(link);}
-init();
+function updateBadges() {
+  const active = state.photos.filter(p => !p.deleted && !p.archived);
+  $('badge-gallery').textContent = active.length;
+  $('badge-albums').textContent = state.albums.length;
+  $('badge-fav').textContent = active.filter(p => p.fav).length;
+  $('badge-archive').textContent = state.photos.filter(p => !p.deleted && p.archived).length;
+  $('badge-trash').textContent = state.photos.filter(p => p.deleted).length;
+}
+
+function openMoreSheet() { $('more-sheet').classList.add('active'); }
+function closeMoreSheet() { $('more-sheet').classList.remove('active'); }
+
+// ============================================================================
+// 8. UPLOAD HANDLER
+// ============================================================================
+function triggerUpload() {
+  if (!state.currentMemberId) return openMemberModal();
+  $('file-input').click();
+}
+
+$('file-input').addEventListener('change', async e => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  if (!files.length) return;
+  await handleFilesUpload(files);
+});
+
+async function handleFilesUpload(files) {
+  const wrap = $('upload-bar-wrap');
+  const fill = $('upload-progress-fill');
+  const txt = $('upload-status-text');
+  const pct = $('upload-pct-text');
+  wrap.style.display = 'block';
+
+  const member = state.members.find(x => x.id === state.currentMemberId) || { id: 'unknown', name: 'Keluarga', emoji: '😊' };
+  let done = 0;
+
+  for (const file of files) {
+    txt.textContent = `Memproses (${done + 1}/${files.length}): ${file.name}`;
+    const p = Math.round((done / files.length) * 100);
+    fill.style.width = p + '%';
+    pct.textContent = p + '%';
+
+    const id = 'ph_' + uid();
+    const thumbBlob = await createThumbnail(file, 500, 0.82);
+    await dbPut('blobs', { id, full: file, thumb: thumbBlob });
+
+    const photo = {
+      id,
+      name: file.name.replace(/\.[^.]+$/, ''),
+      desc: '',
+      tags: '',
+      size: file.size,
+      type: file.type || 'image/jpeg',
+      uploaded_at: Date.now(),
+      album_id: state.view === 'albums' && state.activeAlbumId ? state.activeAlbumId : '',
+      fav: false,
+      likes: 0,
+      pinned: false,
+      archived: false,
+      deleted: false,
+      deleted_at: null,
+      rot: 0,
+      member_id: member.id,
+      member_name: member.name,
+      member_emoji: member.emoji,
+      storage_path: '',
+      public_url: '',
+      viewed_at: null
+    };
+
+    if (state.supabase) {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `${member.id}/${id}.${ext}`;
+      const { error } = await state.supabase.storage.from('photos').upload(path, file, { contentType: photo.type, upsert: true });
+      if (!error) {
+        const { data: pub } = state.supabase.storage.from('photos').getPublicUrl(path);
+        photo.storage_path = path;
+        photo.public_url = pub?.publicUrl || '';
+      }
+    }
+
+    await dbPut('photos', photo);
+    state.photos.unshift(photo);
+    await pushPhotoSupabase(photo);
+    await addLog('upload', `Mengunggah foto "${photo.name}"`);
+    done++;
+  }
+
+  fill.style.width = '100%';
+  pct.textContent = '100%';
+  txt.textContent = `${files.length} foto berhasil ditambahkan!`;
+  setTimeout(() => { wrap.style.display = 'none'; fill.style.width = '0%'; }, 1200);
+  renderCurrentView();
+}
+
+// ============================================================================
+// 9. FEED (TikTok-style Fullscreen Scroll-Snap, object-fit: contain)
+// ============================================================================
+async function renderFeed() {
+  const container = $('feed-container');
+  const list = state.photos.filter(p => !p.deleted && !p.archived).sort((a, b) => b.uploaded_at - a.uploaded_at);
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state" style="padding-top:120px"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-feed"/></svg></div><h3>Belum Ada Foto di Feed</h3><p>Unggah foto pertama keluarga Anda sekarang.</p></div>`;
+    return;
+  }
+  container.innerHTML = list.map((p, idx) => `
+    <div class="feed-item" data-id="${p.id}">
+      <img id="feed-img-${p.id}" src="" alt="${esc(p.name)}" style="transform:rotate(${p.rot || 0}deg)" ondblclick="toggleLike('${p.id}')">
+      <div class="feed-overlay">
+        <div style="font-weight:800;font-size:15px;margin-bottom:4px">${esc(p.member_emoji)} ${esc(p.member_name)} • ${esc(p.name)}</div>
+        ${p.desc ? `<div style="font-size:13px;opacity:0.9;margin-bottom:4px">${esc(p.desc)}</div>` : ''}
+        <div style="font-size:11px;opacity:0.75">${fmtDate(p.uploaded_at)} ${p.tags ? '• ' + esc(p.tags) : ''}</div>
+      </div>
+      <div class="feed-actions">
+        <button class="feed-act-btn ${p.likes > 0 ? 'liked' : ''}" onclick="toggleLike('${p.id}')">
+          <div class="feed-act-circle"><svg class="icon"><use href="#i-heart"/></svg></div>
+          <span>${p.likes || 0}</span>
+        </button>
+        <button class="feed-act-btn ${p.fav ? 'faved' : ''}" onclick="toggleFav('${p.id}')">
+          <div class="feed-act-circle"><svg class="icon"><use href="#i-star"/></svg></div>
+          <span>Favorit</span>
+        </button>
+        <button class="feed-act-btn" onclick="openViewerById('${p.id}', 'feed')">
+          <div class="feed-act-circle"><svg class="icon"><use href="#i-more"/></svg></div>
+          <span>Detail</span>
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  for (const p of list) {
+    const src = await getPhotoSrc(p, false);
+    const img = $('feed-img-' + p.id);
+    if (img && src) img.src = src;
+  }
+}
+
+async function toggleLike(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.likes = (p.likes || 0) + 1;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  await addLog('like', `Menyukai foto "${p.name}"`);
+  renderCurrentView();
+}
+
+async function toggleFav(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.fav = !p.fav;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  await addLog(p.fav ? 'favorite' : 'unfavorite', `${p.fav ? 'Menandai' : 'Menghapus'} favorit "${p.name}"`);
+  renderCurrentView();
+  if ($('viewer-modal').classList.contains('active')) renderViewerTools();
+}
+
+// ============================================================================
+// 10. GALLERY GRID & FILTERING
+// ============================================================================
+function getFilteredGalleryPhotos() {
+  const q = ($('search-input')?.value || '').trim().toLowerCase();
+  const sort = $('sort-select')?.value || 'newest';
+  const dateVal = $('date-filter')?.value || '';
+
+  let list = state.photos.filter(p => !p.deleted && !p.archived);
+  if (q) {
+    list = list.filter(p =>
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.desc || '').toLowerCase().includes(q) ||
+      (p.tags || '').toLowerCase().includes(q) ||
+      (p.member_name || '').toLowerCase().includes(q)
+    );
+  }
+  if (dateVal) {
+    list = list.filter(p => {
+      const d = new Date(p.uploaded_at);
+      const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      return iso === dateVal;
+    });
+  }
+
+  list.sort((a, b) => {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    if (sort === 'oldest') return a.uploaded_at - b.uploaded_at;
+    if (sort === 'name') return (a.name || '').localeCompare(b.name || '');
+    if (sort === 'likes') return (b.likes || 0) - (a.likes || 0);
+    return b.uploaded_at - a.uploaded_at;
+  });
+  return list;
+}
+
+async function renderPhotoGrid(containerEl, list, sourceName = 'gallery') {
+  if (!list.length) {
+    containerEl.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-grid"/></svg></div><h3>Tidak Ada Foto</h3><p>Belum ada foto di bagian ini.</p></div>`;
+    return;
+  }
+  containerEl.classList.toggle('selecting', state.selecting && sourceName === 'gallery');
+  containerEl.innerHTML = list.map(p => `
+    <div class="photo-card ${state.selectedIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}" onclick="onCardClick(event, '${p.id}', '${sourceName}')">
+      <img id="grid-img-${sourceName}-${p.id}" src="" alt="${esc(p.name)}" loading="lazy" style="transform:rotate(${p.rot || 0}deg)">
+      <div class="photo-badges">
+        <div class="badge-group">
+          ${p.pinned ? `<span class="p-badge">📌</span>` : ''}
+          ${p.fav ? `<span class="p-badge">⭐</span>` : ''}
+        </div>
+      </div>
+      <div class="select-check"><svg class="icon icon-sm"><use href="#i-check"/></svg></div>
+      <div class="photo-meta-bar">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.member_emoji)} ${esc(p.name)}</span>
+        ${p.likes ? `<span>❤️ ${p.likes}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  for (const p of list) {
+    const src = await getPhotoSrc(p, true);
+    const img = $(`grid-img-${sourceName}-${p.id}`);
+    if (img && src) img.src = src;
+  }
+}
+
+function renderGallery() {
+  const list = getFilteredGalleryPhotos();
+  renderPhotoGrid($('gallery-grid'), list, 'gallery');
+}
+
+function onCardClick(e, id, sourceName) {
+  if (state.selecting && sourceName === 'gallery') {
+    toggleSelectPhoto(id);
+    return;
+  }
+  openViewerById(id, sourceName);
+}
+
+$('search-input').addEventListener('input', renderGallery);
+$('sort-select').addEventListener('change', renderGallery);
+$('date-filter').addEventListener('change', renderGallery);
+$('cols-select').addEventListener('change', e => {
+  document.documentElement.style.setProperty('--cols', e.target.value);
+});
+
+// ============================================================================
+// 11. ALBUMS (CRUD + Cover + Pindah Foto)
+// ============================================================================
+async function renderAlbums() {
+  if (state.activeAlbumId) {
+    const alb = state.albums.find(a => a.id === state.activeAlbumId);
+    if (!alb) { state.activeAlbumId = null; return renderAlbums(); }
+    $('album-view-heading').textContent = `Album: ${alb.name}`;
+    $('btn-album-back').style.display = 'inline-flex';
+    $('btn-new-album').textContent = 'Edit Album';
+    $('btn-new-album').onclick = () => editAlbumFlow(alb);
+    $('albums-grid').style.display = 'none';
+    $('album-photos-grid').style.display = 'grid';
+    const photos = state.photos.filter(p => !p.deleted && p.album_id === alb.id);
+    renderPhotoGrid($('album-photos-grid'), photos, 'album');
+    return;
+  }
+
+  $('album-view-heading').textContent = 'Semua Album';
+  $('btn-album-back').style.display = 'none';
+  $('btn-new-album').textContent = '+ Album Baru';
+  $('btn-new-album').onclick = createAlbumFlow;
+  $('albums-grid').style.display = 'grid';
+  $('album-photos-grid').style.display = 'none';
+
+  const grid = $('albums-grid');
+  if (!state.albums.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-album"/></svg></div><h3>Belum Ada Album</h3><p>Buat album untuk mengelompokkan momen liburan atau acara keluarga.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = state.albums.map(a => {
+    const count = state.photos.filter(p => !p.deleted && p.album_id === a.id).length;
+    return `
+      <div class="album-card" onclick="openAlbumDetail('${a.id}')">
+        <div class="album-cover" id="alb-cov-${a.id}">
+          <svg class="icon icon-lg" style="color:var(--text-muted)"><use href="#i-album"/></svg>
+        </div>
+        <div class="album-info">
+          <div style="font-weight:700;font-size:14px">${esc(a.name)}</div>
+          <div style="font-size:12px;color:var(--text-muted)">${count} foto</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  for (const a of state.albums) {
+    const coverPhoto = state.photos.find(p => p.id === a.cover_id && !p.deleted) || state.photos.find(p => p.album_id === a.id && !p.deleted);
+    if (coverPhoto) {
+      const src = await getPhotoSrc(coverPhoto, true);
+      const box = $('alb-cov-' + a.id);
+      if (box && src) box.innerHTML = `<img src="${src}" alt="">`;
+    }
+  }
+}
+
+function openAlbumDetail(id) { state.activeAlbumId = id; renderAlbums(); }
+function closeAlbumDetail() { state.activeAlbumId = null; renderAlbums(); }
+
+async function createAlbumFlow() {
+  const res = await showDialog({
+    title: 'Buat Album Baru',
+    fields: [{ name: 'name', label: 'Nama Album', placeholder: 'Misal: Liburan Bali 2026' }],
+    okText: 'Buat'
+  });
+  if (!res || !res.name.trim()) return;
+  const alb = { id: 'alb_' + uid(), name: res.name.trim(), cover_id: '', created_at: Date.now() };
+  await dbPut('albums', alb);
+  state.albums.unshift(alb);
+  await pushAlbumSupabase(alb);
+  await addLog('album-create', `Membuat album "${alb.name}"`);
+  renderAlbums();
+  updateBadges();
+}
+
+async function editAlbumFlow(alb) {
+  const res = await showDialog({
+    title: 'Kelola Album',
+    message: 'Ubah nama album atau ketik HAPUS untuk menghapus album.',
+    fields: [{ name: 'name', label: 'Nama Album', value: alb.name }],
+    okText: 'Simpan'
+  });
+  if (!res) return;
+  const val = res.name.trim();
+  if (val.toUpperCase() === 'HAPUS') {
+    await dbDelete('albums', alb.id);
+    await deleteAlbumSupabase(alb.id);
+    state.albums = state.albums.filter(x => x.id !== alb.id);
+    for (const p of state.photos.filter(x => x.album_id === alb.id)) {
+      p.album_id = '';
+      await dbPut('photos', p);
+      await pushPhotoSupabase(p);
+    }
+    await addLog('album-delete', `Menghapus album "${alb.name}"`);
+    state.activeAlbumId = null;
+    renderAlbums();
+    updateBadges();
+    return;
+  }
+  if (val && val !== alb.name) {
+    alb.name = val;
+    await dbPut('albums', alb);
+    await pushAlbumSupabase(alb);
+    await addLog('album-rename', `Mengubah nama album menjadi "${alb.name}"`);
+    renderAlbums();
+  }
+}
+
+// ============================================================================
+// 12. FAVORITES
+// ============================================================================
+function renderFavorites() {
+  const list = state.photos.filter(p => !p.deleted && !p.archived && p.fav);
+  renderPhotoGrid($('favorites-grid'), list, 'favorites');
+}
+
+// ============================================================================
+// 13. MEMORIES (Hari ini tahun lalu, baru ditambahkan, baru dilihat, favorit acak, hari ini)
+// ============================================================================
+async function renderMemories() {
+  const active = state.photos.filter(p => !p.deleted && !p.archived);
+  const now = new Date();
+  const todayMonth = now.getMonth(), todayDate = now.getDate(), todayYear = now.getFullYear();
+
+  const onThisDay = active.filter(p => {
+    const d = new Date(p.uploaded_at);
+    return d.getMonth() === todayMonth && d.getDate() === todayDate && d.getFullYear() < todayYear;
+  });
+  const todayPhotos = active.filter(p => {
+    const d = new Date(p.uploaded_at);
+    return d.getMonth() === todayMonth && d.getDate() === todayDate && d.getFullYear() === todayYear;
+  });
+  const recentlyAdded = [...active].sort((a, b) => b.uploaded_at - a.uploaded_at).slice(0, 6);
+  const recentlyViewed = active.filter(p => p.viewed_at).sort((a, b) => b.viewed_at - a.viewed_at).slice(0, 6);
+  const favs = active.filter(p => p.fav);
+  const randomFavs = [...favs].sort(() => Math.random() - 0.5).slice(0, 6);
+
+  const sections = [
+    { title: '📅 Hari Ini di Tahun Lalu', items: onThisDay, key: 'mem_otd' },
+    { title: '📸 Foto Hari Ini', items: todayPhotos, key: 'mem_today' },
+    { title: '✨ Baru Ditambahkan', items: recentlyAdded, key: 'mem_new' },
+    { title: '👁️ Baru Dilihat', items: recentlyViewed, key: 'mem_view' },
+    { title: '🎲 Favorit Acak', items: randomFavs, key: 'mem_rfav' }
+  ];
+
+  const box = $('memories-content');
+  box.innerHTML = sections.map(s => `
+    <div class="card">
+      <h4 style="margin-bottom:10px">${s.title}</h4>
+      <div class="photo-grid" id="grid-${s.key}" style="--cols:3"></div>
+    </div>
+  `).join('');
+
+  for (const s of sections) {
+    renderPhotoGrid($('grid-' + s.key), s.items, s.key);
+  }
+}
+
+// ============================================================================
+// 14. ARCHIVE
+// ============================================================================
+function renderArchive() {
+  const list = state.photos.filter(p => !p.deleted && p.archived);
+  renderPhotoGrid($('archive-grid'), list, 'archive');
+}
+
+// ============================================================================
+// 15. TRASH & AUTO-PURGE 30 HARI & UNDO
+// ============================================================================
+async function purgeOldTrash() {
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const expired = state.photos.filter(p => p.deleted && p.deleted_at && p.deleted_at < cutoff);
+  for (const p of expired) {
+    await permanentlyDeletePhoto(p.id, false);
+  }
+}
+
+function renderTrash() {
+  const list = state.photos.filter(p => p.deleted);
+  renderPhotoGrid($('trash-grid'), list, 'trash');
+}
+
+async function softDeletePhoto(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.deleted = true;
+  p.deleted_at = Date.now();
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  await addLog('delete', `Memindahkan "${p.name}" ke sampah`);
+  renderCurrentView();
+  showToast(`"${p.name}" dipindahkan ke sampah`, 'Urungkan', () => restorePhoto(id));
+}
+
+async function restorePhoto(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.deleted = false;
+  p.deleted_at = null;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  await addLog('restore', `Memulihkan foto "${p.name}"`);
+  renderCurrentView();
+  showToast(`"${p.name}" dipulihkan.`);
+}
+
+async function permanentlyDeletePhoto(id, logIt = true) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  await dbDelete('photos', id);
+  await dbDelete('blobs', id);
+  revokePhotoUrl(id);
+  if (state.supabase) {
+    if (p.storage_path) await state.supabase.storage.from('photos').remove([p.storage_path]);
+    await state.supabase.from('photos').delete().eq('id', id);
+  }
+  state.photos = state.photos.filter(x => x.id !== id);
+  if (logIt) await addLog('delete', `Menghapus permanen "${p.name}"`);
+}
+
+async function emptyTrashFlow() {
+  const trashed = state.photos.filter(p => p.deleted);
+  if (!trashed.length) return showToast('Sampah sudah kosong.');
+  const ok = await showDialog({
+    title: 'Kosongkan Sampah?',
+    message: `${trashed.length} foto akan dihapus secara permanen dan tidak bisa dikembalikan.`,
+    okText: 'Hapus Permanen',
+    danger: true
+  });
+  if (!ok) return;
+  for (const p of trashed) await permanentlyDeletePhoto(p.id, false);
+  await addLog('trash-empty', `Mengosongkan sampah (${trashed.length} foto)`);
+  renderTrash();
+  updateBadges();
+  showToast('Sampah berhasil dikosongkan.');
+}
+
+// ============================================================================
+// 16. SELECTION & BULK ACTIONS
+// ============================================================================
+function toggleSelectMode(force = null) {
+  state.selecting = force !== null ? force : !state.selecting;
+  if (!state.selecting) state.selectedIds.clear();
+  $('btn-toggle-select').textContent = state.selecting ? 'Batal Pilih' : 'Pilih';
+  updateBulkBar();
+  renderGallery();
+}
+
+function toggleSelectPhoto(id) {
+  if (state.selectedIds.has(id)) state.selectedIds.delete(id);
+  else state.selectedIds.add(id);
+  updateBulkBar();
+  renderGallery();
+}
+
+function updateBulkBar() {
+  const count = state.selectedIds.size;
+  $('bulk-count').textContent = `${count} dipilih`;
+  $('bulk-bar').classList.toggle('active', state.selecting && count > 0);
+}
+
+async function bulkAction(type) {
+  const ids = Array.from(state.selectedIds);
+  if (!ids.length) return;
+  for (const id of ids) {
+    const p = state.photos.find(x => x.id === id);
+    if (!p) continue;
+    if (type === 'fav') p.fav = !p.fav;
+    if (type === 'pin') p.pinned = !p.pinned;
+    if (type === 'archive') p.archived = !p.archived;
+    if (type === 'delete') { p.deleted = true; p.deleted_at = Date.now(); }
+    await dbPut('photos', p);
+    await pushPhotoSupabase(p);
+  }
+  await addLog(type === 'delete' ? 'delete' : 'rename', `Aksi massal (${type}) pada ${ids.length} foto`);
+  toggleSelectMode(false);
+  renderCurrentView();
+  showToast(`Berhasil memproses ${ids.length} foto.`);
+}
+
+async function bulkMoveAlbum() {
+  if (!state.albums.length) return showToast('Buat album terlebih dahulu.');
+  const res = await showDialog({
+    title: 'Pindah ke Album',
+    fields: [{
+      name: 'albumId', label: 'Pilih Album', type: 'select',
+      options: [{ value: '', label: '-- Tanpa Album --' }, ...state.albums.map(a => ({ value: a.id, label: a.name }))]
+    }],
+    okText: 'Pindahkan'
+  });
+  if (!res) return;
+  const ids = Array.from(state.selectedIds);
+  for (const id of ids) {
+    const p = state.photos.find(x => x.id === id);
+    if (p) { p.album_id = res.albumId; await dbPut('photos', p); await pushPhotoSupabase(p); }
+  }
+  await addLog('move-album', `Memindahkan ${ids.length} foto ke album`);
+  toggleSelectMode(false);
+  renderCurrentView();
+}
+
+async function bulkDownload() {
+  const ids = Array.from(state.selectedIds);
+  for (const id of ids) {
+    await downloadPhoto(id);
+  }
+  toggleSelectMode(false);
+}
+
+// ============================================================================
+// 17. VIEWER (Prev/Next, Swipe, Zoom Double-Tap, Rotate, Share, Copy, Download)
+// ============================================================================
+function getPhotoListBySource(source) {
+  if (source === 'feed') return state.photos.filter(p => !p.deleted && !p.archived).sort((a, b) => b.uploaded_at - a.uploaded_at);
+  if (source === 'favorites') return state.photos.filter(p => !p.deleted && !p.archived && p.fav);
+  if (source === 'archive') return state.photos.filter(p => !p.deleted && p.archived);
+  if (source === 'trash') return state.photos.filter(p => p.deleted);
+  if (source === 'album' && state.activeAlbumId) return state.photos.filter(p => !p.deleted && p.album_id === state.activeAlbumId);
+  return getFilteredGalleryPhotos();
+}
+
+async function openViewerById(id, source = 'gallery') {
+  const list = getPhotoListBySource(source);
+  const idx = list.findIndex(p => p.id === id);
+  if (idx < 0) return;
+  state.viewerList = list;
+  state.viewerIndex = idx;
+  state.viewerZoom = 1;
+  $('viewer-modal').classList.add('active');
+  await renderViewer();
+}
+
+function closeViewer() {
+  stopViewerSlideshow();
+  $('viewer-modal').classList.remove('active');
+}
+
+async function renderViewer() {
+  const p = state.viewerList[state.viewerIndex];
+  if (!p) return closeViewer();
+
+  p.viewed_at = Date.now();
+  dbPut('photos', p);
+
+  $('viewer-title').textContent = p.name;
+  $('viewer-subtitle').textContent = `${p.member_emoji} ${p.member_name} • ${fmtDateTime(p.uploaded_at)} • ${fmtBytes(p.size)}`;
+  $('viewer-desc').textContent = p.desc || '';
+  $('viewer-tags').textContent = p.tags || '';
+
+  const img = $('viewer-img');
+  img.style.transform = `scale(${state.viewerZoom}) rotate(${p.rot || 0}deg)`;
+  img.src = await getPhotoSrc(p, false);
+  renderViewerTools();
+}
+
+function renderViewerTools() {
+  const p = state.viewerList[state.viewerIndex];
+  if (!p) return;
+  const tools = $('viewer-tools');
+  if (p.deleted) {
+    tools.innerHTML = `
+      <button class="v-tool" onclick="restorePhoto('${p.id}');closeViewer()"><svg class="icon icon-sm"><use href="#i-restore"/></svg>Pulihkan</button>
+      <button class="v-tool" style="color:var(--danger)" onclick="permanentlyDeletePhoto('${p.id}');closeViewer();renderCurrentView()"><svg class="icon icon-sm"><use href="#i-trash"/></svg>Hapus Permanen</button>
+    `;
+    return;
+  }
+  tools.innerHTML = `
+    <button class="v-tool" onclick="toggleFav('${p.id}')"><svg class="icon icon-sm"><use href="#i-star"/></svg>${p.fav ? 'Hapus Favorit' : 'Favorit'}</button>
+    <button class="v-tool" onclick="togglePin('${p.id}')"><svg class="icon icon-sm"><use href="#i-pin"/></svg>${p.pinned ? 'Lepas Pin' : 'Pin'}</button>
+    <button class="v-tool" onclick="editPhotoMeta('${p.id}')"><svg class="icon icon-sm"><use href="#i-edit"/></svg>Edit Info</button>
+    <button class="v-tool" onclick="movePhotoAlbum('${p.id}')"><svg class="icon icon-sm"><use href="#i-album"/></svg>Album</button>
+    <button class="v-tool" onclick="rotatePhoto('${p.id}')"><svg class="icon icon-sm"><use href="#i-rotate"/></svg>Putar</button>
+    <button class="v-tool" onclick="downloadPhoto('${p.id}')"><svg class="icon icon-sm"><use href="#i-download"/></svg>Unduh</button>
+    <button class="v-tool" onclick="sharePhoto('${p.id}')"><svg class="icon icon-sm"><use href="#i-share"/></svg>Bagikan</button>
+    <button class="v-tool" onclick="copyPhotoInfo('${p.id}')"><svg class="icon icon-sm"><use href="#i-copy"/></svg>Salin Info</button>
+    <button class="v-tool" onclick="exportPhotoMeta('${p.id}')">JSON</button>
+    <button class="v-tool" onclick="toggleArchivePhoto('${p.id}')"><svg class="icon icon-sm"><use href="#i-archive"/></svg>${p.archived ? 'Batal Arsip' : 'Arsip'}</button>
+    <button class="v-tool" style="color:var(--danger)" onclick="softDeletePhoto('${p.id}');closeViewer()"><svg class="icon icon-sm"><use href="#i-trash"/></svg>Hapus</button>
+  `;
+}
+
+function viewerNav(dir) {
+  if (!state.viewerList.length) return;
+  state.viewerIndex = (state.viewerIndex + dir + state.viewerList.length) % state.viewerList.length;
+  state.viewerZoom = 1;
+  renderViewer();
+}
+
+// Swipe & Double-Tap Zoom di Viewer
+(() => {
+  const stage = $('viewer-stage');
+  let startX = 0, lastTap = 0;
+  stage.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) startX = e.touches[0].clientX;
+  }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      state.viewerZoom = state.viewerZoom > 1 ? 1 : 2.2;
+      const p = state.viewerList[state.viewerIndex];
+      $('viewer-img').style.transform = `scale(${state.viewerZoom}) rotate(${p?.rot || 0}deg)`;
+      lastTap = 0;
+      return;
+    }
+    lastTap = now;
+    if (e.changedTouches.length === 1 && state.viewerZoom === 1) {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) viewerNav(dx < 0 ? 1 : -1);
+    }
+  });
+})();
+
+async function togglePin(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.pinned = !p.pinned;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  renderViewerTools();
+  renderCurrentView();
+  showToast(p.pinned ? 'Foto disematkan di atas.' : 'Pin dilepas.');
+}
+
+async function toggleArchivePhoto(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.archived = !p.archived;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  closeViewer();
+  renderCurrentView();
+  showToast(p.archived ? 'Foto diarsipkan.' : 'Dikembalikan dari arsip.');
+}
+
+async function rotatePhoto(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  p.rot = ((p.rot || 0) + 90) % 360;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  renderViewer();
+  renderCurrentView();
+}
+
+async function editPhotoMeta(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  const res = await showDialog({
+    title: 'Edit Info Foto',
+    fields: [
+      { name: 'name', label: 'Nama Foto', value: p.name },
+      { name: 'desc', label: 'Deskripsi', value: p.desc },
+      { name: 'tags', label: 'Tag (pisahkan spasi/koma)', value: p.tags }
+    ],
+    okText: 'Simpan'
+  });
+  if (!res) return;
+  p.name = res.name.trim() || p.name;
+  p.desc = res.desc.trim();
+  p.tags = res.tags.trim();
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  await addLog('rename', `Mengubah info foto "${p.name}"`);
+  renderViewer();
+  renderCurrentView();
+}
+
+async function movePhotoAlbum(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  const res = await showDialog({
+    title: 'Pilih Album & Sampul',
+    fields: [
+      {
+        name: 'albumId', label: 'Album', type: 'select', value: p.album_id,
+        options: [{ value: '', label: '-- Tanpa Album --' }, ...state.albums.map(a => ({ value: a.id, label: a.name }))]
+      },
+      {
+        name: 'asCover', label: 'Jadikan Sampul Album?', type: 'select', value: 'no',
+        options: [{ value: 'no', label: 'Tidak' }, { value: 'yes', label: 'Ya, jadikan cover album' }]
+      }
+    ],
+    okText: 'Simpan'
+  });
+  if (!res) return;
+  p.album_id = res.albumId;
+  await dbPut('photos', p);
+  await pushPhotoSupabase(p);
+  if (res.asCover === 'yes' && res.albumId) {
+    const alb = state.albums.find(a => a.id === res.albumId);
+    if (alb) { alb.cover_id = p.id; await dbPut('albums', alb); await pushAlbumSupabase(alb); }
+  }
+  await addLog('move-album', `Memindahkan foto "${p.name}" ke album`);
+  renderCurrentView();
+  showToast('Album foto diperbarui.');
+}
+
+async function downloadPhoto(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  const src = await getPhotoSrc(p, false);
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = (p.name || 'foto') + '.jpg';
+  a.click();
+}
+
+async function sharePhoto(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  const blobRec = await dbGet('blobs', id);
+  if (navigator.share && blobRec?.full) {
+    const file = new File([blobRec.full], (p.name || 'foto') + '.jpg', { type: p.type });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ title: p.name, text: p.desc, files: [file] }).catch(() => {});
+      return;
+    }
+  }
+  if (p.public_url && navigator.share) {
+    await navigator.share({ title: p.name, url: p.public_url }).catch(() => {});
+  } else {
+    copyPhotoInfo(id);
+  }
+}
+
+function copyPhotoInfo(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  const txt = `${p.name} - ${p.desc || 'Kirana Family Gallery'} ${p.public_url || ''}`.trim();
+  navigator.clipboard?.writeText(txt);
+  showToast('Info foto disalin ke clipboard.');
+}
+
+function exportPhotoMeta(id) {
+  const p = state.photos.find(x => x.id === id);
+  if (!p) return;
+  const blob = new Blob([JSON.stringify(p, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${p.name}_metadata.json`;
+  a.click();
+}
+
+function openSurprise() {
+  const active = state.photos.filter(p => !p.deleted && !p.archived);
+  if (!active.length) return showToast('Belum ada foto untuk kejutan.');
+  const pick = active[Math.floor(Math.random() * active.length)];
+  openViewerById(pick.id, 'gallery');
+}
+
+// ============================================================================
+// 18. SLIDESHOW
+// ============================================================================
+function startSlideshow(source = 'gallery') {
+  const list = getPhotoListBySource(source);
+  if (!list.length) return showToast('Tidak ada foto untuk slideshow.');
+  openViewerById(list[0].id, source);
+  toggleViewerSlideshow(true);
+}
+
+function toggleViewerSlideshow(forceStart = false) {
+  if (state.slideshowTimer && !forceStart) {
+    stopViewerSlideshow();
+    showToast('Slideshow dihentikan.');
+    return;
+  }
+  stopViewerSlideshow();
+  $('viewer-slideshow-btn').style.color = 'var(--accent)';
+  state.slideshowTimer = setInterval(() => viewerNav(1), 3000);
+  showToast('Slideshow berjalan (3 detik/foto).');
+}
+
+function stopViewerSlideshow() {
+  if (state.slideshowTimer) {
+    clearInterval(state.slideshowTimer);
+    state.slideshowTimer = null;
+  }
+  $('viewer-slideshow-btn').style.color = '#fff';
+}
+
+// ============================================================================
+// 19. STATS & LEADERBOARD
+// ============================================================================
+function renderStats() {
+  const active = state.photos.filter(p => !p.deleted);
+  const totalSize = active.reduce((s, p) => s + (p.size || 0), 0);
+  const totalLikes = active.reduce((s, p) => s + (p.likes || 0), 0);
+
+  // Chart 6 bulan terakhir
+  const months = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    const label = d.toLocaleDateString('id-ID', { month: 'short' });
+    const count = active.filter(p => {
+      const pd = new Date(p.uploaded_at);
+      return `${pd.getFullYear()}-${pd.getMonth()}` === key;
+    }).length;
+    months.push({ label, count });
+  }
+  const maxM = Math.max(1, ...months.map(m => m.count));
+
+  // Leaderboard anggota
+  const leader = state.members.map(m => ({
+    ...m,
+    count: active.filter(p => p.member_id === m.id).length
+  })).sort((a, b) => b.count - a.count);
+
+  $('stats-content').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-box"><div style="font-size:12px;color:var(--text-muted)">Total Foto</div><div class="stat-val">${active.length}</div></div>
+      <div class="stat-box"><div style="font-size:12px;color:var(--text-muted)">Total Album</div><div class="stat-val">${state.albums.length}</div></div>
+      <div class="stat-box"><div style="font-size:12px;color:var(--text-muted)">Total Suka</div><div class="stat-val">${totalLikes}</div></div>
+      <div class="stat-box"><div style="font-size:12px;color:var(--text-muted)">Kapasitas Lokal</div><div class="stat-val" style="font-size:18px">${fmtBytes(totalSize)}</div></div>
+    </div>
+    <div class="card">
+      <h4>Foto per Bulan (6 Bulan Terakhir)</h4>
+      <div class="bar-chart">
+        ${months.map(m => `
+          <div class="bar-col">
+            <span style="font-size:11px;font-weight:700">${m.count}</span>
+            <div class="bar-fill" style="height:${Math.round((m.count / maxM) * 100)}%"></div>
+            <span style="font-size:11px;color:var(--text-muted)">${m.label}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <h4 style="margin-bottom:12px">Leaderboard Upload Anggota</h4>
+      ${leader.map((m, i) => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-weight:800;width:20px;color:var(--accent)">#${i + 1}</span>
+            <span>${esc(m.emoji)} <b>${esc(m.name)}</b></span>
+          </div>
+          <span class="nav-badge">${m.count} foto</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ============================================================================
+// 20. LOG VIEW
+// ============================================================================
+function updateLogMemberFilter() {
+  const sel = $('log-member-filter');
+  sel.innerHTML = `<option value="all">Semua Anggota</option>` +
+    state.members.map(m => `<option value="${m.id}">${esc(m.emoji)} ${esc(m.name)}</option>`).join('');
+}
+
+function renderLogs() {
+  const filter = $('log-member-filter').value;
+  const list = state.logs
+    .filter(l => filter === 'all' || l.member_id === filter)
+    .sort((a, b) => b.created_at - a.created_at);
+
+  const box = $('logs-list');
+  if (!list.length) {
+    box.innerHTML = `<div class="empty-state"><p>Belum ada catatan aktivitas.</p></div>`;
+    return;
+  }
+  box.innerHTML = list.map(l => `
+    <div class="card" style="padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <div>
+        <div style="font-size:13px;font-weight:700">${esc(l.member_emoji)} ${esc(l.member_name)} <span style="color:var(--accent);font-size:11px">[${esc(l.action)}]</span></div>
+        <div style="font-size:13px;margin-top:2px">${esc(l.detail)}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);white-space:nowrap">${fmtDateTime(l.created_at)}</div>
+    </div>
+  `).join('');
+}
+
+async function clearLogsFlow() {
+  const ok = await showDialog({ title: 'Hapus Semua Log?', message: 'Riwayat aktivitas lokal akan dibersihkan.', okText: 'Hapus', danger: true });
+  if (!ok) return;
+  for (const l of state.logs) await dbDelete('logs', l.id);
+  state.logs = [];
+  renderLogs();
+  showToast('Log aktivitas dibersihkan.');
+}
+
+// ============================================================================
+// 21. SETTINGS, PRIVACY, LOCK & DUPLICATES
+// ============================================================================
+function renderSettings() {
+  const pin = localStorage.getItem('kfg_app_pin');
+  $('pin-status-text').textContent = pin ? 'Aktif (Terkunci saat tombol Kunci ditekan)' : 'Belum diatur';
+  $('sync-info-box').innerHTML = state.online
+    ? `Status Cloud: <b style="color:var(--success)">Terhubung ke Supabase (Realtime Aktif)</b>`
+    : `Status Cloud: <b style="color:var(--warning)">Mode Offline Lokal (IndexedDB)</b>. Isi <code>SUPABASE_URL</code> dan <code>SUPABASE_ANON_KEY</code> di bagian atas script untuk sinkronisasi antar HP.`;
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', cur === 'light' ? 'light' : '');
+  localStorage.setItem('kfg_theme', cur);
+}
+
+$('accent-picker').addEventListener('input', e => {
+  document.documentElement.style.setProperty('--accent', e.target.value);
+  localStorage.setItem('kfg_accent', e.target.value);
+});
+
+function togglePrivacy() {
+  state.privacyMode = !state.privacyMode;
+  document.body.classList.toggle('privacy-blur', state.privacyMode);
+  $('btn-privacy').style.color = state.privacyMode ? 'var(--accent)' : '';
+  showToast(state.privacyMode ? 'Mode Privat Aktif (Thumbnail diburamkan)' : 'Mode Privat Nonaktif');
+}
+
+async function setupPinFlow() {
+  const res = await showDialog({
+    title: 'Atur PIN Kunci Aplikasi',
+    message: 'Masukkan 4-6 digit angka PIN. Kosongkan untuk menonaktifkan PIN.',
+    fields: [{ name: 'pin', type: 'password', placeholder: 'PIN baru...' }],
+    okText: 'Simpan PIN'
+  });
+  if (!res) return;
+  const p = res.pin.trim();
+  if (!p) {
+    localStorage.removeItem('kfg_app_pin');
+    showToast('PIN aplikasi dinonaktifkan.');
+  } else {
+    localStorage.setItem('kfg_app_pin', p);
+    showToast('PIN aplikasi disimpan.');
+  }
+  renderSettings();
+}
+
+function lockApp() {
+  const pin = localStorage.getItem('kfg_app_pin');
+  if (!pin) return setupPinFlow();
+  $('unlock-pin-input').value = '';
+  $('lock-screen').classList.add('active');
+}
+
+function unlockApp() {
+  const pin = localStorage.getItem('kfg_app_pin');
+  if ($('unlock-pin-input').value === pin) {
+    $('lock-screen').classList.remove('active');
+  } else {
+    showToast('PIN salah!');
+  }
+}
+
+async function scanDuplicates() {
+  const active = state.photos.filter(p => !p.deleted);
+  const seen = new Map();
+  const dupes = [];
+  for (const p of active) {
+    const sig = `${p.name}_${p.size}`;
+    if (seen.has(sig)) dupes.push(p);
+    else seen.set(sig, p);
+  }
+  if (!dupes.length) return showToast('Tidak ditemukan foto duplikat.');
+  const ok = await showDialog({
+    title: `Ditemukan ${dupes.length} Duplikat`,
+    message: 'Pindahkan foto duplikat ke sampah?',
+    okText: 'Pindahkan ke Sampah',
+    danger: true
+  });
+  if (!ok) return;
+  for (const d of dupes) await softDeletePhoto(d.id);
+}
+
+// ============================================================================
+// 22. BACKUP EXPORT / IMPORT (.kfg JSON)
+// ============================================================================
+async function exportBackup() {
+  const payload = {
+    app: 'KIRANA_FAMILY_GALLERY',
+    exported_at: Date.now(),
+    members: state.members,
+    albums: state.albums,
+    photos: state.photos,
+    logs: state.logs
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `kirana_backup_${new Date().toISOString().slice(0,10)}.kfg`;
+  a.click();
+  await addLog('backup-export', 'Mengekspor file backup (.kfg)');
+  showToast('Backup .kfg berhasil diunduh.');
+}
+
+async function importBackup(e) {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (data.app !== 'KIRANA_FAMILY_GALLERY') return showToast('Format file backup tidak valid.');
+    for (const m of (data.members || [])) { await dbPut('members', m); await pushMemberSupabase(m); }
+    for (const a of (data.albums || [])) { await dbPut('albums', a); await pushAlbumSupabase(a); }
+    for (const p of (data.photos || [])) { await dbPut('photos', p); await pushPhotoSupabase(p); }
+    state.members = await dbAll('members');
+    state.albums = await dbAll('albums');
+    state.photos = await dbAll('photos');
+    await addLog('backup-import', `Mengimpor backup (${(data.photos || []).length} foto)`);
+    renderCurrentView();
+    showToast('Backup berhasil dipulihkan!');
+  } catch (err) {
+    showToast('Gagal membaca file backup.');
+  }
+}
+
+// ============================================================================
+// 23. SUPABASE SYNC
+// ============================================================================
+function initSupabaseClient() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || SUPABASE_URL.includes('GANTI-DENGAN') || SUPABASE_ANON_KEY.includes('GANTI-DENGAN')) {
+    state.online = false;
+    $('sync-dot').classList.remove('online');
+    return;
+  }
+  try {
+    state.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    state.online = true;
+    $('sync-dot').classList.add('online');
+  } catch (e) {
+    state.online = false;
+  }
+}
+
+async function syncFromSupabase(manual = false) {
+  if (!state.supabase) return;
+  try {
+    const [mRes, aRes, pRes, lRes] = await Promise.all([
+      state.supabase.from('members').select('*'),
+      state.supabase.from('albums').select('*'),
+      state.supabase.from('photos').select('*'),
+      state.supabase.from('logs').select('*').order('created_at', { ascending: false }).limit(200)
+    ]);
+
+    if (mRes.data && mRes.data.length) {
+      for (const m of mRes.data) await dbPut('members', m);
+      state.members = await dbAll('members');
+      renderActiveMemberUI();
+      updateLogMemberFilter();
+    } else if (state.members.length) {
+      for (const m of state.members) await pushMemberSupabase(m);
+    }
+
+    if (aRes.data) {
+      for (const a of aRes.data) await dbPut('albums', a);
+      state.albums = await dbAll('albums');
+    }
+
+    if (pRes.data) {
+      for (const p of pRes.data) await dbPut('photos', p);
+      state.photos = await dbAll('photos');
+    }
+
+    if (lRes.data) {
+      for (const l of lRes.data) await dbPut('logs', l);
+      state.logs = await dbAll('logs');
+    }
+
+    renderCurrentView();
+    if (manual) showToast('Sinkronisasi Supabase selesai!');
+  } catch (e) {
+    if (manual) showToast('Gagal sinkronisasi ke Supabase.');
+  }
+}
+
+async function pushMemberSupabase(m) {
+  if (state.supabase) await state.supabase.from('members').upsert(m);
+}
+async function deleteMemberSupabase(id) {
+  if (state.supabase) await state.supabase.from('members').delete().eq('id', id);
+}
+async function pushAlbumSupabase(a) {
+  if (state.supabase) await state.supabase.from('albums').upsert(a);
+}
+async function deleteAlbumSupabase(id) {
+  if (state.supabase) await state.supabase.from('albums').delete().eq('id', id);
+}
+async function pushPhotoSupabase(p) {
+  if (state.supabase) await state.supabase.from('photos').upsert(p);
+}
+async function pushLogSupabase(l) {
+  if (state.supabase) await state.supabase.from('logs').upsert(l);
+}
+
+// ============================================================================
+// 24. REALTIME (Sinkronisasi Langsung Antar HP)
+// ============================================================================
+function setupRealtime() {
+  if (!state.supabase) return;
+  state.supabase.channel('kirana-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'photos' }, async payload => {
+      if (payload.eventType === 'DELETE') {
+        const id = payload.old.id;
+        await dbDelete('photos', id);
+        state.photos = state.photos.filter(x => x.id !== id);
+      } else {
+        const p = payload.new;
+        await dbPut('photos', p);
+        const idx = state.photos.findIndex(x => x.id === p.id);
+        if (idx >= 0) state.photos[idx] = p;
+        else state.photos.unshift(p);
+      }
+      renderCurrentView();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'albums' }, async payload => {
+      if (payload.eventType === 'DELETE') {
+        await dbDelete('albums', payload.old.id);
+        state.albums = state.albums.filter(x => x.id !== payload.old.id);
+      } else {
+        const a = payload.new;
+        await dbPut('albums', a);
+        const idx = state.albums.findIndex(x => x.id === a.id);
+        if (idx >= 0) state.albums[idx] = a;
+        else state.albums.unshift(a);
+      }
+      renderCurrentView();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'members' }, async payload => {
+      if (payload.eventType === 'DELETE') {
+        await dbDelete('members', payload.old.id);
+        state.members = state.members.filter(x => x.id !== payload.old.id);
+      } else {
+        const m = payload.new;
+        await dbPut('members', m);
+        const idx = state.members.findIndex(x => x.id === m.id);
+        if (idx >= 0) state.members[idx] = m;
+        else state.members.push(m);
+      }
+      renderActiveMemberUI();
+      updateLogMemberFilter();
+    })
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs' }, async payload => {
+      const l = payload.new;
+      await dbPut('logs', l);
+      if (!state.logs.some(x => x.id === l.id)) state.logs.unshift(l);
+      if (state.view === 'logs') renderLogs();
+    })
+    .subscribe();
+}
+
+// ============================================================================
+// 25. INIT, KEYBOARD SHORTCUTS & PWA INLINE
+// ============================================================================
+function setupPWA() {
+  const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#7c5cff"/><text x="50%" y="56%" font-size="260" text-anchor="middle" dominant-baseline="middle">📸</text></svg>`;
+  const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(iconSvg)));
+  const linkApple = document.createElement('link');
+  linkApple.rel = 'apple-touch-icon';
+  linkApple.href = iconUrl;
+  document.head.appendChild(linkApple);
+
+  const manifest = {
+    name: 'KIRANA FAMILY GALLERY',
+    short_name: 'Kirana Gallery',
+    start_url: '.',
+    display: 'standalone',
+    background_color: '#0a0a0f',
+    theme_color: '#7c5cff',
+    icons: [{ src: iconUrl, sizes: '512x512', type: 'image/svg+xml' }]
+  };
+  const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const mLink = document.createElement('link');
+  mLink.rel = 'manifest';
+  mLink.href = URL.createObjectURL(mBlob);
+  document.head.appendChild(mLink);
+
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      const CACHE = 'kfg-v1';
+      self.addEventListener('install', e => self.skipWaiting());
+      self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+      self.addEventListener('fetch', e => {
+        if (e.request.method !== 'GET') return;
+        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+      });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+    if (e.key === 'Escape') document.activeElement.blur();
+    return;
+  }
+  if ($('viewer-modal').classList.contains('active')) {
+    if (e.key === 'Escape') closeViewer();
+    if (e.key === 'ArrowLeft') viewerNav(-1);
+    if (e.key === 'ArrowRight') viewerNav(1);
+    return;
+  }
+  const map = { g: 'gallery', f: 'feed', a: 'albums', v: 'favorites', m: 'memories', r: 'archive', t: 'trash', l: 'logs', s: 'settings' };
+  const k = e.key.toLowerCase();
+  if (map[k]) switchView(map[k]);
+  if (e.key === '/') { e.preventDefault(); switchView('gallery'); $('search-input').focus(); }
+  if (e.key === 'Escape') { closeMoreSheet(); if (state.selecting) toggleSelectMode(false); }
+});
+
+document.querySelectorAll('.nav-item, .bnav-btn[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
+});
+
+async function initApp() {
+  // Restore tema & aksen
+  if (localStorage.getItem('kfg_theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  const savedAccent = localStorage.getItem('kfg_accent');
+  if (savedAccent) {
+    document.documentElement.style.setProperty('--accent', savedAccent);
+    $('accent-picker').value = savedAccent;
+  }
+
+  setupPWA();
+  await openDB();
+
+  state.members = await dbAll('members');
+  if (!state.members.length) {
+    for (const m of DEFAULT_MEMBERS) await dbPut('members', m);
+    state.members = [...DEFAULT_MEMBERS];
+  }
+  state.albums = await dbAll('albums');
+  state.photos = await dbAll('photos');
+  state.logs = await dbAll('logs');
+
+  await purgeOldTrash();
+  updateLogMemberFilter();
+
+  initSupabaseClient();
+  await syncFromSupabase(false);
+  setupRealtime();
+
+  if (!state.currentMemberId || !state.members.some(m => m.id === state.currentMemberId)) {
+    state.currentMemberId = '';
+    openMemberModal();
+  } else {
+    renderActiveMemberUI();
+  }
+
+  renderCurrentView();
+}
+
+initApp();
 </script>
 </body>
 </html>
