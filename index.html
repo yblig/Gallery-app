@@ -469,7 +469,7 @@ svg.icon-lg { width: 32px; height: 32px; }
           Secret Code (Bagikan ke HP keluarga lain): <br>
           <code id="settings-fam-code" style="background:var(--surface-2);padding:6px 10px;border-radius:6px;display:inline-block;margin-top:4px;font-size:14px;font-weight:bold;color:var(--accent)">-</code>
         </div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
           <button class="btn btn-primary" onclick="copySecretCode()">Salin Secret Code</button>
           <button class="btn" onclick="openPairingModal()">Ganti / Masuk Kode Lain</button>
         </div>
@@ -634,15 +634,17 @@ svg.icon-lg { width: 32px; height: 32px; }
   </div>
 </div>
 
-<!-- Modal Pairing / Setup Keluarga & Secret Code -->
 <div class="modal-backdrop" id="pairing-modal">
   <div class="modal-box" style="text-align:center">
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-icon" onclick="$('pairing-modal').classList.remove('active')"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+    </div>
     <div class="empty-icon"><svg class="icon icon-lg"><use href="#i-sparkles"/></svg></div>
     <h3 style="margin-bottom:6px">Keluarga & Secret Code</h3>
     <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Hubungkan HP ini dengan keluarga Anda menggunakan secret code atau buat keluarga baru.</p>
     
     <div style="margin-bottom:16px;text-align:left">
-      <label class="form-label">1. Buat Keluarga Baru</label>
+      <label class="form-label">1. Buat / Ubah Nama Keluarga</label>
       <div style="display:flex;gap:8px">
         <input type="text" class="form-input" id="pair-new-name" placeholder="Nama Keluarga (Mis: Keluarga Kirana)">
         <button class="btn btn-primary" onclick="createNewFamily()">Buat</button>
@@ -685,7 +687,7 @@ svg.icon-lg { width: 32px; height: 32px; }
 
 <script>
 // ============================================================================
-// KONFIGURASI SUPABASE (Ganti dengan Project URL & Anon Public Key Anda)
+// KONFIGURASI SUPABASE (SUDAH TERISI OTOMATIS)
 // ============================================================================
 const SUPABASE_URL = 'https://mmxtypftvqgtfvadklvy.supabase.co';
 const SUPABASE_ANON_KEY = 'Sb_publishable_5sBKTxCm_C4vZV3gyNBbig_VxRREXYl';
@@ -841,7 +843,7 @@ function updateFamilyUI() {
 
 function openPairingModal() {
   $('pair-new-name').value = state.familyName;
-  $('pair-code-input').value = state.familyCode;
+  $('pair-code-input').value = '';
   $('pairing-modal').classList.add('active');
 }
 
@@ -856,12 +858,13 @@ async function createNewFamily() {
   localStorage.setItem('kfg_fam_code', code);
 
   if (state.supabase) {
-    await state.supabase.from('families').upsert({ id: 'primary', name, code });
+    const { error } = await state.supabase.from('families').upsert({ id: 'primary', name, code });
+    if (error) showToast('Gagal menyimpan kode ke cloud: ' + error.message);
   }
 
   $('pairing-modal').classList.remove('active');
   updateFamilyUI();
-  showToast(`Keluarga "${name}" dibuat! Secret Code: ${code}`);
+  showToast(`Keluarga "${name}" disimpan! Secret Code: ${code}`);
 }
 
 async function joinBySecretCode() {
@@ -869,10 +872,10 @@ async function joinBySecretCode() {
   if (!code) return showToast('Masukkan Secret Code.');
 
   if (state.supabase) {
-    showToast('Mencari data keluarga...');
-    const { data, error } = await state.supabase.from('families').select('*').eq('code', code).single();
+    showToast('Mencari data keluarga di Cloud...');
+    const { data, error } = await state.supabase.from('families').select('*').ilike('code', code).maybeSingle();
     if (error || !data) {
-      return showToast('Secret Code tidak ditemukan di Cloud.');
+      return showToast('Secret Code tidak ditemukan. Pastikan HP utama sudah tersambung & klik Sinkron Ulang Cloud.');
     }
     state.familyName = data.name;
     state.familyCode = data.code;
@@ -882,9 +885,9 @@ async function joinBySecretCode() {
     $('pairing-modal').classList.remove('active');
     updateFamilyUI();
     await syncFromSupabase(true);
-    showToast(`Berhasil bergabung dengan ${data.name}!`);
+    showToast(`Berhasil terhubung dengan ${data.name}!`);
   } else {
-    showToast('Mode offline: Pastikan Supabase terhubung untuk pairing antar HP.');
+    showToast('Mode offline: Tidak dapat terhubung ke server Supabase.');
   }
 }
 
@@ -1270,6 +1273,8 @@ async function handleFilesUpload(files) {
         const { data: pub } = state.supabase.storage.from('photos').getPublicUrl(path);
         photo.storage_path = path;
         photo.public_url = pub?.publicUrl || '';
+      } else {
+        showToast('Upload ke storage gagal: ' + error.message);
       }
     }
 
@@ -2264,7 +2269,7 @@ function initSupabaseClient() {
 async function syncFromSupabase(manual = false) {
   if (!state.supabase) return;
   try {
-    const famRes = await state.supabase.from('families').select('*').limit(1).single();
+    const famRes = await state.supabase.from('families').select('*').limit(1).maybeSingle();
     if (famRes.data) {
       state.familyName = famRes.data.name;
       state.familyCode = famRes.data.code;
@@ -2309,7 +2314,7 @@ async function syncFromSupabase(manual = false) {
     renderCurrentView();
     if (manual) showToast('Sinkronisasi Supabase selesai!');
   } catch (e) {
-    if (manual) showToast('Gagal sinkronisasi ke Supabase.');
+    if (manual) showToast('Gagal sinkronisasi: pastikan tabel SQL sudah dibuat.');
   }
 }
 
@@ -2338,6 +2343,15 @@ async function pushLogSupabase(l) {
 function setupRealtime() {
   if (!state.supabase) return;
   state.supabase.channel('kirana-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'families' }, async payload => {
+      if (payload.new) {
+        state.familyName = payload.new.name;
+        state.familyCode = payload.new.code;
+        localStorage.setItem('kfg_fam_name', payload.new.name);
+        localStorage.setItem('kfg_fam_code', payload.new.code);
+        updateFamilyUI();
+      }
+    })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'photos' }, async payload => {
       if (payload.eventType === 'DELETE') {
         const id = payload.old.id;
@@ -2474,17 +2488,15 @@ async function initApp() {
   updateLogMemberFilter();
 
   initSupabaseClient();
-  await syncFromSupabase(false);
-  setupRealtime();
-
-  updateFamilyUI();
-
+  
   if (!state.familyCode) {
-    // Generate initial code jika belum ada
     state.familyCode = 'KRF-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
     localStorage.setItem('kfg_fam_code', state.familyCode);
-    updateFamilyUI();
   }
+  updateFamilyUI();
+
+  await syncFromSupabase(false);
+  setupRealtime();
 
   if (!state.currentMemberId || !state.members.some(m => m.id === state.currentMemberId)) {
     state.currentMemberId = '';
