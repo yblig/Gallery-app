@@ -8,15 +8,18 @@
 <style>
 :root{
   --bg:#0a0a0f;--surface:#14141c;--surface2:#1c1c26;--text:#f2f2f7;--muted:#9a9ab0;
-  --accent:#7c5cff;--accent2:#9b7cff;--danger:#ff5c7a;--radius:16px;--shadow:0 8px 24px rgba(0,0,0,.35);
+  --accent:#7c5cff;--danger:#ff5c7a;--radius:16px;--shadow:0 8px 24px rgba(0,0,0,.35);
 }
 [data-theme="light"]{
   --bg:#f7f7fb;--surface:#ffffff;--surface2:#f0f0f7;--text:#17171f;--muted:#6b6b80;
-  --accent:#6b46ff;--accent2:#8a6bff;--shadow:0 8px 24px rgba(20,20,40,.10);
+  --shadow:0 8px 24px rgba(20,20,40,.10);
 }
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+button,a,input,select,textarea{outline:none}
+button:focus,a:focus,input:focus,select:focus,textarea:focus{outline:none;box-shadow:none}
+::selection{background:var(--accent);color:#fff}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 input,select,textarea{font:inherit;color:inherit}
 img{display:block;max-width:100%}
@@ -25,7 +28,7 @@ img{display:block;max-width:100%}
 #sidebar .brand{font-weight:800;letter-spacing:.5px;font-size:15px;color:var(--accent);margin-bottom:18px;padding:0 8px}
 #sidebar button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;color:var(--muted);font-size:14px;transition:.2s}
 #sidebar button:hover{background:var(--surface2);color:var(--text)}
-#sidebar button.active{background:rgba(124,92,255,.15);color:var(--accent)}
+#sidebar button.active{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
 #sidebar svg{width:18px;height:18px}
 #content{flex:1;min-width:0;display:flex;flex-direction:column}
 #topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 14px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid rgba(128,128,160,.12)}
@@ -86,7 +89,7 @@ img{display:block;max-width:100%}
 #viewer .counter{position:absolute;top:14px;left:50%;transform:translateX(-50%);color:#fff;font-size:12px;background:rgba(0,0,0,.5);padding:4px 12px;border-radius:20px}
 #modalRoot{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);padding:20px}
 #modalRoot.open{display:flex}
-.modal{background:var(--surface);border-radius:20px;padding:22px;max-width:380px;width:100%;box-shadow:var(--shadow);animation:pop .2s}
+.modal{background:var(--surface);border-radius:20px;padding:22px;max-width:380px;width:100%;box-shadow:var(--shadow);animation:pop .2s;max-height:85dvh;overflow-y:auto}
 @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
 .modal h3{font-size:16px;margin-bottom:8px}
 .modal p{font-size:13px;color:var(--muted);margin-bottom:16px}
@@ -96,16 +99,19 @@ img{display:block;max-width:100%}
 .toast{background:var(--surface);color:var(--text);padding:10px 18px;border-radius:12px;font-size:13px;box-shadow:var(--shadow);animation:pop .2s}
 #memberModal{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
 #memberModal.open{display:flex}
-#memberModal .box{background:var(--surface);border-radius:20px;padding:24px;max-width:400px;width:100%}
+#memberModal .box{background:var(--surface);border-radius:20px;padding:24px;max-width:420px;width:100%;max-height:85dvh;overflow-y:auto}
 #memberModal h2{font-size:17px;margin-bottom:16px;text-align:center}
 .membergrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.membercard{background:var(--surface2);border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;transition:.2s;border:2px solid transparent}
-.membercard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.membercard{background:var(--surface2);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:.2s;border:2px solid transparent;position:relative}
+.membercard:hover{transform:translateY(-2px)}
+.membercard img{width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto 6px}
 .membercard .em{font-size:32px}
 .membercard .nm{font-size:12px;margin-top:6px;color:var(--muted)}
+.membercard .mact{position:absolute;top:6px;right:6px;display:flex;gap:4px}
+.membercard .mact button{width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
 .progress{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-top:8px}
 .progress>div{height:100%;background:var(--accent);transition:width .2s}
-.banner{background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.3);border-radius:12px;padding:12px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.banner{background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:12px;padding:12px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
 .statrow{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 .statbox{background:var(--surface);border-radius:14px;padding:14px;text-align:center}
 .statbox .v{font-size:22px;font-weight:800;color:var(--accent)}
@@ -230,6 +236,7 @@ img{display:block;max-width:100%}
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 <input type="file" id="fileInput" multiple accept="image/*" hidden>
+<input type="file" id="avatarInput" accept="image/*" hidden>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -242,18 +249,19 @@ function shuffle(a){const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math
 function timeAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return 'baru saja';const m=Math.floor(s/60);if(m<60)return m+' menit lalu';const h=Math.floor(m/60);if(h<24)return h+' jam lalu';const d=Math.floor(h/24);if(d<30)return d+' hari lalu';const mo=Math.floor(d/30);if(mo<12)return mo+' bulan lalu';return Math.floor(mo/12)+' tahun lalu';}
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;$('#toastRoot').appendChild(t);setTimeout(()=>t.remove(),2600);}
 function modalConfirm(title,msg){return new Promise(res=>{const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>'+escapeHtml(title)+'</h3><p>'+escapeHtml(msg)+'</p><div class="row"><button class="btn ghost" id="mcNo">Batal</button><button class="btn danger" id="mcYes">Ya</button></div></div>';r.classList.add('open');$('#mcNo').onclick=()=>{r.classList.remove('open');res(false);};$('#mcYes').onclick=()=>{r.classList.remove('open');res(true);};});}
-function modalPrompt(title,label,defaultVal){return new Promise(res=>{const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>'+escapeHtml(title)+'</h3><input id="mpIn" value="'+escapeHtml(defaultVal||'')+'" placeholder="'+escapeHtml(label)+'"><div class="row"><button class="btn ghost" id="mpNo">Batal</button><button class="btn" id="mpYes">Simpan</button></div></div>';r.classList.add('open');const inp=$('#mpIn');inp.focus();$('#mpNo').onclick=()=>{r.classList.remove('open');res(null);};$('#mpYes').onclick=()=>{const v=inp.value.trim();r.classList.remove('open');res(v||null);};inp.onkeydown=e=>{if(e.key==='Enter')$('#mpYes').click();if(e.key==='Escape')$('#mpNo').click();};});}
+function modalPrompt(title,label,defaultVal,isPassword){return new Promise(res=>{const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>'+escapeHtml(title)+'</h3><input id="mpIn" type="'+(isPassword?'password':'text')+'" value="'+escapeHtml(defaultVal||'')+'" placeholder="'+escapeHtml(label)+'"><div class="row"><button class="btn ghost" id="mpNo">Batal</button><button class="btn" id="mpYes">Simpan</button></div></div>';r.classList.add('open');const inp=$('#mpIn');inp.focus();$('#mpNo').onclick=()=>{r.classList.remove('open');res(null);};$('#mpYes').onclick=()=>{const v=inp.value;r.classList.remove('open');res(v);};inp.onkeydown=e=>{if(e.key==='Enter')$('#mpYes').click();if(e.key==='Escape')$('#mpNo').click();};});}
 function downloadBlob(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000);}
-function makeThumb(blob){return new Promise(res=>{const img=new Image();const url=URL.createObjectURL(blob);img.onload=()=>{const max=500;const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(url);res(b||blob);},'image/jpeg',0.82);};img.onerror=()=>{URL.revokeObjectURL(url);res(blob);};img.src=url;});}
-function blobToBase64(blob){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(blob);});}
+function makeThumb(blob){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(blob);img.onload=()=>{try{const max=500;const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(url);if(b)res(b);else rej(new Error('thumbnail gagal'));},'image/jpeg',0.82);}catch(e){URL.revokeObjectURL(url);rej(e);}};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('gambar tidak bisa dibaca'));};img.src=url;});}
+function blobToBase64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(blob);});}
 function base64ToBlob(dataUrl){const parts=dataUrl.split(',');const mime=parts[0].match(/:(.*?);/)[1];const bin=atob(parts[1]);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime});}
+function fileToBlob(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(new Blob([r.result],{type:file.type||'image/jpeg'}));r.onerror=()=>rej(r.error);r.readAsArrayBuffer(file);});}
 
 let members=[];let activeMember=null;
 function loadMembers(){try{members=JSON.parse(localStorage.getItem('kfg_members'))||[];}catch(e){members=[];}
-if(!members.length){members=[{id:'m1',name:'Ayah',emoji:'👨',color:'#7c5cff'},{id:'m2',name:'Ibu',emoji:'👩',color:'#ff7ab8'},{id:'m3',name:'Anak',emoji:'🧒',color:'#4fd1c5'}];saveMembers();}
+if(!members.length){members=[{id:'m1',name:'Ayah',emoji:'👨',color:'#7c5cff',photo:'',pass:''},{id:'m2',name:'Ibu',emoji:'👩',color:'#ff7ab8',photo:'',pass:''},{id:'m3',name:'Anak',emoji:'🧒',color:'#4fd1c5',photo:'',pass:''}];saveMembers();}
 const aid=localStorage.getItem('kfg_active');activeMember=members.find(m=>m.id===aid)||null;}
 function saveMembers(){localStorage.setItem('kfg_members',JSON.stringify(members));}
-function setActiveMember(id){activeMember=members.find(m=>m.id===id)||null;if(activeMember)localStorage.setItem('kfg_active',id);$('#memberEmoji').textContent=activeMember?activeMember.emoji:'👤';}
+function setActiveMember(id){activeMember=members.find(m=>m.id===id)||null;if(activeMember)localStorage.setItem('kfg_active',id);$('#memberEmoji').textContent=activeMember?(activeMember.photo?'🖼️':activeMember.emoji):'👤';}
 
 const DB_NAME='kfg_db';const DB_VERSION=1;let db=null;
 function openDB(){return new Promise((res,rej)=>{const rq=indexedDB.open(DB_NAME,DB_VERSION);rq.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('photos')){const s=d.createObjectStore('photos',{keyPath:'id'});s.createIndex('uploadedAt','uploadedAt');s.createIndex('albumId','albumId');}if(!d.objectStoreNames.contains('albums')){d.createObjectStore('albums',{keyPath:'id'});}if(!d.objectStoreNames.contains('log')){const s=d.createObjectStore('log',{keyPath:'id'});s.createIndex('ts','ts');}};rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);});}
@@ -278,14 +286,27 @@ function activePhotos(){return state.photos.filter(p=>!p.deleted);}
 function getAlbum(id){return state.albums.find(a=>a.id===id)||null;}
 function getPhoto(id){return state.photos.find(p=>p.id===id)||null;}
 
+function applyAccent(color){document.documentElement.style.setProperty('--accent',color);localStorage.setItem('kfg_accent',color);}
 function setView(v){state.view=v;state.selectMode=false;state.selected.clear();updateBulkbar();$$('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===v));const titles={feed:'Feed',gallery:'Galeri',albums:'Album',favorites:'Favorit',memories:'Memories',trash:'Tempat Sampah',log:'Log Aktivitas',stats:'Statistik',settings:'Pengaturan'};$('#topTitle').textContent=titles[v]||'KIRANA FAMILY GALLERY';render();closeSheet();}
 function render(){const v=state.view;const m=$('#main');m.innerHTML='';if(v==='feed')renderFeed(m);else if(v==='gallery')renderGallery(m);else if(v==='albums')renderAlbums(m);else if(v==='favorites')renderFavorites(m);else if(v==='memories')renderMemories(m);else if(v==='trash')renderTrash(m);else if(v==='log')renderLog(m);else if(v==='stats')renderStats(m);else if(v==='settings')renderSettings(m);}
 
 $('#uploadBtn').onclick=()=>$('#fileInput').click();
-$('#fileInput').onchange=async e=>{const files=Array.from(e.target.files);if(!files.length)return;e.target.value='';const total=files.length;let done=0;const bar=document.createElement('div');bar.className='card';bar.innerHTML='<div style="font-size:13px;margin-bottom:6px">Mengunggah 0/'+total+'</div><div class="progress"><div style="width:0%"></div></div>';$('#main').prepend(bar);const prog=bar.querySelector('.progress>div');const label=bar.querySelector('div');
-for(const f of files){try{const thumb=await makeThumb(f);const p={id:uid(),name:f.name,desc:'',blob:f,thumb,size:f.size,type:f.type,uploadedAt:Date.now(),albumId:null,fav:false,likes:0,deleted:false,memberId:activeMember?activeMember.id:'unknown',memberName:activeMember?activeMember.name:'Unknown',memberEmoji:activeMember?activeMember.emoji:'👤',viewedAt:null};await dbPut('photos',p);state.photos.push(p);await addLog('upload',{photoId:p.id,photoName:p.name});}catch(err){toast('Gagal upload: '+f.name);}
+$('#fileInput').onchange=async e=>{const files=Array.from(e.target.files||[]);if(!files.length)return;e.target.value='';
+if(!db){toast('Database belum siap, coba lagi');return;}
+const total=files.length;let done=0;let fail=0;
+const bar=document.createElement('div');bar.className='card';bar.innerHTML='<div class="upLabel" style="font-size:13px;margin-bottom:6px">Mengunggah 0/'+total+'</div><div class="progress"><div class="upBar" style="width:0%"></div></div>';
+$('#main').prepend(bar);const prog=bar.querySelector('.upBar');const label=bar.querySelector('.upLabel');
+for(const f of files){try{if(!f.type.startsWith('image/')){fail++;continue;}
+const blob=await fileToBlob(f);
+let thumb;try{thumb=await makeThumb(blob);}catch(err){thumb=blob;}
+const p={id:uid(),name:f.name,desc:'',blob,thumb,size:blob.size,type:blob.type||f.type,uploadedAt:Date.now(),albumId:null,fav:false,likes:0,deleted:false,memberId:activeMember?activeMember.id:'unknown',memberName:activeMember?activeMember.name:'Unknown',memberEmoji:activeMember?activeMember.emoji:'👤',viewedAt:null};
+await dbPut('photos',p);state.photos.push(p);await addLog('upload',{photoId:p.id,photoName:p.name});}
+catch(err){fail++;toast('Gagal upload '+f.name+': '+(err&&err.message?err.message:'error'));}
 done++;label.textContent='Mengunggah '+done+'/'+total;prog.style.width=(done/total*100)+'%';}
-setTimeout(()=>bar.remove(),600);toast(total+' foto diunggah');render();};
+setTimeout(()=>bar.remove(),600);
+if(fail===0)toast(total+' foto berhasil diunggah');
+else toast(total-fail+' berhasil, '+fail+' gagal');
+render();};
 
 function renderFeed(m){const photos=shuffle(activePhotos());if(!photos.length){m.innerHTML='<div class="empty"><div class="big">🎬</div><p>Belum ada foto. Upload foto pertamamu!</p></div>';return;}
 m.innerHTML='<div id="feed">'+photos.map((p,i)=>'<div class="feeditem" data-idx="'+i+'"><img src="'+getPhotoURL(p)+'" alt="'+escapeHtml(p.name)+'"><div class="overlay"><div style="font-size:14px;font-weight:600">'+escapeHtml(p.name)+'</div><div style="font-size:11px;opacity:.7">'+escapeHtml(p.memberEmoji+' '+p.memberName)+' · '+timeAgo(p.uploadedAt)+'</div></div><div class="actions"><button class="act-like '+(p.likes>0?'on':'')+'" data-id="'+p.id+'"><svg><use href="#i-heart"/></svg>'+p.likes+'</button><button class="act-fav '+(p.fav?'on':'')+'" data-id="'+p.id+'"><svg><use href="#i-star"/></svg></button><button class="act-info" data-id="'+p.id+'"><svg><use href="#i-info"/></svg></button><button class="act-full" data-id="'+p.id+'"><svg><use href="#i-full"/></svg></button></div></div>').join('')+'</div>';
@@ -352,36 +373,37 @@ $('#emptyTrash').onclick=async()=>{const ok=await modalConfirm('Kosongkan Tempat
 state.photos=state.photos.filter(p=>!p.deleted);toast('Tempat sampah dikosongkan');render();};
 m.querySelectorAll('.photocard').forEach(c=>{c.onclick=async()=>{const p=getPhoto(c.dataset.id);const ok=await modalConfirm('Pulihkan foto?','"'+p.name+'" akan dikembalikan ke galeri.');if(!ok)return;p.deleted=false;await dbPut('photos',p);await addLog('restore',{photoId:p.id,photoName:p.name});toast('Foto dipulihkan');render();};});}
 
-function renderLog(m){const logs=listLogsSync();const membersInLog=[...new Set(logs.map(l=>l.memberId))];
-m.innerHTML='<div class="toolbar"><select id="logFilter"><option value="">Semua anggota</option>'+membersInLog.map(id=>{const mem=members.find(x=>x.id===id);return '<option value="'+id+'">'+escapeHtml(mem?mem.emoji+' '+mem.name:id)+'</option>';}).join('')+'</select><button class="btn danger" id="clearLog"><svg><use href="#i-trash"/></svg> Hapus Log</button></div><div class="card">'+(logs.length?logs.map(l=>{const act={upload:'menambahkan foto',favorite:'menambahkan ke favorit',unfavorite:'menghapus dari favorit',like:'menyukai',unlike:'membatalkan suka',rename:'mengubah nama foto',delete:'menghapus',restore:'memulihkan','move-album':'memindahkan', 'album-create':'membuat album','album-rename':'mengubah nama album','album-delete':'menghapus album','trash-empty':'mengosongkan tempat sampah','backup-export':'mengekspor backup','backup-import':'mengimpor backup'}[l.action]||l.action;
+function renderLog(m){const logs=listLogsCache;const membersInLog=[...new Set(logs.map(l=>l.memberId))];
+m.innerHTML='<div class="toolbar"><select id="logFilter"><option value="">Semua anggota</option>'+membersInLog.map(id=>{const mem=members.find(x=>x.id===id);return '<option value="'+id+'">'+escapeHtml(mem?mem.emoji+' '+mem.name:id)+'</option>';}).join('')+'</select><button class="btn danger" id="clearLog"><svg><use href="#i-trash"/></svg> Hapus Log</button></div><div class="card">'+(logs.length?logs.map(l=>{const act={upload:'menambahkan foto',favorite:'menambahkan ke favorit',unfavorite:'menghapus dari favorit',like:'menyukai',unlike:'membatalkan suka',rename:'mengubah nama foto',delete:'menghapus',restore:'memulihkan','move-album':'memindahkan','album-create':'membuat album','album-rename':'mengubah nama album','album-delete':'menghapus album','trash-empty':'mengosongkan tempat sampah','backup-export':'mengekspor backup','backup-import':'mengimpor backup'}[l.action]||l.action;
 let txt=escapeHtml(l.memberName)+' '+act;if(l.photoName)txt+=' "'+escapeHtml(l.photoName)+'"';if(l.albumName)txt+=' album "'+escapeHtml(l.albumName)+'"';
 return '<div class="logitem"><div class="em">'+escapeHtml(l.memberEmoji)+'</div><div><div>'+txt+'</div><div class="t">'+timeAgo(l.ts)+'</div></div></div>';}).join(''):'<div class="empty"><div class="big">📜</div><p>Belum ada aktivitas.</p></div>')+'</div>';
 $('#logFilter').onchange=render;
-$('#clearLog').onclick=async()=>{const ok=await modalConfirm('Hapus semua log?','Log aktivitas akan dihapus permanen.');if(!ok)return;await clearLogs();toast('Log dihapus');render();};}
-function listLogsSync(){return [];}
-function getLogsSync(){return [];}
+$('#clearLog').onclick=async()=>{const ok=await modalConfirm('Hapus semua log?','Log aktivitas akan dihapus permanen.');if(!ok)return;await clearLogs();listLogsCache=[];toast('Log dihapus');render();};}
+let listLogsCache=[];
+async function refreshLogs(){listLogsCache=await listLogs();}
 
 function renderStats(m){const photos=activePhotos();const totalSize=photos.reduce((s,p)=>s+p.size,0);
 const months={};photos.forEach(p=>{const d=new Date(p.uploadedAt);const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');months[key]=(months[key]||0)+1;});
 const keys=Object.keys(months).sort().slice(-12);const max=Math.max(1,...keys.map(k=>months[k]));
 m.innerHTML='<div class="statrow"><div class="statbox"><div class="v">'+photos.length+'</div><div class="l">Total Foto</div></div><div class="statbox"><div class="v">'+photos.filter(p=>p.fav).length+'</div><div class="l">Favorit</div></div><div class="statbox"><div class="v">'+state.albums.length+'</div><div class="l">Album</div></div><div class="statbox"><div class="v">'+fmtSize(totalSize)+'</div><div class="l">Total Ukuran</div></div></div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:6px">Foto per Bulan</div><div class="chart">'+(keys.length?keys.map(k=>'<div class="bar" style="height:'+(months[k]/max*100)+'%"><span>'+k.slice(5)+'</span></div>').join(''):'<p style="font-size:12px;color:var(--muted)">Belum ada data.</p>')+'</div></div>';}
 
-function renderSettings(m){const theme=document.body.dataset.theme;const grid=localStorage.getItem('kfg_grid')||'3';const slide=localStorage.getItem('kfg_slide')||'4000';
+function renderSettings(m){const theme=document.body.dataset.theme;const grid=localStorage.getItem('kfg_grid')||'3';const slide=localStorage.getItem('kfg_slide')||'4000';const accent=localStorage.getItem('kfg_accent')||'#7c5cff';
 m.innerHTML='<div class="banner">📱 <b>Info Sinkronisasi:</b> Aplikasi ini menyimpan foto <b>LOKAL di HP masing-masing</b>. Untuk berbagi foto antar HP: gunakan tombol "Export Backup" di HP pengunggah, kirim file .kfg (JSON) via WhatsApp/email ke HP lain, lalu "Import Backup" di HP penerima. Sync real-time antar HP membutuhkan server (Firebase/Supabase) — di luar cakupan file ini.</div>'+
-'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Tampilan</div><div class="toolbar"><button class="btn ghost" id="themeBtn">Tema: '+(theme==='dark'?'Gelap':'Terang')+'</button><select id="gridSel"><option value="2">2 kolom</option><option value="3">3 kolom</option><option value="4">4 kolom</option><option value="6">6 kolom</option></select></div></div>'+
+'<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Tampilan</div><div class="toolbar"><button class="btn ghost" id="themeBtn">Tema: '+(theme==='dark'?'Gelap':'Terang')+'</button><input type="color" id="accentPick" value="'+accent+'" title="Warna aksen"><select id="gridSel"><option value="2">2 kolom</option><option value="3">3 kolom</option><option value="4">4 kolom</option><option value="6">6 kolom</option></select></div><p style="font-size:11px;color:var(--muted)">Pilih warna aksen apa saja (biru, hijau, pink, dll).</p></div>'+
 '<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Slideshow</div><div class="toolbar"><input type="number" id="slideInt" value="'+slide+'" min="1000" step="500" style="width:100px"> <span style="font-size:12px;color:var(--muted)">ms per foto</span></div></div>'+
 '<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Penyimpanan</div><div id="storageInfo" style="font-size:13px;color:var(--muted)">Menghitung...</div></div>'+
 '<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Backup</div><div class="toolbar"><button class="btn" id="exportBtn"><svg><use href="#i-down"/></svg> Export Backup</button><button class="btn ghost" id="importBtn"><svg><use href="#i-upload"/></svg> Import Backup</button><input type="file" id="importFile" accept=".kfg,.json" hidden></div><div class="progress hidden" id="backupProg"><div></div></div></div>'+
 '<div class="card"><button class="btn" id="installBtn" style="width:100%;margin-bottom:10px">Install PWA</button><button class="btn danger" id="wipeBtn" style="width:100%">Hapus Semua Data</button></div>';
 $('#themeBtn').onclick=()=>{const t=document.body.dataset.theme==='dark'?'light':'dark';document.body.dataset.theme=t;localStorage.setItem('kfg_theme',t);render();};
+$('#accentPick').oninput=e=>{applyAccent(e.target.value);toast('Warna aksen diubah');};
 $('#gridSel').value=grid;$('#gridSel').onchange=e=>{localStorage.setItem('kfg_grid',e.target.value);toast('Ukuran grid diubah');};
 $('#slideInt').onchange=e=>{localStorage.setItem('kfg_slide',e.target.value);toast('Interval slideshow diubah');};
 if(navigator.storage&&navigator.storage.estimate){navigator.storage.estimate().then(est=>{const el=$('#storageInfo');if(el)el.textContent='Terpakai: '+fmtSize(est.usage||0)+' dari '+fmtSize(est.quota||0);});}else{const el=$('#storageInfo');if(el)el.textContent='Info storage tidak tersedia di browser ini.';}
 $('#exportBtn').onclick=exportBackup;
 $('#importBtn').onclick=()=>$('#importFile').click();
 $('#importFile').onchange=importBackup;
-$('#installBtn').onclick=()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;}else toast('PWA belum tersedia untuk install. Gunakan menu browser "Add to Home Screen".');};
-$('#wipeBtn').onclick=async()=>{const ok=await modalConfirm('Hapus semua data?','Semua foto, album, dan log akan dihapus permanen.');if(!ok)return;await dbClear('photos');await dbClear('albums');await dbClear('log');state.photos=[];state.albums=[];toast('Semua data dihapus');render();};}
+$('#installBtn').onclick=()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;}else toast('Gunakan menu browser "Add to Home Screen".');};
+$('#wipeBtn').onclick=async()=>{const ok=await modalConfirm('Hapus semua data?','Semua foto, album, dan log akan dihapus permanen.');if(!ok)return;await dbClear('photos');await dbClear('albums');await dbClear('log');state.photos=[];state.albums=[];listLogsCache=[];toast('Semua data dihapus');render();};}
 
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
@@ -400,7 +422,7 @@ done++;if(bar)bar.querySelector('div').style.width=(done/total*100)+'%';}
 for(const ad of (data.albums||[])){if(!state.albums.find(a=>a.id===ad.id)){state.albums.push(ad);await dbPut('albums',ad);}}
 for(const ld of (data.logs||[])){await dbPut('log',ld);}
 await addLog('backup-import',{detail:added+' ditambah, '+skipped+' dilewati'});
-toast('Import selesai: '+added+' foto ditambah, '+skipped+' dilewati');if(bar)setTimeout(()=>bar.classList.add('hidden'),800);render();}
+toast('Import selesai: '+added+' ditambah, '+skipped+' dilewati');if(bar)setTimeout(()=>bar.classList.add('hidden'),800);render();}
 
 function openViewer(id,list){const idx=list.findIndex(p=>p.id===id);if(idx<0)return;state.viewerList=list;state.viewerIndex=idx;$('#viewer').classList.add('open');showViewerPhoto();
 const p=getPhoto(id);if(p){p.viewedAt=Date.now();dbPut('photos',p);const recent=JSON.parse(localStorage.getItem('kfg_recent')||'[]');const nr=[id,...recent.filter(x=>x!==id)].slice(0,50);localStorage.setItem('kfg_recent',JSON.stringify(nr));}}
@@ -439,13 +461,34 @@ document.addEventListener('click',e=>{if(!$('#moreSheet').contains(e.target)&&e.
 $$('[data-nav]').forEach(b=>b.onclick=()=>setView(b.dataset.nav));
 
 $('#memberBtn').onclick=()=>{$('#memberModal').classList.add('open');renderMemberGrid();};
-function renderMemberGrid(){const g=$('#memberGrid');g.innerHTML=members.map(m=>'<div class="membercard" data-id="'+m.id+'" style="border-color:'+(activeMember&&activeMember.id===m.id?m.color:'transparent')+'"><div class="em">'+m.emoji+'</div><div class="nm">'+escapeHtml(m.name)+'</div></div>').join('');
-g.querySelectorAll('.membercard').forEach(c=>c.onclick=()=>{setActiveMember(c.dataset.id);$('#memberModal').classList.remove('open');toast('Profil: '+activeMember.name);});}
-$('#addMemberBtn').onclick=async()=>{const name=await modalPrompt('Tambah anggota','Nama anggota','');if(!name)return;const emoji=await modalPrompt('Emoji anggota','Emoji (misal: 🐶)','🙂')||'🙂';const color=await modalPrompt('Warna','Kode warna hex','#7c5cff')||'#7c5cff';const m={id:uid(),name,emoji,color};members.push(m);saveMembers();renderMemberGrid();toast('Anggota ditambahkan');};
+function renderMemberGrid(){const g=$('#memberGrid');g.innerHTML=members.map(m=>'<div class="membercard" data-id="'+m.id+'" style="border-color:'+(activeMember&&activeMember.id===m.id?m.color:'transparent')+'">'+(m.photo?'<img src="'+m.photo+'">':'<div class="em">'+m.emoji+'</div>')+'<div class="nm">'+escapeHtml(m.name)+(m.pass?' 🔒':'')+'</div><div class="mact"><button class="medit" data-id="'+m.id+'">✏️</button><button class="mdel" data-id="'+m.id+'">🗑️</button></div></div>').join('');
+g.querySelectorAll('.membercard').forEach(c=>{c.onclick=async e=>{if(e.target.closest('.mact'))return;const id=c.dataset.id;const mem=members.find(x=>x.id===id);if(mem.pass){const pw=await modalPrompt('Password','Masukkan password '+mem.name,'',true);if(pw===null)return;if(pw!==mem.pass){toast('Password salah');return;}}
+setActiveMember(id);$('#memberModal').classList.remove('open');toast('Profil: '+mem.name);};});
+g.querySelectorAll('.medit').forEach(b=>b.onclick=e=>{e.stopPropagation();openMemberEditor(b.dataset.id);});
+g.querySelectorAll('.mdel').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.id;if(members.length<=1){toast('Minimal harus ada 1 anggota');return;}
+const mem=members.find(x=>x.id===id);const ok=await modalConfirm('Hapus anggota?','"'+mem.name+'" akan dihapus dari daftar profil.');if(!ok)return;
+members=members.filter(x=>x.id!==id);saveMembers();if(activeMember&&activeMember.id===id){setActiveMember(members[0].id);}
+renderMemberGrid();toast('Anggota dihapus');});}
+
+let pendingAvatar=null;
+function openMemberEditor(id){const mem=members.find(x=>x.id===id);pendingAvatar=mem.photo||'';
+const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Edit Anggota</h3><input id="meName" value="'+escapeHtml(mem.name)+'" placeholder="Nama"><input id="meEmoji" value="'+escapeHtml(mem.emoji)+'" placeholder="Emoji"><input type="color" id="meColor" value="'+escapeHtml(mem.color)+'"><input type="password" id="mePass" value="'+escapeHtml(mem.pass)+'" placeholder="Password (opsional)"><button class="btn ghost" id="mePhotoBtn" style="width:100%;margin-bottom:10px">Pilih Foto Profil</button><div class="row"><button class="btn ghost" id="meNo">Batal</button><button class="btn" id="meYes">Simpan</button></div></div>';
+r.classList.add('open');
+$('#mePhotoBtn').onclick=()=>{const inp=$('#avatarInput');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{pendingAvatar=rd.result;toast('Foto profil dipilih');};rd.readAsDataURL(f);};inp.click();};
+$('#meNo').onclick=()=>r.classList.remove('open');
+$('#meYes').onclick=()=>{mem.name=$('#meName').value.trim()||mem.name;mem.emoji=$('#meEmoji').value.trim()||mem.emoji;mem.color=$('#meColor').value;mem.pass=$('#mePass').value;mem.photo=pendingAvatar;saveMembers();if(activeMember&&activeMember.id===mem.id)setActiveMember(mem.id);r.classList.remove('open');renderMemberGrid();toast('Anggota diperbarui');};}
+
+$('#addMemberBtn').onclick=async()=>{const name=await modalPrompt('Tambah anggota','Nama anggota','');if(!name)return;const emoji=await modalPrompt('Emoji anggota','Emoji (misal: 🐶)','🙂')||'🙂';const color=await modalPrompt('Warna','Kode warna hex','#7c5cff')||'#7c5cff';const pass=await modalPrompt('Password','Password (opsional)','',true)||'';
+const m={id:uid(),name,emoji,color,pass,photo:''};
+const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Foto Profil (opsional)</h3><button class="btn ghost" id="amPhotoBtn" style="width:100%;margin-bottom:10px">Pilih Foto Profil</button><div class="row"><button class="btn" id="amDone">Selesai</button></div></div>';r.classList.add('open');
+$('#amPhotoBtn').onclick=()=>{const inp=$('#avatarInput');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{m.photo=rd.result;toast('Foto profil dipilih');};rd.readAsDataURL(f);};inp.click();};
+$('#amDone').onclick=()=>{members.push(m);saveMembers();r.classList.remove('open');renderMemberGrid();toast('Anggota ditambahkan');};};
 
 async function init(){await openDB();loadMembers();setActiveMember(localStorage.getItem('kfg_active')||members[0].id);
 state.photos=await dbAll('photos');state.albums=await dbAll('albums');
+await refreshLogs();
 const theme=localStorage.getItem('kfg_theme')||'dark';document.body.dataset.theme=theme;
+applyAccent(localStorage.getItem('kfg_accent')||'#7c5cff');
 setView('gallery');
 if('serviceWorker' in navigator){try{const swCode="self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('fetch',e=>{});";const blob=new Blob([swCode],{type:'text/javascript'});await navigator.serviceWorker.register(URL.createObjectURL(blob));}catch(e){}}
 const manifest={name:'KIRANA FAMILY GALLERY',short_name:'KFG',start_url:'.',display:'standalone',background_color:'#0a0a0f',theme_color:'#7c5cff',icons:[]};
