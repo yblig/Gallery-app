@@ -203,6 +203,7 @@ img{display:block;max-width:100%}
     <button class="iconbtn" id="memberBtn" title="Ganti profil"><span id="memberEmoji">👨</span></button>
     <h1 id="topTitle">KIRANA FAMILY GALLERY</h1>
     <span id="topCount"></span>
+    <button class="iconbtn" id="fsBtn" title="Full Screen"><svg><use href="#i-full"/></svg></button>
     <button class="iconbtn" id="uploadBtn" title="Upload foto"><svg><use href="#i-upload"/></svg></button>
   </header>
   <main id="main"></main>
@@ -338,10 +339,12 @@ if(v==='feed')renderFeed(m);else if(v==='gallery')renderGallery(m);else if(v==='
 async function deletePhoto(p){p.deleted=true;p.deletedAt=Date.now();await dbPut('photos',p);await addLog('delete',{photoId:p.id,photoName:p.name});lastDeleted=p;vibrate();
 toastUndo('Dipindah ke Tempat Sampah — ketuk untuk urungkan',async()=>{p.deleted=false;p.deletedAt=null;await dbPut('photos',p);await addLog('restore',{photoId:p.id,photoName:p.name});toast('Dipulihkan');render();});}
 
+function waitForDB(){return new Promise(res=>{if(db)return res();const t=setInterval(()=>{if(db){clearInterval(t);res();}},50);});}
+
 $('#uploadBtn').onclick=()=>$('#fileInput').click();
 $('#fab').onclick=()=>$('#fileInput').click();
 $('#fileInput').onchange=async e=>{const files=Array.from(e.target.files||[]);if(!files.length)return;e.target.value='';
-if(!db){toast('Database belum siap, coba lagi');return;}
+await waitForDB();
 const total=files.length;let done=0;let fail=0;
 const bar=document.createElement('div');bar.className='card';bar.innerHTML='<div class="upLabel" style="font-size:13px;margin-bottom:6px">Mengunggah 0/'+total+'</div><div class="progress"><div class="upBar" style="width:0%"></div></div>';
 $('#main').prepend(bar);const prog=bar.querySelector('.upBar');const label=bar.querySelector('.upLabel');
@@ -356,6 +359,24 @@ setTimeout(()=>bar.remove(),600);
 if(fail===0)toast(total+' foto berhasil diunggah');
 else toast((total-fail)+' berhasil, '+fail+' gagal');
 vibrate();render();};
+
+$('#fsBtn').onclick=async()=>{
+  const el=document.documentElement;
+  if(!document.fullscreenElement){
+    try{
+      await el.requestFullscreen();
+      if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('portrait').catch(()=>{});
+      toast('Mode fullscreen aktif');
+    }catch(e){toast('Fullscreen tidak didukung browser ini');}
+  }else{
+    try{await document.exitFullscreen();toast('Fullscreen dimatikan');}catch(e){}
+  }
+};
+document.addEventListener('fullscreenchange',()=>{
+  const on=!!document.fullscreenElement;
+  $('#fsBtn').style.background=on?'var(--accent)':'';
+  $('#fsBtn').style.color=on?'#fff':'';
+});
 
 function renderFeed(m){const photos=shuffle(activePhotos());if(!photos.length){m.innerHTML='<div class="empty"><div class="big">🎬</div><p>Belum ada foto. Upload foto pertamamu!</p></div>';return;}
 m.innerHTML='<div id="feed">'+photos.map((p,i)=>'<div class="feeditem" data-idx="'+i+'"><img src="'+getPhotoURL(p)+'" alt="'+escapeHtml(p.name)+'"><div class="overlay"><div style="font-size:14px;font-weight:600">'+escapeHtml(p.name)+'</div><div style="font-size:11px;opacity:.7">'+escapeHtml(p.memberEmoji+' '+p.memberName)+' · '+timeAgo(p.uploadedAt)+'</div></div><div class="actions"><button class="act-like '+(p.likes>0?'on':'')+'" data-id="'+p.id+'"><svg><use href="#i-heart"/></svg>'+p.likes+'</button><button class="act-fav '+(p.fav?'on':'')+'" data-id="'+p.id+'"><svg><use href="#i-star"/></svg></button><button class="act-info" data-id="'+p.id+'"><svg><use href="#i-info"/></svg></button><button class="act-full" data-id="'+p.id+'"><svg><use href="#i-full"/></svg></button></div></div>').join('')+'</div>';
@@ -582,7 +603,7 @@ const r=$('#modalRoot');r.innerHTML='<div class="modal"><h3>Foto Profil (opsiona
 $('#amPhotoBtn').onclick=()=>{const inp=$('#avatarInput');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{m.photo=rd.result;toast('Foto profil dipilih');};rd.readAsDataURL(f);};inp.click();};
 $('#amDone').onclick=()=>{members.push(m);saveMembers();r.classList.remove('open');$('#memberModal').classList.add('open');renderMemberGrid();toast('Anggota ditambahkan');};};
 
-async function init(){await openDB();loadMembers();setActiveMember(localStorage.getItem('kfg_active')||members[0].id);
+async function init(){db=await openDB();loadMembers();setActiveMember(localStorage.getItem('kfg_active')||members[0].id);
 state.photos=await dbAll('photos');state.albums=await dbAll('albums');
 await refreshLogs();
 const cutoff=Date.now()-30*86400000;const old=state.photos.filter(p=>p.deleted&&(p.deletedAt||p.uploadedAt)<cutoff);
